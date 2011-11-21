@@ -18,7 +18,19 @@ class TagStorage
 
 public:
 
-	static const QList<Tag*> storedTags(void);
+	static const QList<Tag *> storedTags(void);
+
+	static bool append(Tag *tag);
+
+private:
+	
+	TagStorage(void);
+
+	TagStorage(const TagStorage &tag);
+
+	TagStorage &operator=(const TagStorage &);
+
+	~TagStorage(void);
 
 };
 

@@ -14,3 +14,8 @@ const QList<Tag*> TagStorage::storedTags(void)
 	return dummy;
 }
 
+bool TagStorage::append(Tag *tag)
+{
+	(void) tag;
+	return false;
+}

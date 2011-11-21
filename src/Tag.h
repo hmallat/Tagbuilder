@@ -9,8 +9,41 @@
 #ifndef _TAG_H_
 #define _TAG_H_
 
+#include <QNdefMessage>
+#include <QDateTime>
+#include <QString>
+
+QTM_USE_NAMESPACE;
+
 class Tag 
 {
+
+public:
+
+	Tag(const QString name, const QNdefMessage message);
+
+	~Tag(void);
+
+	const QString &name(void) const;
+
+	const QNdefMessage &message(void) const;
+
+	const QDateTime &creationTime(void) const;
+
+private:
+
+	Tag(void);
+
+	Tag(const Tag &tag);
+
+	Tag &operator=(const Tag &);
+
+	QString m_name;
+
+	QNdefMessage m_message;
+
+	QDateTime m_creationTime;
+
 };
 
 #endif /* _TAG_H_ */

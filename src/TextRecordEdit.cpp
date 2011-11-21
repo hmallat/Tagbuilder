@@ -22,6 +22,7 @@ TextRecordEdit::TextRecordEdit(const QStringList availableLanguages,
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
 	m_text = new MTextEdit(MTextEditModel::MultiLine);
+	m_text->setPrompt(tr("Enter text"));
 	m_text->setText(initialContents);
 	m_layout->addItem(m_text);
 	m_layout->setAlignment(m_text, Qt::AlignHCenter);
@@ -68,6 +69,14 @@ TextRecordEdit::TextRecordEdit(const QStringList availableLanguages,
 
 TextRecordEdit::~TextRecordEdit(void)
 {
+	for (int i = count() - 1; i >= 0; --i) {
+		QGraphicsLayoutItem *item = itemAt(i);
+		removeAt(i);
+		if (item) {
+			if (item->ownedByLayout())
+				delete item;
+		}
+	}
 }
 
 void TextRecordEdit::setGeometry(const QRectF &rect)
@@ -97,15 +106,14 @@ QGraphicsLayoutItem *TextRecordEdit::itemAt(int i) const
 
 void TextRecordEdit::removeAt(int i)
 {
-	/* TODO this seems to be wrongo */
-	(void)i;
-	m_layout->setParentLayoutItem(NULL);
-	delete m_layout;
-	m_layout = 0;
-	m_text = 0;
-	m_sizeLabel = 0;
-	m_langCombo = 0;
-	m_size = 0;
+	(void) i;
+
+	if (m_layout == 0) {
+		return;
+	}
+
+	m_layout->setParentLayoutItem(0);
+	invalidate();
 }
 
 void TextRecordEdit::updateSize(void)
