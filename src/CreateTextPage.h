@@ -13,9 +13,7 @@
 #include <QSystemInfo>
 #include <MApplicationPage>
 
-class MTextEdit;
-class MLabel;
-class MComboBox;
+class TextRecordEdit;
 
 QTM_USE_NAMESPACE;
 
@@ -33,23 +31,15 @@ public:
 
 private Q_SLOTS:
 
-	void textChanged(void);
-
-	void languageChanged(void);
+	void saveTag(void);
 
 private:
 
 	Q_DISABLE_COPY(CreateTextPage);
 
-	MTextEdit *m_text;
-
-	MLabel *m_sizeLabel;
-
-	MComboBox *m_langCombo;
+	TextRecordEdit *m_edit;
 
 	QSystemInfo *m_sysinfo;
-
-	void updateSize(void);
 
 };
 

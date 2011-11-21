@@ -23,7 +23,8 @@ HEADERS         += \
                 CreateTextPage.h \
                 MainPage.h \
 		Tag.h \
-		TagStorage.h
+		TagStorage.h \
+		TextRecordEdit.h
 
 SOURCES         += \
                 tag-creator.cpp \
@@ -31,7 +32,8 @@ SOURCES         += \
                 CreateTextPage.cpp \
                 MainPage.cpp \
 		Tag.cpp \
-		TagStorage.cpp
+		TagStorage.cpp \
+		TextRecordEdit.cpp
 
 TRANSLATIONS    = \
                 tag-creator_en.ts \

@@ -7,11 +7,10 @@
  */
 
 #include "CreateTextPage.h"
+#include "TextRecordEdit.h"
 
 #include <QGraphicsLinearLayout>
-#include <MTextEdit>
 #include <MLabel>
-#include <MComboBox>
 #include <MAction>
 
 #include <MDebug>
@@ -19,11 +18,13 @@
 /* TODO: show a locale specific human readable language name 
    instead of two-letter code (study QLocale) */
 
+/* TODO: figure out a way to make a component out of the text input, 
+   language selection, and byte counter fields that can be added to
+   other layouts. Smarmyposter editor needs that. */
+
 CreateTextPage::CreateTextPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
-	  m_text(NULL),
-	  m_sizeLabel(NULL),
-	  m_langCombo(NULL),
+	  m_edit(NULL),
 	  m_sysinfo(new QSystemInfo(this))
 {
 }
@@ -49,80 +50,16 @@ void CreateTextPage::createContent(void)
 	layout->addItem(label);
 	layout->setAlignment(label, Qt::AlignHCenter);
 
-	m_text = new MTextEdit(MTextEditModel::MultiLine);
-	layout->addItem(m_text);
-	layout->setAlignment(m_text, Qt::AlignHCenter);
-	layout->setStretchFactor(m_text, 999);
-
-	connect(m_text, SIGNAL(textChanged(void)),
-		this, SLOT(textChanged(void)));
-
-	{
-		QGraphicsLinearLayout *sublayout = 
-			new QGraphicsLinearLayout(Qt::Horizontal);
-
-		m_langCombo = new MComboBox();
-		m_langCombo->setTitle(tr("Text language"));
-		m_langCombo->addItems(m_sysinfo->availableLanguages());
-		for (int i = 0; i < m_langCombo->count(); i++) {
-			if (m_sysinfo->currentLanguage() == 
-			    m_langCombo->itemText(i)) {
-				m_langCombo->setCurrentIndex(i);
-				break;
-			}
-		}
-		if (m_langCombo->currentIndex() == -1) {
-			m_langCombo->setCurrentIndex(0);
-		}
-		sublayout->addItem(m_langCombo);
-		sublayout->setAlignment(m_langCombo, 
-					Qt::AlignLeft | Qt::AlignVCenter);
-		connect(m_langCombo, 
-			SIGNAL(currentIndexChanged(int)),
-			this,
-			SLOT(languageChanged(void)));
-
-		m_sizeLabel = new MLabel();
-		m_sizeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-		sublayout->addItem(m_sizeLabel);
-		sublayout->setAlignment(m_sizeLabel, 
-					Qt::AlignRight | Qt::AlignVCenter);
-		sublayout->setStretchFactor(m_sizeLabel, 999);
-
-		layout->addItem(sublayout);
-	}
+	m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
+				    m_sysinfo->currentLanguage());
+	layout->addItem(m_edit);
+	layout->setAlignment(m_edit, Qt::AlignHCenter);
+	layout->setStretchFactor(m_edit, 999);
 
 	centralWidget()->setLayout(layout);
-	updateSize();
 }
 
-void CreateTextPage::updateSize(void)
+void CreateTextPage::saveTag(void)
 {
-	/* This is an awful lot of work just to print a number... */
-
-	QString lang = m_langCombo->currentText();
-
-	int payloadLength = 
-		1 + /* status byte */
-		lang.toUtf8().length() + /* language code */
-		m_text->text().toUtf8().length(); /* text itself */
-
-	int ndefLength = 
-		1 + /* NDEF header */
-		1 + /* type length */
-		(payloadLength < 256 ? 1 : 4) + /* payload length */
-		1 + /* type (T) */
-		payloadLength; /* payload */
-
-	m_sizeLabel->setText(tr("%1 bytes").arg(ndefLength));
-}
-
-void CreateTextPage::textChanged(void)
-{
-	updateSize();
-}
-
-void CreateTextPage::languageChanged(void)
-{
-	updateSize();
+	/* TODO: write to tag storage and go back to main screen */
 }
