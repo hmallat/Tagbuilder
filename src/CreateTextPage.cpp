@@ -7,14 +7,15 @@
  */
 
 #include "CreateTextPage.h"
+#include "LabeledTextEdit.h"
 #include "TextRecordEdit.h"
 #include "Tag.h"
 #include "TagStorage.h"
 
 #include <QGraphicsLinearLayout>
 #include <MAction>
-#include <MTextEdit>
 #include <MLabel>
+#include <MMessageBox>
 
 #include <QNdefNfcTextRecord>
 #include <QNdefMessage>
@@ -24,17 +25,13 @@ QTM_USE_NAMESPACE;
 /* TODO: show a locale specific human readable language name 
    instead of two-letter code (study QLocale) */
 
-/* TODO: subclass text edit to show placeholder text */
-
-/* TODO: dim placeholder text */
-
 CreateTextPage::CreateTextPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_name(NULL),
 	  m_nameFocused(false),
 	  m_edit(NULL),
 	  m_sysinfo(new QSystemInfo(this)),
-	  m_saveAction(NULL)
+	  m_storeAction(NULL)
 {
 }
 
@@ -44,12 +41,12 @@ CreateTextPage::~CreateTextPage(void)
 
 void CreateTextPage::createContent(void)
 {
-	m_saveAction = new MAction(tr("Save"), this);
-	m_saveAction->setEnabled(false);
-	m_saveAction->setLocation(MAction::ToolBarLocation);
- 	connect(m_saveAction, SIGNAL(triggered()),
- 		this, SLOT(saveTag()));
-	addAction(m_saveAction);
+	m_storeAction = new MAction(tr("Store"), this);
+	m_storeAction->setEnabled(false);
+	m_storeAction->setLocation(MAction::ToolBarLocation);
+ 	connect(m_storeAction, SIGNAL(triggered()),
+ 		this, SLOT(storeTag()));
+	addAction(m_storeAction);
 
 	QGraphicsLinearLayout *layout = 
 		new QGraphicsLinearLayout(Qt::Vertical);
@@ -59,8 +56,9 @@ void CreateTextPage::createContent(void)
 	layout->addItem(label);
 	layout->setAlignment(label, Qt::AlignHCenter);
 
-	m_name = new MTextEdit(MTextEditModel::SingleLine);
-	m_name->setPrompt(tr("Enter tag name"));
+	m_name = new LabeledTextEdit(MTextEditModel::SingleLine,
+				     tr("Tag name"),
+				     tr("Enter tag name"));
 	layout->addItem(m_name);
 	layout->setAlignment(m_name, Qt::AlignHCenter);
 	connect(m_name, SIGNAL(textChanged(void)),
@@ -78,14 +76,14 @@ void CreateTextPage::createContent(void)
 void CreateTextPage::nameChanged(void)
 {
 	if (m_name->text() == "") {
-		/* cannot save without a name */
-		m_saveAction->setEnabled(false);
+		/* cannot store without a name */
+		m_storeAction->setEnabled(false);
 	} else {
-		m_saveAction->setEnabled(true);
+		m_storeAction->setEnabled(true);
 	}
 }
 
-void CreateTextPage::saveTag(void)
+void CreateTextPage::storeTag(void)
 {
 	QNdefMessage message;
 
@@ -97,7 +95,9 @@ void CreateTextPage::saveTag(void)
 	
 	Tag *tag = new Tag(m_name->text(), message);
 	if (TagStorage::append(tag) == false) {
-		/* TODO: show banner */
+		MMessageBox *box = 
+			new MMessageBox(tr("Cannot store the tag. "));
+		box->appear();
 		delete tag;
 	}
 

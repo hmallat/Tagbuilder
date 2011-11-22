@@ -12,7 +12,7 @@
 #include <QGraphicsLayout>
 
 class QGraphicsLinearLayout;
-class MTextEdit;
+class LabeledTextEdit;
 class MLabel;
 class MComboBox;
 
@@ -61,7 +61,7 @@ private:
 
 	QGraphicsLinearLayout *m_layout;
 
-	MTextEdit *m_text;
+	LabeledTextEdit *m_text;
 	
 	MLabel *m_sizeLabel;
 

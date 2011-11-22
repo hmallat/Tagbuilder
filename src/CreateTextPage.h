@@ -14,7 +14,7 @@
 #include <MApplicationPage>
 
 class TextRecordEdit;
-class MTextEdit;
+class LabeledTextEdit;
 
 QTM_USE_NAMESPACE;
 
@@ -34,13 +34,13 @@ private Q_SLOTS:
 
 	void nameChanged(void);
 
-	void saveTag(void);
+	void storeTag(void);
 
 private:
 
 	Q_DISABLE_COPY(CreateTextPage);
 
-	MTextEdit *m_name;
+	LabeledTextEdit *m_name;
 
 	bool m_nameFocused;
 
@@ -48,7 +48,7 @@ private:
 
 	QSystemInfo *m_sysinfo;
 
-	MAction *m_saveAction;
+	MAction *m_storeAction;
 
 };
 

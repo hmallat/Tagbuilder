@@ -7,9 +7,9 @@
  */
 
 #include "TextRecordEdit.h"
+#include "LabeledTextEdit.h"
 
 #include <QGraphicsLinearLayout>
-#include <MTextEdit>
 #include <MLabel>
 #include <MComboBox>
 
@@ -21,9 +21,10 @@ TextRecordEdit::TextRecordEdit(const QStringList availableLanguages,
 {
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
-	m_text = new MTextEdit(MTextEditModel::MultiLine);
-	m_text->setPrompt(tr("Enter text"));
-	m_text->setText(initialContents);
+	m_text = new LabeledTextEdit(MTextEditModel::MultiLine,
+				     "Text",
+				     "Enter text",
+				     initialContents);
 	m_layout->addItem(m_text);
 	m_layout->setAlignment(m_text, Qt::AlignHCenter);
 	m_layout->setStretchFactor(m_text, 999);
