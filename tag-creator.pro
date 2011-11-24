@@ -20,21 +20,21 @@ DESTDIR         = ./out
            
 HEADERS         += \
                 CreatePage.h \
-                CreateTextPage.h \
 		LabeledTextEdit.h \
                 MainPage.h \
 		Tag.h \
 		TagStorage.h \
+		TextPage.h \
 		TextRecordEdit.h
 
 SOURCES         += \
                 tag-creator.cpp \
                 CreatePage.cpp \
-                CreateTextPage.cpp \
 		LabeledTextEdit.cpp \
                 MainPage.cpp \
 		Tag.cpp \
 		TagStorage.cpp \
+                TextPage.cpp \
 		TextRecordEdit.cpp
 
 TRANSLATIONS    = \

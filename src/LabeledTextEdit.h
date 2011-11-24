@@ -45,6 +45,8 @@ public:
 
 	const QString text(void) const;
 
+	void setText(const QString text);
+
 Q_SIGNALS:
 
 	void textChanged(void);

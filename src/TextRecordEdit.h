@@ -47,6 +47,8 @@ public:
 
 	const QString contents(void) const;
 
+	void setContents(const QString contents);
+
 	int size(void) const;
 
 private Q_SLOTS:

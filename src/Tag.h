@@ -26,7 +26,11 @@ public:
 
 	const QString &name(void) const;
 
+	void setName(const QString name);
+
 	const QNdefMessage &message(void) const;
+
+	void setMessage(const QNdefMessage message);
 
 	const QDateTime &creationTime(void) const;
 

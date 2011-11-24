@@ -22,6 +22,8 @@ public:
 
 	static bool append(Tag *tag);
 
+	static bool update(Tag *tag);
+
 };
 
 #endif /* _TAG_STORAGE_H_ */

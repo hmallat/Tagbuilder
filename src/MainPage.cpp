@@ -8,6 +8,7 @@
 
 #include "MainPage.h"
 #include "CreatePage.h"
+#include "TextPage.h"
 #include "TagStorage.h"
 #include "Tag.h"
 
@@ -123,6 +124,9 @@ void MainPage::showAbout(void)
 {
 }
 
-void MainPage::tagSelected(int)
+void MainPage::tagSelected(int which)
 {
+	Tag *tag = TagStorage::storedTags().at(which);
+	TextPage *page = new TextPage(tag);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 }

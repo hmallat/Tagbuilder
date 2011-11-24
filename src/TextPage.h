@@ -6,27 +6,29 @@
  *
  */
 
-#ifndef _CREATE_TEXT_PAGE_H_
-#define _CREATE_TEXT_PAGE_H_
+#ifndef _TEXT_PAGE_H_
+#define _TEXT_PAGE_H_
 
 #include <QString>
 #include <QSystemInfo>
 #include <MApplicationPage>
 
+class Tag;
 class TextRecordEdit;
 class LabeledTextEdit;
 
 QTM_USE_NAMESPACE;
 
-class CreateTextPage : public MApplicationPage
+class TextPage : public MApplicationPage
 {
 	Q_OBJECT;
 
 public:
 
-	CreateTextPage(QGraphicsItem *parent = 0);
+	TextPage(Tag *tag = 0,
+		 QGraphicsItem *parent = 0);
 
-	~CreateTextPage(void);
+	~TextPage(void);
 
         virtual void createContent(void);
 
@@ -36,9 +38,13 @@ private Q_SLOTS:
 
 	void storeTag(void);
 
+	void removeTag(void);
+
 private:
 
-	Q_DISABLE_COPY(CreateTextPage);
+	Q_DISABLE_COPY(TextPage);
+
+	Tag* m_tag;
 
 	LabeledTextEdit *m_name;
 
@@ -50,6 +56,8 @@ private:
 
 	MAction *m_storeAction;
 
+	MAction *m_removeAction;
+
 };
 
-#endif /* _CREATE_TEXT_PAGE_H_ */
+#endif /* _TEXT_PAGE_H_ */

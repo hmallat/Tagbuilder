@@ -37,6 +37,8 @@ public:
 
 	bool append(Tag *tag);
 
+	bool update(Tag *tag);
+
 private:
 
 	QList<Tag *> tags;
@@ -62,6 +64,13 @@ const QList<Tag *> TagStorageImpl::storedTags(void)
 bool TagStorageImpl::append(Tag *tag)
 {
 	tags << tag;
+	return true;
+}
+
+bool TagStorageImpl::update(Tag *tag)
+{
+	/* nothing for now */
+	(void) tag;
 	return true;
 }
 
@@ -106,3 +115,10 @@ bool TagStorage::append(Tag *tag)
 {
 	return storage()->append(tag);
 }
+
+bool TagStorage::update(Tag *tag)
+{
+	return storage()->update(tag);
+}
+
+

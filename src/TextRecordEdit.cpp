@@ -164,6 +164,13 @@ const QString TextRecordEdit::contents(void) const
 	return m_text != 0 ? m_text->text() : "";
 }
 
+void TextRecordEdit::setContents(const QString what)
+{
+	if (m_text != 0) {
+		m_text->setText(what);
+	}
+}
+
 int TextRecordEdit::size(void) const
 {
 	return m_size;

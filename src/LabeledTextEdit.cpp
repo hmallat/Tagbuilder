@@ -91,4 +91,9 @@ const QString LabeledTextEdit::text(void) const
 	return m_text != 0 ? m_text->text() : "";
 }
 
-
+void LabeledTextEdit::setText(const QString what)
+{
+	if (m_text != 0) {
+		m_text->setText(what);
+	}
+}

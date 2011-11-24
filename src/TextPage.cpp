@@ -6,7 +6,7 @@
  *
  */
 
-#include "CreateTextPage.h"
+#include "TextPage.h"
 #include "LabeledTextEdit.h"
 #include "TextRecordEdit.h"
 #include "Tag.h"
@@ -25,8 +25,9 @@ QTM_USE_NAMESPACE;
 /* TODO: show a locale specific human readable language name 
    instead of two-letter code (study QLocale) */
 
-CreateTextPage::CreateTextPage(QGraphicsItem *parent)
+TextPage::TextPage(Tag *tag, QGraphicsItem *parent)
 	: MApplicationPage(parent),
+	  m_tag(tag),
 	  m_name(NULL),
 	  m_nameFocused(false),
 	  m_edit(NULL),
@@ -35,23 +36,36 @@ CreateTextPage::CreateTextPage(QGraphicsItem *parent)
 {
 }
 
-CreateTextPage::~CreateTextPage(void)
+TextPage::~TextPage(void)
 {
 }
 
-void CreateTextPage::createContent(void)
+void TextPage::createContent(void)
 {
 	m_storeAction = new MAction(tr("Store"), this);
 	m_storeAction->setEnabled(false);
 	m_storeAction->setLocation(MAction::ToolBarLocation);
- 	connect(m_storeAction, SIGNAL(triggered()),
- 		this, SLOT(storeTag()));
+	connect(m_storeAction, SIGNAL(triggered()),
+		this, SLOT(storeTag()));
 	addAction(m_storeAction);
+
+	if (m_tag == 0) { /* create new */
+		/* TODO */
+	} else { /* edit existing */
+		m_removeAction = new MAction(tr("Remove"), this);
+		m_removeAction->setEnabled(false);
+		m_removeAction->setLocation(MAction::ToolBarLocation);
+		connect(m_removeAction, SIGNAL(triggered()),
+			this, SLOT(removeTag()));
+		addAction(m_removeAction);
+	}
 
 	QGraphicsLinearLayout *layout = 
 		new QGraphicsLinearLayout(Qt::Vertical);
 
-	MLabel *label = new MLabel(tr("<big>Create tag contents</big>"));
+	MLabel *label = new MLabel(m_tag == 0 
+				   ? tr("<big>Create tag contents</big>")
+				   : tr("<big>Edit tag contents</big>"));
 	label->setAlignment(Qt::AlignCenter);
 	layout->addItem(label);
 	layout->setAlignment(label, Qt::AlignHCenter);
@@ -59,13 +73,23 @@ void CreateTextPage::createContent(void)
 	m_name = new LabeledTextEdit(MTextEditModel::SingleLine,
 				     tr("Tag name"),
 				     tr("Enter tag name"));
+	if (m_tag != 0) {
+		m_name->setText(m_tag->name());
+	}
 	layout->addItem(m_name);
 	layout->setAlignment(m_name, Qt::AlignHCenter);
 	connect(m_name, SIGNAL(textChanged(void)),
 		this, SLOT(nameChanged(void)));
 
-	m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
-				    m_sysinfo->currentLanguage());
+	if (m_tag != 0) {
+		QNdefNfcTextRecord T(m_tag->message().at(0));
+		m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
+					    T.locale());
+		m_edit->setContents(T.text());
+	} else {
+		m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
+					    m_sysinfo->currentLanguage());
+	}
 	layout->addItem(m_edit);
 	layout->setAlignment(m_edit, Qt::AlignHCenter);
 	layout->setStretchFactor(m_edit, 999);
@@ -73,7 +97,7 @@ void CreateTextPage::createContent(void)
 	centralWidget()->setLayout(layout);
 }
 
-void CreateTextPage::nameChanged(void)
+void TextPage::nameChanged(void)
 {
 	if (m_name->text() == "") {
 		/* cannot store without a name */
@@ -83,7 +107,7 @@ void CreateTextPage::nameChanged(void)
 	}
 }
 
-void CreateTextPage::storeTag(void)
+void TextPage::storeTag(void)
 {
 	QNdefMessage message;
 
@@ -93,14 +117,29 @@ void CreateTextPage::storeTag(void)
 	T.setText(m_edit->contents());
 	message << T;
 	
-	Tag *tag = new Tag(m_name->text(), message);
-	if (TagStorage::append(tag) == false) {
+	bool success;
+	if (m_tag == 0) {
+		Tag *new_tag = new Tag(m_name->text(), message);
+		success = TagStorage::append(new_tag);
+		if (success == false) {
+			delete new_tag;
+		}
+	} else {
+		m_tag->setName(m_name->text());
+		m_tag->setMessage(message);
+		success = TagStorage::update(m_tag);
+	}
+	
+	if (success == false) {
 		MMessageBox *box = 
 			new MMessageBox(tr("Cannot store the tag. "));
 		box->appear();
-		delete tag;
 	} else {
-		/* Go back to main page, but how? Chain signals if
-		   nothing else */
+		/* Go back to main page, but how? */
 	}
+}
+
+void TextPage::removeTag(void)
+{
+	/* TODO */
 }

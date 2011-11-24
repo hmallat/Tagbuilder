@@ -7,7 +7,7 @@
  */
 
 #include "CreatePage.h"
-#include "CreateTextPage.h"
+#include "TextPage.h"
 
 #include <QGraphicsLinearLayout>
 #include <MButton>
@@ -78,7 +78,7 @@ void CreatePage::createContent(void)
 
 void CreatePage::createText(void)
 {
-	CreateTextPage *page = new CreateTextPage();
+	TextPage *page = new TextPage();
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 }
 
