@@ -99,7 +99,8 @@ void CreateTextPage::storeTag(void)
 			new MMessageBox(tr("Cannot store the tag. "));
 		box->appear();
 		delete tag;
+	} else {
+		/* Go back to main page, but how? Chain signals if
+		   nothing else */
 	}
-
-	/* TODO: go back to main? */
 }

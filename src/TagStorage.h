@@ -22,16 +22,6 @@ public:
 
 	static bool append(Tag *tag);
 
-private:
-	
-	TagStorage(void);
-
-	TagStorage(const TagStorage &tag);
-
-	TagStorage &operator=(const TagStorage &);
-
-	~TagStorage(void);
-
 };
 
 #endif /* _TAG_STORAGE_H_ */

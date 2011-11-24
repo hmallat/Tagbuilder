@@ -11,6 +11,9 @@
 
 #include <MApplicationPage>
 
+class QGraphicsLinearLayout;
+class MButtonGroup;
+
 class MainPage : public MApplicationPage
 {
 	Q_OBJECT;
@@ -31,9 +34,15 @@ private Q_SLOTS:
 
 	void refreshList(void);
 
+	void tagSelected(int);
+
 private:
 
 	Q_DISABLE_COPY(MainPage);
+
+	void createTagButtons(QGraphicsLinearLayout *layout);
+
+	MButtonGroup *m_tagButtons;
 
 };
 

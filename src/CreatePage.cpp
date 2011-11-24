@@ -13,6 +13,10 @@
 #include <MButton>
 #include <MLabel>
 
+/* TODO: own buttons for SMS and CALLTO? What about other URI types? 
+   Codewise could use the same page anyway...
+ */
+
 CreatePage::CreatePage(QGraphicsItem *parent)
 	: MApplicationPage(parent)
 {

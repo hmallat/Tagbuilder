@@ -9,13 +9,34 @@
 #include "MainPage.h"
 #include "CreatePage.h"
 #include "TagStorage.h"
+#include "Tag.h"
 
 #include <QGraphicsLinearLayout>
 #include <MAction>
 #include <MLabel>
+#include <MButton>
+#include <MButtonGroup>
+
+static const QString _messageTypeToIcon(const QNdefMessage &message)
+{
+	QNdefRecord record = message.at(0);
+	if (record.typeNameFormat() == QNdefRecord::NfcRtd) {
+		if (record.type() == "T") {
+			return "icon-m-content-text";
+		} else if (record.type() == "U" ||
+			   record.type() == "Sp") {
+			return "icon-m-content-uri";
+		} else {
+			return "";
+		}
+	} else {
+		return "";
+	}
+}
 
 MainPage::MainPage(QGraphicsItem *parent)
-	: MApplicationPage(parent)
+	: MApplicationPage(parent),
+	  m_tagButtons(NULL)
 {
 }
 
@@ -47,6 +68,25 @@ void MainPage::createContent(void)
 	refreshList();
 }
 
+void MainPage::createTagButtons(QGraphicsLinearLayout *layout)
+{
+	const QList<Tag*> storedTags = TagStorage::storedTags();
+
+	delete m_tagButtons;
+	m_tagButtons = new MButtonGroup(this);
+
+	for (int i = 0; i < storedTags.length(); i++) {
+		Tag *tag = storedTags.at(i);
+		QString iconId = _messageTypeToIcon(tag->message());
+		MButton *button = new MButton(iconId, tag->name());
+		m_tagButtons->addButton(button, i);
+		layout->addItem(button);
+	}
+
+	connect(m_tagButtons, SIGNAL(buttonClicked(int)),
+		this, SLOT(tagSelected(int)));
+}
+
 void MainPage::refreshList(void)
 {
 	QGraphicsLinearLayout *layout = 
@@ -59,9 +99,7 @@ void MainPage::refreshList(void)
 		delete item;
 	}
 
-	QList<Tag*> storedTags = TagStorage::storedTags();
-
-	if (storedTags.length() == 0) {
+	if (TagStorage::storedTags().length() == 0) {
 		MLabel *nothing = new MLabel(tr("<h1>You don't have any "
 						"stored tags currently"
 						"</h1>"));
@@ -69,7 +107,7 @@ void MainPage::refreshList(void)
 		nothing->setWordWrap(true);
 		layout->addItem(nothing);
 	} else {
-		/* ... */
+		createTagButtons(layout);
 	}
 }
 
@@ -85,4 +123,6 @@ void MainPage::showAbout(void)
 {
 }
 
-
+void MainPage::tagSelected(int)
+{
+}
