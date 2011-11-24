@@ -129,4 +129,6 @@ void MainPage::tagSelected(int which)
 	Tag *tag = TagStorage::storedTags().at(which);
 	TextPage *page = new TextPage(tag);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(disappeared(void)),
+		this, SLOT(refreshList(void)));
 }
