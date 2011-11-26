@@ -23,6 +23,8 @@ HEADERS         += \
 		LabeledTextEdit.h \
                 MainPage.h \
 		Tag.h \
+		TagListCellCreator.h \
+		TagListModel.h \
 		TagStorage.h \
 		TextPage.h \
 		TextRecordEdit.h
@@ -33,6 +35,8 @@ SOURCES         += \
 		LabeledTextEdit.cpp \
                 MainPage.cpp \
 		Tag.cpp \
+		TagListCellCreator.cpp \
+		TagListModel.cpp \
 		TagStorage.cpp \
                 TextPage.cpp \
 		TextRecordEdit.cpp

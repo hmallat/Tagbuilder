@@ -11,29 +11,14 @@
 #include "TextPage.h"
 #include "TagStorage.h"
 #include "Tag.h"
+#include "TagListModel.h"
+#include "TagListCellCreator.h"
 
 #include <QGraphicsLinearLayout>
 #include <MAction>
 #include <MLabel>
-#include <MButton>
-#include <MButtonGroup>
-
-static const QString _messageTypeToIcon(const QNdefMessage &message)
-{
-	QNdefRecord record = message.at(0);
-	if (record.typeNameFormat() == QNdefRecord::NfcRtd) {
-		if (record.type() == "T") {
-			return "icon-m-content-text";
-		} else if (record.type() == "U" ||
-			   record.type() == "Sp") {
-			return "icon-m-content-uri";
-		} else {
-			return "";
-		}
-	} else {
-		return "";
-	}
-}
+#include <MList>
+#include <MContentItem>
 
 MainPage::MainPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
@@ -71,21 +56,12 @@ void MainPage::createContent(void)
 
 void MainPage::createTagButtons(QGraphicsLinearLayout *layout)
 {
-	const QList<Tag*> storedTags = TagStorage::storedTags();
-
-	delete m_tagButtons;
-	m_tagButtons = new MButtonGroup(this);
-
-	for (int i = 0; i < storedTags.length(); i++) {
-		Tag *tag = storedTags.at(i);
-		QString iconId = _messageTypeToIcon(tag->message());
-		MButton *button = new MButton(iconId, tag->name());
-		m_tagButtons->addButton(button, i);
-		layout->addItem(button);
-	}
-
-	connect(m_tagButtons, SIGNAL(buttonClicked(int)),
-		this, SLOT(tagSelected(int)));
+	MList *list = new MList();
+	TagListCellCreator *creator = new TagListCellCreator;
+	list->setCellCreator(creator);
+	TagListModel *model = new TagListModel;
+	list->setItemModel(model);
+	layout->addItem(list);
 }
 
 void MainPage::refreshList(void)

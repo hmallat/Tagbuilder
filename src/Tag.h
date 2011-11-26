@@ -12,6 +12,7 @@
 #include <QNdefMessage>
 #include <QDateTime>
 #include <QString>
+#include <QVariant>
 
 QTM_USE_NAMESPACE;
 
@@ -49,5 +50,7 @@ private:
 	QDateTime m_creationTime;
 
 };
+
+Q_DECLARE_METATYPE(Tag *);
 
 #endif /* _TAG_H_ */
