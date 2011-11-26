@@ -168,7 +168,13 @@ void MainPage::editTag(void)
 
 void MainPage::removeTag(void)
 {
-	m_longTapIndex = QModelIndex();
+	if (m_longTapIndex.isValid() &&
+	    m_longTapIndex.row() < TagStorage::storedTags().length()) {
+		Tag *tag = TagStorage::storedTags().at(m_longTapIndex.row());
+		TagStorage::remove(tag);
+		refreshList();
+		m_longTapIndex = QModelIndex();
+	}
 }
 
 void MainPage::showAbout(void)

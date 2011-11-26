@@ -24,6 +24,8 @@ public:
 
 	static bool update(Tag *tag);
 
+	static bool remove(Tag *tag);
+
 };
 
 #endif /* _TAG_STORAGE_H_ */

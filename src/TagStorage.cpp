@@ -39,6 +39,8 @@ public:
 
 	bool update(Tag *tag);
 
+	bool remove(Tag *tag);
+
 private:
 
 	QList<Tag *> tags;
@@ -63,14 +65,26 @@ const QList<Tag *> TagStorageImpl::storedTags(void)
 
 bool TagStorageImpl::append(Tag *tag)
 {
+	/* should also add to persistent storage */
 	tags << tag;
 	return true;
 }
 
 bool TagStorageImpl::update(Tag *tag)
 {
-	/* nothing for now */
+	/* nothing for now, should update persistent storage */
 	(void) tag;
+	return true;
+}
+
+bool TagStorageImpl::remove(Tag *tag)
+{
+	/* should also remove from persistent storage */
+	if (tags.contains(tag) == false) {
+		return false;
+	}
+	tags.removeOne(tag);
+	delete tag;
 	return true;
 }
 
@@ -119,6 +133,11 @@ bool TagStorage::append(Tag *tag)
 bool TagStorage::update(Tag *tag)
 {
 	return storage()->update(tag);
+}
+
+bool TagStorage::remove(Tag *tag)
+{
+	return storage()->remove(tag);
 }
 
 
