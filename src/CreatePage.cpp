@@ -12,6 +12,7 @@
 #include "TagTypeListCellCreator.h"
 
 #include <QGraphicsAnchorLayout>
+#include <MAction>
 #include <MLabel>
 #include <MList>
 #include <MContentItem>
@@ -25,6 +26,8 @@ CreatePage::CreatePage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_model(NULL)
 {
+	setComponentsDisplayMode(MApplicationPage::EscapeButton,
+				 MApplicationPageModel::Hide);
 }
 
 CreatePage::~CreatePage(void)
@@ -33,6 +36,12 @@ CreatePage::~CreatePage(void)
 
 void CreatePage::createContent(void)
 {
+	MAction *cancelAction = new MAction(tr("Cancel"), this);
+	cancelAction->setLocation(MAction::ToolBarLocation);
+	connect(cancelAction, SIGNAL(triggered()),
+		this, SLOT(dismiss()));
+	addAction(cancelAction);
+
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	centralWidget()->setLayout(layout);
 
