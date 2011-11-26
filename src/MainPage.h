@@ -11,6 +11,7 @@
 
 #include <MApplicationPage>
 
+class QModelIndex;
 class QGraphicsAnchorLayout;
 class MButtonGroup;
 
@@ -34,7 +35,7 @@ private Q_SLOTS:
 
 	void refreshList(void);
 
-	void tagSelected(int);
+	void tagSelected(const QModelIndex &);
 
 private:
 

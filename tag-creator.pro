@@ -1,58 +1,54 @@
-TEMPLATE         = app
-CONFIG          += meegotouch mobility debug
-#CONFIG         += console
-MOBILITY        += connectivity systeminfo
-QT              += core
+TEMPLATE	 = app
+CONFIG		+= meegotouch mobility debug
+#CONFIG		+= console
+MOBILITY	+= connectivity systeminfo
+QT		+= core
 
-TARGET           = tag-creator
+TARGET		 = tag-creator
 
-PREFIX           = /opt/tag-creator
+PREFIX		 = /opt/tag-creator
 
-QMAKE_CXXFLAGS  += -Werror -DINSTALLPREFIX='\\\"/opt/tag-creator\\\"'
+QMAKE_CXXFLAGS	+= -Werror -DINSTALLPREFIX='\\\"/opt/tag-creator\\\"'
 
-DEPENDPATH      += ./src
-INCLUDEPATH     += ./src
-VPATH           += $$DEPENDPATH $$INCLUDEPATH
+OBJECTS_DIR	= ./obj
+MOC_DIR		= ./moc
+DESTDIR		= ./out
+	   
+HEADERS		+= \
+		src/CreatePage.h \
+		src/LabeledTextEdit.h \
+		src/MainPage.h \
+		src/Tag.h \
+		src/TagListCellCreator.h \
+		src/TagListModel.h \
+		src/TagStorage.h \
+		src/TextPage.h \
+		src/TextRecordEdit.h
 
-OBJECTS_DIR     = ./obj
-MOC_DIR         = ./moc
-DESTDIR         = ./out
-           
-HEADERS         += \
-                CreatePage.h \
-		LabeledTextEdit.h \
-                MainPage.h \
-		Tag.h \
-		TagListCellCreator.h \
-		TagListModel.h \
-		TagStorage.h \
-		TextPage.h \
-		TextRecordEdit.h
+SOURCES		+= \
+		src/tag-creator.cpp \
+		src/CreatePage.cpp \
+		src/LabeledTextEdit.cpp \
+		src/MainPage.cpp \
+		src/Tag.cpp \
+		src/TagListCellCreator.cpp \
+		src/TagListModel.cpp \
+		src/TagStorage.cpp \
+		src/TextPage.cpp \
+		src/TextRecordEdit.cpp
 
-SOURCES         += \
-                tag-creator.cpp \
-                CreatePage.cpp \
-		LabeledTextEdit.cpp \
-                MainPage.cpp \
-		Tag.cpp \
-		TagListCellCreator.cpp \
-		TagListModel.cpp \
-		TagStorage.cpp \
-                TextPage.cpp \
-		TextRecordEdit.cpp
+TRANSLATIONS	= \
+		tag-creator_en.ts \
+		tag-creator_fi.ts
 
-TRANSLATIONS    = \
-                tag-creator_en.ts \
-                tag-creator_fi.ts
+target.path	= $$PREFIX/bin
 
-target.path     = $$PREFIX/bin
+gfx.path	= $$PREFIX/share/images
+gfx.files	= \
 
-gfx.path        = $$PREFIX/share/images
-gfx.files       = \
+trans.path	= $$PREFIX/share/l10n/tag-writing-plugin
+trans.files	= \
+		tag-creator_en.qm \
+		tag-creator_fi.qm
 
-trans.path      = $$PREFIX/share/l10n/tag-writing-plugin
-trans.files     = \
-                tag-creator_en.qm \
-                tag-creator_fi.qm
-
-INSTALLS        += target gfx trans
+INSTALLS	+= target gfx trans

@@ -79,6 +79,9 @@ void MainPage::createTagButtons(QGraphicsAnchorLayout *layout)
 				 label, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(view, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
+
+	connect(list, SIGNAL(itemClicked(const QModelIndex &)),
+		this, SLOT(tagSelected(const QModelIndex &)));
 }
 
 void MainPage::refreshList(void)
@@ -99,14 +102,10 @@ void MainPage::refreshList(void)
 						"</h1>"));
 		nothing->setAlignment(Qt::AlignCenter);
 		nothing->setWordWrap(true);
-		layout->addAnchor(nothing, Qt::AnchorTop,
-				  layout, Qt::AnchorTop);
-		layout->addAnchor(nothing, Qt::AnchorBottom,
-				  layout, Qt::AnchorBottom);
-		layout->addAnchor(nothing, Qt::AnchorLeft,
-				  layout, Qt::AnchorLeft);
-		layout->addAnchor(nothing, Qt::AnchorRight,
-				  layout, Qt::AnchorRight);
+		layout->addCornerAnchors(nothing, Qt::TopLeftCorner,
+					 layout, Qt::TopLeftCorner);
+		layout->addCornerAnchors(nothing, Qt::BottomRightCorner,
+					 layout, Qt::BottomRightCorner);
 		
 	} else {
 		createTagButtons(layout);
@@ -125,11 +124,14 @@ void MainPage::showAbout(void)
 {
 }
 
-void MainPage::tagSelected(int which)
+void MainPage::tagSelected(const QModelIndex &which)
 {
-	Tag *tag = TagStorage::storedTags().at(which);
-	TextPage *page = new TextPage(tag);
-	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
-	connect(page, SIGNAL(disappeared(void)),
-		this, SLOT(refreshList(void)));
+	if (which.isValid() &&
+	    which.row() < TagStorage::storedTags().length()) {
+		Tag *tag = TagStorage::storedTags().at(which.row());
+		TextPage *page = new TextPage(tag);
+		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+		connect(page, SIGNAL(disappeared(void)),
+			this, SLOT(refreshList(void)));
+	}
 }
