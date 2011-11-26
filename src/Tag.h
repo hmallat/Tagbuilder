@@ -23,6 +23,10 @@ public:
 
 	Tag(const QString &name, const QNdefMessage &message);
 
+	Tag(const QString &name, 
+	    const QByteArray &message,
+	    quint32 seconds);
+
 	~Tag(void);
 
 	const QString &name(void) const;

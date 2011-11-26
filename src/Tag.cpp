@@ -15,6 +15,15 @@ Tag::Tag(const QString &name, const QNdefMessage &message)
 {
 }
 
+Tag::Tag(const QString &name, 
+	 const QByteArray &message,
+	 quint32 seconds)
+	: m_name(name),
+	  m_message(QNdefMessage::fromByteArray(message)),
+	  m_creationTime(QDateTime::fromMSecsSinceEpoch(1000*(qint64)seconds))
+{
+}
+
 Tag::~Tag(void)
 {
 }
