@@ -40,7 +40,7 @@ void TagListCellCreator::updateCell(const QModelIndex &index,
 {
 	MContentItem *contentItem = qobject_cast<MContentItem *>(cell);
 	QVariant data = index.data(Qt::DisplayRole);
-	Tag *tag = data.value<Tag *>();
+	const Tag *tag = data.value<const Tag *>();
 	contentItem->setTitle(tag->name());
 	contentItem->setImageID(_messageTypeToIcon(tag->message()));
 }

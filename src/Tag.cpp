@@ -8,7 +8,7 @@
 
 #include "Tag.h"
 
-Tag::Tag(const QString name, const QNdefMessage message)
+Tag::Tag(const QString &name, const QNdefMessage &message)
 	: m_name(name),
 	  m_message(message),
 	  m_creationTime(QDateTime::currentDateTime())
@@ -24,19 +24,9 @@ const QString &Tag::name(void) const
 	return m_name;
 }
 
-void Tag::setName(const QString name)
-{
-	m_name = name;
-}
-
 const QNdefMessage &Tag::message(void) const
 {
 	return m_message;
-}
-
-void Tag::setMessage(const QNdefMessage message)
-{
-	m_message = message;
 }
 
 const QDateTime &Tag::creationTime(void) const

@@ -119,7 +119,7 @@ void MainPage::refreshList(void)
 		delete item;
 	}
 
-	if (TagStorage::storedTags().length() == 0) {
+	if (TagStorage::count() == 0) {
 		MLabel *nothing = new MLabel(tr("<h1>You don't have any "
 						"stored tags currently"
 						"</h1>"));
@@ -156,9 +156,8 @@ void MainPage::createSelectedTag(QString which)
 void MainPage::editTag(void)
 {
 	if (m_longTapIndex.isValid() &&
-	    m_longTapIndex.row() < TagStorage::storedTags().length()) {
-		Tag *tag = TagStorage::storedTags().at(m_longTapIndex.row());
-		TextPage *page = new TextPage(tag);
+	    m_longTapIndex.row() < TagStorage::count()) {
+		TextPage *page = new TextPage(m_longTapIndex.row());
 		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 		connect(page, SIGNAL(disappeared(void)),
 			this, SLOT(refreshList(void)));
@@ -169,9 +168,8 @@ void MainPage::editTag(void)
 void MainPage::removeTag(void)
 {
 	if (m_longTapIndex.isValid() &&
-	    m_longTapIndex.row() < TagStorage::storedTags().length()) {
-		Tag *tag = TagStorage::storedTags().at(m_longTapIndex.row());
-		TagStorage::remove(tag);
+	    m_longTapIndex.row() < TagStorage::count()) {
+		TagStorage::remove(m_longTapIndex.row());
 		refreshList();
 		m_longTapIndex = QModelIndex();
 	}
@@ -191,7 +189,7 @@ void MainPage::tagLongSelected(const QModelIndex &which,
 			       const QPointF &position)
 {
 	if (which.isValid() &&
-	    which.row() < TagStorage::storedTags().length()) {
+	    which.row() < TagStorage::count()) {
 		m_longTapIndex = which;
 		m_objectMenu->setCursorPosition(position);
 		m_objectMenu->setTitle(which.data().toString());

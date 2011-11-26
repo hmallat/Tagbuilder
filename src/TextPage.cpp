@@ -25,7 +25,7 @@ QTM_USE_NAMESPACE;
 /* TODO: show a locale specific human readable language name 
    instead of two-letter code (study QLocale) */
 
-TextPage::TextPage(Tag *tag, QGraphicsItem *parent)
+TextPage::TextPage(int tag, QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_tag(tag),
 	  m_name(NULL),
@@ -60,7 +60,7 @@ void TextPage::createContent(void)
 	QGraphicsLinearLayout *layout = 
 		new QGraphicsLinearLayout(Qt::Vertical);
 
-	MLabel *label = new MLabel(m_tag == 0 
+	MLabel *label = new MLabel(m_tag == -1 
 				   ? tr("<big>Create tag contents</big>")
 				   : tr("<big>Edit tag contents</big>"));
 	label->setAlignment(Qt::AlignCenter);
@@ -70,16 +70,16 @@ void TextPage::createContent(void)
 	m_name = new LabeledTextEdit(MTextEditModel::SingleLine,
 				     tr("Tag name"),
 				     tr("Enter tag name"));
-	if (m_tag != 0) {
-		m_name->setText(m_tag->name());
+	if (m_tag != -1) {
+		m_name->setText(TagStorage::tag(m_tag)->name());
 	}
 	layout->addItem(m_name);
 	layout->setAlignment(m_name, Qt::AlignHCenter);
 	connect(m_name, SIGNAL(textChanged(void)),
 		this, SLOT(nameChanged(void)));
 
-	if (m_tag != 0) {
-		QNdefNfcTextRecord T(m_tag->message().at(0));
+	if (m_tag != -1) {
+		QNdefNfcTextRecord T(TagStorage::tag(m_tag)->message().at(0));
 		m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
 					    T.locale());
 		m_edit->setContents(T.text());
@@ -115,16 +115,12 @@ void TextPage::storeTag(void)
 	message << T;
 	
 	bool success;
-	if (m_tag == 0) {
-		Tag *new_tag = new Tag(m_name->text(), message);
-		success = TagStorage::append(new_tag);
-		if (success == false) {
-			delete new_tag;
-		}
+	if (m_tag == -1) {
+		success = TagStorage::append(m_name->text(), message);
 	} else {
-		m_tag->setName(m_name->text());
-		m_tag->setMessage(message);
-		success = TagStorage::update(m_tag);
+		success = TagStorage::update(m_tag,
+					     m_name->text(),
+					     message);
 	}
 	
 	if (success == false) {

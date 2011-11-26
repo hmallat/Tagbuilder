@@ -21,17 +21,13 @@ class Tag
 
 public:
 
-	Tag(const QString name, const QNdefMessage message);
+	Tag(const QString &name, const QNdefMessage &message);
 
 	~Tag(void);
 
 	const QString &name(void) const;
 
-	void setName(const QString name);
-
 	const QNdefMessage &message(void) const;
-
-	void setMessage(const QNdefMessage message);
 
 	const QDateTime &creationTime(void) const;
 
@@ -51,6 +47,6 @@ private:
 
 };
 
-Q_DECLARE_METATYPE(Tag *);
+Q_DECLARE_METATYPE(const Tag *);
 
 #endif /* _TAG_H_ */

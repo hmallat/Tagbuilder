@@ -33,13 +33,15 @@ public:
 
 	~TagStorageImpl(void);
 
-	const QList<Tag *> storedTags(void);
+	int count(void);
+
+	const Tag *at(int which);
 
 	bool append(Tag *tag);
 
-	bool update(Tag *tag);
+	bool update(int which, Tag *tag);
 
-	bool remove(Tag *tag);
+	bool remove(int which);
 
 private:
 
@@ -58,9 +60,14 @@ TagStorageImpl::~TagStorageImpl(void)
 	}
 }
 
-const QList<Tag *> TagStorageImpl::storedTags(void)
+int TagStorageImpl::count(void)
 {
-	return tags;
+	return tags.length();
+}
+
+const Tag* TagStorageImpl::at(int which)
+{
+	return tags[which];
 }
 
 bool TagStorageImpl::append(Tag *tag)
@@ -70,21 +77,21 @@ bool TagStorageImpl::append(Tag *tag)
 	return true;
 }
 
-bool TagStorageImpl::update(Tag *tag)
+bool TagStorageImpl::update(int which, Tag *tag)
 {
-	/* nothing for now, should update persistent storage */
-	(void) tag;
+	/* should also update persistent storage */
+	Tag *old = tags[which];
+	tags[which] = tag;
+	delete old;
 	return true;
 }
 
-bool TagStorageImpl::remove(Tag *tag)
+bool TagStorageImpl::remove(int which)
 {
 	/* should also remove from persistent storage */
-	if (tags.contains(tag) == false) {
-		return false;
-	}
-	tags.removeOne(tag);
-	delete tag;
+	Tag *old = tags[which];
+	tags.removeAt(which);
+	delete old;
 	return true;
 }
 
@@ -120,24 +127,34 @@ static TagStorageImpl *storage(void)
 #endif
 }
 
-const QList<Tag *> TagStorage::storedTags(void)
+int TagStorage::count(void)
 {
-	return storage()->storedTags();
+	return storage()->count();
 }
 
-bool TagStorage::append(Tag *tag)
+const Tag *TagStorage::tag(int which)
 {
+	return storage()->at(which);
+}
+
+bool TagStorage::append(const QString &name, 
+			const QtMobility::QNdefMessage &message)
+{
+	Tag *tag = new Tag(name, message);
 	return storage()->append(tag);
 }
 
-bool TagStorage::update(Tag *tag)
+bool TagStorage::update(int which, 
+			const QString &name,
+			const QtMobility::QNdefMessage &message)
 {
-	return storage()->update(tag);
+	Tag *tag = new Tag(name, message);
+	return storage()->update(which, tag);
 }
 
-bool TagStorage::remove(Tag *tag)
+bool TagStorage::remove(int which)
 {
-	return storage()->remove(tag);
+	return storage()->remove(which);
 }
 
 

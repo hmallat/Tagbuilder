@@ -25,7 +25,7 @@ class TextPage : public MApplicationPage
 
 public:
 
-	TextPage(Tag *tag = 0,
+	TextPage(int tag = -1,
 		 QGraphicsItem *parent = 0);
 
 	~TextPage(void);
@@ -42,7 +42,7 @@ private:
 
 	Q_DISABLE_COPY(TextPage);
 
-	Tag* m_tag;
+	int m_tag;
 
 	LabeledTextEdit *m_name;
 

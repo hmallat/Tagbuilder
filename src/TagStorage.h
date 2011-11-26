@@ -9,22 +9,29 @@
 #ifndef _TAG_STORAGE_H_
 #define _TAG_STORAGE_H_
 
-#include <QList>
-
 class Tag;
+class QString;
+namespace QtMobility {
+	class QNdefMessage;
+}
 
 class TagStorage
 {
 
 public:
 
-	static const QList<Tag *> storedTags(void);
+	static int count(void);
 
-	static bool append(Tag *tag);
+	static const Tag *tag(int which);
 
-	static bool update(Tag *tag);
+	static bool append(const QString &name,
+			   const QtMobility::QNdefMessage &message);
 
-	static bool remove(Tag *tag);
+	static bool update(int which, 
+			   const QString &name,
+			   const QtMobility::QNdefMessage &message);
+
+	static bool remove(int which);
 
 };
 

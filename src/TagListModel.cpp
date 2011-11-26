@@ -18,19 +18,18 @@ TagListModel::TagListModel(QObject *parent)
 int TagListModel::rowCount(const QModelIndex &parent) const
 {
 	(void) parent;
-	return TagStorage::storedTags().length();
+	return TagStorage::count();
 }
 
 QVariant TagListModel::data(const QModelIndex &index, int role) const
 {
 	(void) role;
 	
-	if (index.isValid() == false || 
-	    index.row() >= TagStorage::storedTags().length()) {
+	if (index.isValid() == false || index.row() >= TagStorage::count()) {
 		return QVariant();
 	}
 
-	Tag *tag = TagStorage::storedTags().at(index.row());
+	const Tag *tag = TagStorage::tag(index.row());
 	return qVariantFromValue(tag);
 }
 
