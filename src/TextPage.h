@@ -38,8 +38,6 @@ private Q_SLOTS:
 
 	void storeTag(void);
 
-	void removeTag(void);
-
 private:
 
 	Q_DISABLE_COPY(TextPage);
@@ -54,9 +52,9 @@ private:
 
 	QSystemInfo *m_sysinfo;
 
-	MAction *m_storeAction;
+	MAction *m_cancelAction;
 
-	MAction *m_removeAction;
+	MAction *m_storeAction;
 
 };
 

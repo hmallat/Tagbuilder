@@ -34,6 +34,8 @@ TextPage::TextPage(Tag *tag, QGraphicsItem *parent)
 	  m_sysinfo(new QSystemInfo(this)),
 	  m_storeAction(NULL)
 {
+	setComponentsDisplayMode(MApplicationPage::EscapeButton,
+				 MApplicationPageModel::Hide);
 }
 
 TextPage::~TextPage(void)
@@ -42,23 +44,18 @@ TextPage::~TextPage(void)
 
 void TextPage::createContent(void)
 {
+	m_cancelAction = new MAction(tr("Cancel"), this);
+	m_cancelAction->setLocation(MAction::ToolBarLocation);
+	connect(m_cancelAction, SIGNAL(triggered()),
+		this, SLOT(dismiss()));
+	addAction(m_cancelAction);
+
 	m_storeAction = new MAction(tr("Store"), this);
 	m_storeAction->setEnabled(false);
 	m_storeAction->setLocation(MAction::ToolBarLocation);
 	connect(m_storeAction, SIGNAL(triggered()),
 		this, SLOT(storeTag()));
 	addAction(m_storeAction);
-
-	if (m_tag == 0) { /* create new */
-		/* TODO */
-	} else { /* edit existing */
-		m_removeAction = new MAction(tr("Remove"), this);
-		m_removeAction->setEnabled(false);
-		m_removeAction->setLocation(MAction::ToolBarLocation);
-		connect(m_removeAction, SIGNAL(triggered()),
-			this, SLOT(removeTag()));
-		addAction(m_removeAction);
-	}
 
 	QGraphicsLinearLayout *layout = 
 		new QGraphicsLinearLayout(Qt::Vertical);
@@ -135,11 +132,6 @@ void TextPage::storeTag(void)
 			new MMessageBox(tr("Cannot store the tag. "));
 		box->appear();
 	} else {
-		/* Go back to main page, but how? */
+		dismiss();
 	}
-}
-
-void TextPage::removeTag(void)
-{
-	/* TODO */
 }
