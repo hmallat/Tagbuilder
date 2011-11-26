@@ -31,6 +31,8 @@ private Q_SLOTS:
 
 	void createTag(void);
 
+	void createSelectedTag(QString which);
+
 	void showAbout(void);
 
 	void refreshList(void);

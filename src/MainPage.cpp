@@ -12,6 +12,7 @@
 #include "TagStorage.h"
 #include "Tag.h"
 #include "TagListModel.h"
+#include "TagTypeListModel.h"
 #include "TagListCellCreator.h"
 
 #include <QGraphicsAnchorLayout>
@@ -116,8 +117,18 @@ void MainPage::createTag(void)
 {
 	CreatePage *page = new CreatePage();
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
-	connect(page, SIGNAL(disappeared(void)),
-		this, SLOT(refreshList(void)));
+	connect(page, SIGNAL(selected(QString)),
+		this, SLOT(createSelectedTag(QString)));
+}
+
+void MainPage::createSelectedTag(QString which)
+{
+	if (which == TagTypeListModel::TEXT_TAG) {
+		TextPage *page = new TextPage();
+		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+		connect(page, SIGNAL(disappeared(void)),
+			this, SLOT(refreshList(void)));
+	}
 }
 
 void MainPage::showAbout(void)

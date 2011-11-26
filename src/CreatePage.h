@@ -11,6 +11,9 @@
 
 #include <MApplicationPage>
 
+class TagTypeListModel;
+class QModelIndex;
+
 class CreatePage : public MApplicationPage
 {
 	Q_OBJECT;
@@ -23,13 +26,19 @@ public:
 
         virtual void createContent(void);
 
+signals:
+
+	void selected(QString which);
+
 private Q_SLOTS:
 	
-	void createText(void);
+	void tagTypeSelected(const QModelIndex &which);
 
 private:
 
 	Q_DISABLE_COPY(CreatePage);
+
+	TagTypeListModel *m_model;
 
 };
 

@@ -21,6 +21,8 @@ HEADERS		+= \
 		src/Tag.h \
 		src/TagListCellCreator.h \
 		src/TagListModel.h \
+		src/TagTypeListCellCreator.h \
+		src/TagTypeListModel.h \
 		src/TagStorage.h \
 		src/TextPage.h \
 		src/TextRecordEdit.h
@@ -33,6 +35,8 @@ SOURCES		+= \
 		src/Tag.cpp \
 		src/TagListCellCreator.cpp \
 		src/TagListModel.cpp \
+		src/TagTypeListCellCreator.cpp \
+		src/TagTypeListModel.cpp \
 		src/TagStorage.cpp \
 		src/TextPage.cpp \
 		src/TextRecordEdit.cpp
