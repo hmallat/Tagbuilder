@@ -21,10 +21,13 @@
 #include <MList>
 #include <MContentItem>
 #include <MPannableViewport>
+#include <MObjectMenu>
+#include <MSceneManager>
 
 MainPage::MainPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
-	  m_tagButtons(NULL)
+	  m_objectMenu(NULL),
+	  m_longTapIndex(QModelIndex())
 {
 }
 
@@ -32,9 +35,24 @@ MainPage::~MainPage(void)
 {
 }
 
+void MainPage::createObjectMenuActions(void)
+{
+	m_objectMenu = new MObjectMenu(this);
+	
+	MAction *editAction = new MAction(tr("Edit tag"), this);
+	m_objectMenu->addAction(editAction);
+  	connect(editAction, SIGNAL(triggered()), this, SLOT(editTag()));
+
+	MAction *removeAction = new MAction(tr("Remove tag"), this);
+	m_objectMenu->addAction(removeAction);
+  	connect(removeAction, SIGNAL(triggered()), this, SLOT(removeTag()));
+}
+
 void MainPage::createContent(void)
 {
 	setPannable(false);
+
+	createObjectMenuActions();
 
 	MAction *newAction = new MAction("icon-m-toolbar-add", 
 					 tr("Create a new tag"),
@@ -66,7 +84,7 @@ void MainPage::createTagButtons(QGraphicsAnchorLayout *layout)
 				 layout, Qt::TopLeftCorner);
 
 	MList *list = new MList();
-	TagListCellCreator *creator = new TagListCellCreator;
+	TagListCellCreator *creator = new TagListCellCreator(this);
 	list->setCellCreator(creator);
 	TagListModel *model = new TagListModel;
 	list->setItemModel(model);
@@ -83,6 +101,10 @@ void MainPage::createTagButtons(QGraphicsAnchorLayout *layout)
 
 	connect(list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(tagSelected(const QModelIndex &)));
+	connect(list, SIGNAL(itemLongTapped(const QModelIndex &,
+					    const QPointF &)),
+		this, SLOT(tagLongSelected(const QModelIndex &,
+					   const QPointF &)));
 }
 
 void MainPage::refreshList(void)
@@ -131,18 +153,42 @@ void MainPage::createSelectedTag(QString which)
 	}
 }
 
+void MainPage::editTag(void)
+{
+	if (m_longTapIndex.isValid() &&
+	    m_longTapIndex.row() < TagStorage::storedTags().length()) {
+		Tag *tag = TagStorage::storedTags().at(m_longTapIndex.row());
+		TextPage *page = new TextPage(tag);
+		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+		connect(page, SIGNAL(disappeared(void)),
+			this, SLOT(refreshList(void)));
+		m_longTapIndex = QModelIndex();
+	}
+}
+
+void MainPage::removeTag(void)
+{
+	m_longTapIndex = QModelIndex();
+}
+
 void MainPage::showAbout(void)
 {
 }
 
 void MainPage::tagSelected(const QModelIndex &which)
 {
+	(void) which;
+	/* TODO: write it */
+}
+
+void MainPage::tagLongSelected(const QModelIndex &which,
+			       const QPointF &position)
+{
 	if (which.isValid() &&
 	    which.row() < TagStorage::storedTags().length()) {
-		Tag *tag = TagStorage::storedTags().at(which.row());
-		TextPage *page = new TextPage(tag);
-		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
-		connect(page, SIGNAL(disappeared(void)),
-			this, SLOT(refreshList(void)));
+		m_longTapIndex = which;
+		m_objectMenu->setCursorPosition(position);
+		m_objectMenu->setTitle(which.data().toString());
+		sceneManager()->appearSceneWindow(m_objectMenu);
 	}
 }

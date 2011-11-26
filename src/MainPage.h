@@ -10,10 +10,10 @@
 #define _MAIN_PAGE_H_
 
 #include <MApplicationPage>
+#include <QModelIndex>
 
-class QModelIndex;
 class QGraphicsAnchorLayout;
-class MButtonGroup;
+class MObjectMenu;
 
 class MainPage : public MApplicationPage
 {
@@ -33,19 +33,30 @@ private Q_SLOTS:
 
 	void createSelectedTag(QString which);
 
+	void editTag(void);
+
+	void removeTag(void);
+
 	void showAbout(void);
 
 	void refreshList(void);
 
 	void tagSelected(const QModelIndex &);
 
+	void tagLongSelected(const QModelIndex &,
+			     const QPointF &);
+
 private:
 
 	Q_DISABLE_COPY(MainPage);
 
+	void createObjectMenuActions(void);
+
 	void createTagButtons(QGraphicsAnchorLayout *layout);
 
-	MButtonGroup *m_tagButtons;
+	MObjectMenu *m_objectMenu;
+
+	QModelIndex m_longTapIndex;
 
 };
 

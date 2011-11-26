@@ -8,9 +8,9 @@
 
 #include "TagListCellCreator.h"
 #include "Tag.h"
+#include "MainPage.h"
 
 #include <QVariant>
-#include <MAction>
 
 static const QString _messageTypeToIcon(const QNdefMessage &message)
 {
@@ -29,6 +29,12 @@ static const QString _messageTypeToIcon(const QNdefMessage &message)
 	}
 }
 
+TagListCellCreator::TagListCellCreator(MainPage *page)
+	: MAbstractCellCreator<MContentItem>(),
+	  m_page(page)
+{
+}
+
 void TagListCellCreator::updateCell(const QModelIndex &index, 
 				    MWidget *cell) const
 {
@@ -37,24 +43,4 @@ void TagListCellCreator::updateCell(const QModelIndex &index,
 	Tag *tag = data.value<Tag *>();
 	contentItem->setTitle(tag->name());
 	contentItem->setImageID(_messageTypeToIcon(tag->message()));
-
-	QList<QAction *> actions = contentItem->actions();
-	for (int i = 0; i < actions.length(); i++) {
-		contentItem->removeAction(actions[i]);
-	}
-	
-	MAction *editAction = new MAction(QT_TR_NOOP("Edit tag"), 
-					  contentItem);
-	editAction->setLocation(MAction::ObjectMenuLocation);
-//  	connect(aboutAction, SIGNAL(triggered()),
-//  		this, SLOT(showAbout()));
-	contentItem->addAction(editAction);
-
-	MAction *removeAction = new MAction(QT_TR_NOOP("Remove tag"), 
-					    contentItem);
-	removeAction->setLocation(MAction::ObjectMenuLocation);
-//  	connect(aboutAction, SIGNAL(triggered()),
-//  		this, SLOT(showAbout()));
-	contentItem->addAction(removeAction);
-
 }
