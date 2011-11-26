@@ -11,7 +11,7 @@
 
 #include <MApplicationPage>
 
-class QGraphicsLinearLayout;
+class QGraphicsAnchorLayout;
 class MButtonGroup;
 
 class MainPage : public MApplicationPage
@@ -40,7 +40,7 @@ private:
 
 	Q_DISABLE_COPY(MainPage);
 
-	void createTagButtons(QGraphicsLinearLayout *layout);
+	void createTagButtons(QGraphicsAnchorLayout *layout);
 
 	MButtonGroup *m_tagButtons;
 

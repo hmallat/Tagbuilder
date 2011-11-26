@@ -35,6 +35,5 @@ void TagListCellCreator::updateCell(const QModelIndex &index,
 	QVariant data = index.data(Qt::DisplayRole);
 	Tag *tag = data.value<Tag *>();
 	contentItem->setTitle(tag->name());
-	contentItem->setSubtitle("Ia! Ia!");
 	contentItem->setImageID(_messageTypeToIcon(tag->message()));
 }

@@ -14,11 +14,12 @@
 #include "TagListModel.h"
 #include "TagListCellCreator.h"
 
-#include <QGraphicsLinearLayout>
+#include <QGraphicsAnchorLayout>
 #include <MAction>
 #include <MLabel>
 #include <MList>
 #include <MContentItem>
+#include <MPannableViewport>
 
 MainPage::MainPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
@@ -32,6 +33,8 @@ MainPage::~MainPage(void)
 
 void MainPage::createContent(void)
 {
+	setPannable(false);
+
 	MAction *newAction = new MAction("icon-m-toolbar-add", 
 					 tr("Create a new tag"),
 					 this);
@@ -47,27 +50,41 @@ void MainPage::createContent(void)
  		this, SLOT(showAbout()));
 	addAction(aboutAction);
 
-	QGraphicsLinearLayout *layout = 
-		new QGraphicsLinearLayout(Qt::Vertical);
+	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	centralWidget()->setLayout(layout);
 
 	refreshList();
 }
 
-void MainPage::createTagButtons(QGraphicsLinearLayout *layout)
+void MainPage::createTagButtons(QGraphicsAnchorLayout *layout)
 {
+	MLabel *label = new MLabel(tr("<big>Stored tags</big>"));
+	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	label->setAlignment(Qt::AlignLeft);
+	layout->addCornerAnchors(label, Qt::TopLeftCorner,
+				 layout, Qt::TopLeftCorner);
+
 	MList *list = new MList();
 	TagListCellCreator *creator = new TagListCellCreator;
 	list->setCellCreator(creator);
 	TagListModel *model = new TagListModel;
 	list->setItemModel(model);
-	layout->addItem(list);
+
+	MPannableViewport *view = new MPannableViewport();
+	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	view->setPanDirection(Qt::Vertical);
+	view->setMinimumSize(100, 100);
+	view->setWidget(list);
+	layout->addCornerAnchors(view, Qt::TopLeftCorner,
+				 label, Qt::BottomLeftCorner);
+	layout->addCornerAnchors(view, Qt::BottomRightCorner,
+				 layout, Qt::BottomRightCorner);
 }
 
 void MainPage::refreshList(void)
 {
-	QGraphicsLinearLayout *layout = 
-		static_cast<QGraphicsLinearLayout *>
+	QGraphicsAnchorLayout *layout = 
+		static_cast<QGraphicsAnchorLayout *>
 		(centralWidget()->layout());
 
 	while (layout->count() > 0) {
@@ -82,7 +99,15 @@ void MainPage::refreshList(void)
 						"</h1>"));
 		nothing->setAlignment(Qt::AlignCenter);
 		nothing->setWordWrap(true);
-		layout->addItem(nothing);
+		layout->addAnchor(nothing, Qt::AnchorTop,
+				  layout, Qt::AnchorTop);
+		layout->addAnchor(nothing, Qt::AnchorBottom,
+				  layout, Qt::AnchorBottom);
+		layout->addAnchor(nothing, Qt::AnchorLeft,
+				  layout, Qt::AnchorLeft);
+		layout->addAnchor(nothing, Qt::AnchorRight,
+				  layout, Qt::AnchorRight);
+		
 	} else {
 		createTagButtons(layout);
 	}
