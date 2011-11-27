@@ -15,8 +15,6 @@
 #include <QFile>
 #include <QList>
 
-#include <MDebug>
-
 /* TODO: totally inefficient storage implementation to be fixed... */
 
 /*
@@ -33,11 +31,7 @@
 static QString _storageLocation(void)
 {
 	QString location = 
-		QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/" + 
-		QCoreApplication::organizationName() + "/" +
-		QCoreApplication::applicationName();
-
-	mDebug(__func__) << "It's at " << location;
+		QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 
 	return location;
 }
