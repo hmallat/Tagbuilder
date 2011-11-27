@@ -15,6 +15,10 @@
 #include <QFile>
 #include <QList>
 
+#include <MDebug>
+
+/* TODO: totally inefficient storage implementation to be fixed... */
+
 /*
  * TagStorage is simply a file which is read and written using QDataStream.
  * 
@@ -26,93 +30,104 @@
 
 #define CURRENT_VERSION 0x10
 
-class TagStorageImpl
+static QString _storageLocation(void)
 {
+	QString location = 
+		QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/" + 
+		QCoreApplication::organizationName() + "/" +
+		QCoreApplication::applicationName();
 
-public:
+	mDebug(__func__) << "It's at " << location;
 
-	TagStorageImpl(QList<Tag *> tags);
-
-	TagStorageImpl(void);
-
-	~TagStorageImpl(void);
-
-	int count(void);
-
-	const Tag *at(int which);
-
-	bool append(Tag *tag);
-
-	bool update(int which, Tag *tag);
-
-	bool remove(int which);
-
-private:
-
-	QList<Tag *> tags;
-
-};
-
-TagStorageImpl::TagStorageImpl(QList<Tag *> readTags)
-	: tags(readTags)
-{
+	return location;
 }
 
-TagStorageImpl::TagStorageImpl(void)
+static bool _createStorageLocation(void)
 {
-}
+	QString location = _storageLocation();
 
-TagStorageImpl::~TagStorageImpl(void)
-{
-	while (tags.isEmpty() == false) {
-		delete tags.takeFirst();
+	if (QFile::exists(location)) {
+		return true;
 	}
+
+	QDir dir;
+	return dir.mkpath(location);
 }
 
-int TagStorageImpl::count(void)
+static QString _storageFilename(void)
 {
-	return tags.length();
+	return _storageLocation() + "/" + "tag-creator-storage.bin";
 }
 
-const Tag* TagStorageImpl::at(int which)
+static bool _writeStorage(QList<Tag *> &contents)
 {
-	return tags[which];
-}
+	QFile file(_storageFilename());
 
-bool TagStorageImpl::append(Tag *tag)
-{
-	/* should also add to persistent storage */
-	tags << tag;
+	if (_createStorageLocation() == false) {
+		return false;
+	}
+	
+	if ((file.exists() == true && file.remove() == false)) {
+		return false;
+	}
+
+	if (file.open(QIODevice::WriteOnly) == false) {
+		return false;
+	}
+
+	QByteArray data;
+
+	char version = CURRENT_VERSION;
+	data.append(&version, 1);
+
+	for (int i = 0; i < contents.length(); i++) {
+		Tag *tag = contents[i];
+
+		char namelen[2];
+		QByteArray name = tag->name().toUtf8();
+		namelen[0] = (name.length() >> 8) & 0xff;
+		namelen[1] = (name.length() >> 0) & 0xff;
+		data.append(namelen, 2);
+		data.append(name.data(), name.length());
+
+		char messlen[4];
+		QByteArray mess = tag->message().toByteArray();
+		messlen[0] = (mess.length() >> 24) & 0xff;
+		messlen[1] = (mess.length() >> 16) & 0xff;
+		messlen[2] = (mess.length() >>  8) & 0xff;
+		messlen[3] = (mess.length() >>  0) & 0xff;
+		data.append(messlen, 4);
+		data.append(mess.data(), mess.length());
+
+		char created[4];
+		qint64 seconds = tag->creationTime().toMSecsSinceEpoch()/1000;
+		created[0] = (seconds >> 24) & 0xff;
+		created[1] = (seconds >> 16) & 0xff;
+		created[2] = (seconds >>  8) & 0xff;
+		created[3] = (seconds >>  0) & 0xff;
+		data.append(created, 4);
+		
+	}
+
+	if (file.write(data) != data.length()) {
+		return false;
+	}
+
 	return true;
 }
 
-bool TagStorageImpl::update(int which, Tag *tag)
-{
-	/* should also update persistent storage */
-	Tag *old = tags[which];
-	tags[which] = tag;
-	delete old;
-	return true;
-}
-
-bool TagStorageImpl::remove(int which)
-{
-	/* should also remove from persistent storage */
-	Tag *old = tags[which];
-	tags.removeAt(which);
-	delete old;
-	return true;
-}
-
-static TagStorageImpl *singleton = NULL;
-
-static bool _readStorage(QFile &file, QList<Tag *> &contents)
+static bool _readStorage(QList<Tag *> &contents)
 {
 	while (contents.isEmpty() == false) {
 		delete contents.takeFirst();
 	}
 
-	if (file.open(QIODevice::ReadWrite) == false) {
+	QFile file(_storageFilename());
+	if (file.exists() == false) {
+		return true; /* initial storage: no entries */
+	}
+
+	if (file.open(QIODevice::ReadOnly) == false) {
 		return false;
 	}
 
@@ -187,27 +202,93 @@ fail:
 	return false;
 }
 
+class TagStorageImpl
+{
+
+public:
+
+	TagStorageImpl(QList<Tag *> tags);
+
+	TagStorageImpl(void);
+
+	~TagStorageImpl(void);
+
+	int count(void);
+
+	const Tag *at(int which);
+
+	bool append(Tag *tag);
+
+	bool update(int which, Tag *tag);
+
+	bool remove(int which);
+
+private:
+
+	QList<Tag *> tags;
+
+};
+
+TagStorageImpl::TagStorageImpl(QList<Tag *> readTags)
+	: tags(readTags)
+{
+}
+
+TagStorageImpl::TagStorageImpl(void)
+{
+}
+
+TagStorageImpl::~TagStorageImpl(void)
+{
+	while (tags.isEmpty() == false) {
+		delete tags.takeFirst();
+	}
+}
+
+int TagStorageImpl::count(void)
+{
+	return tags.length();
+}
+
+const Tag* TagStorageImpl::at(int which)
+{
+	return tags[which];
+}
+
+bool TagStorageImpl::append(Tag *tag)
+{
+	tags << tag;
+	return _writeStorage(tags);
+}
+
+bool TagStorageImpl::update(int which, Tag *tag)
+{
+	Tag *old = tags[which];
+	tags[which] = tag;
+	delete old;
+	return _writeStorage(tags);
+}
+
+bool TagStorageImpl::remove(int which)
+{
+	Tag *old = tags[which];
+	tags.removeAt(which);
+	delete old;
+	return _writeStorage(tags);
+}
+
+static TagStorageImpl *singleton = NULL;
+
 static TagStorageImpl *storage(void)
 {
 	if (singleton != NULL) {
 		return singleton;
 	}
 
-	QString location = 
-		QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/" + 
-		QCoreApplication::organizationName() + "/" +
-		QCoreApplication::applicationName();
-
-	if (QFile::exists(location) == false) {
-		QDir dir;
-		dir.mkpath(location);
-	}
-
-	QFile file(location + "/" + "tag-creator-storage.bin");
 	QList<Tag *>contents;
-
-	if (_readStorage(file, contents) == false) {
-		/* TODO: should whinge about this in the UI if file exists! */
+	if (_readStorage(contents) == false) {
+		/* TODO: should whinge about this in the UI if file
+		 * exists but cannot be read! */
 		singleton = new TagStorageImpl();
 	} else {
 		singleton = new TagStorageImpl(contents);

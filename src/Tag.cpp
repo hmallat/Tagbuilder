@@ -8,6 +8,9 @@
 
 #include "Tag.h"
 
+/* TODO: maximum name length supported by tag storage is 65535,
+   should limit somewhere what names are given to tags */
+
 Tag::Tag(const QString &name, const QNdefMessage &message)
 	: m_name(name),
 	  m_message(message),
