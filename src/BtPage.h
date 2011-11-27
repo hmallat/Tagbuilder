@@ -49,6 +49,8 @@ private Q_SLOTS:
 
 	void discoveryFinished(void);
 
+	void setDevice(const QBluetoothDeviceInfo &info);
+
 private:
 
 	Q_DISABLE_COPY(BtPage);
@@ -64,6 +66,8 @@ private:
 	MAction *m_storeAction;
 
 	QBluetoothDeviceDiscoveryAgent *m_discovery;
+
+	QBluetoothDeviceInfo m_info;
 
 };
 

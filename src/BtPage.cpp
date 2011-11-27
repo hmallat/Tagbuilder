@@ -6,6 +6,12 @@
  *
  */
 
+/* TODO: apparently cannot get already known devices from qt
+ * connectivity -- and maybe not local class of device either -- might
+ * just as well use bluez all the way? */ 
+
+/* TODO: check what happens if BT is off */
+
 #include "BtPage.h"
 #include "BtNdefRecord.h"
 #include "LabeledTextEdit.h"
@@ -21,6 +27,7 @@
 #include <QGraphicsLinearLayout>
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
+#include <QBluetoothLocalDevice>
 
 #include <MDebug>
 
@@ -105,9 +112,7 @@ void BtPage::createContent(void)
 	if (m_tag != -1) {
 		/* TODO */
 	} else {
-		m_device->setImageID("icon-m-content-bluetooth");
-		m_device->setTitle(tr("No device selected"));
-		m_device->setSubtitle("00:00:00:00:00:00");
+		setDevice(QBluetoothDeviceInfo());
 	}
 	layout->addItem(m_device);
 	layout->setAlignment(m_device, Qt::AlignCenter);
@@ -117,7 +122,7 @@ void BtPage::createContent(void)
 			new QGraphicsLinearLayout(Qt::Vertical);
 
 		MButton *this_button = 
-			new MButton(tr("Use the phone's address"));
+			new MButton(tr("Choose this phone"));
 		this_button->setSizePolicy(QSizePolicy::Minimum, 
 					   QSizePolicy::Fixed);
 		sub_layout->addItem(this_button);
@@ -159,7 +164,19 @@ void BtPage::storeTag(void)
 
 void BtPage::choosePhoneBT(void)
 {
-	/* TODO */
+	QList<QBluetoothHostInfo> locals = QBluetoothLocalDevice::allDevices();
+	if (locals.length() > 0) {
+		QBluetoothDeviceInfo info(locals[0].getAddress(),
+					  locals[0].getName(),
+					  0 /* TODO */);
+		setDevice(info);
+		return;
+	}
+
+	MMessageBox *box = 
+		new MMessageBox(tr("Cannot get phone Bluetooth "
+				   "information. "));
+	box->appear();
 }
 
 void BtPage::chooseExistingBT(void)
@@ -186,4 +203,17 @@ void BtPage::discoveryError(QBluetoothDeviceDiscoveryAgent::Error err)
 void BtPage::discoveryFinished(void)
 {
 	mDebug(__func__) << "done. ";
+}
+
+void BtPage::setDevice(const QBluetoothDeviceInfo &info)
+{
+	m_info = info;
+
+	m_device->setImageID("icon-m-content-bluetooth"); /* TODO */
+	m_device->setTitle(m_info.isValid()
+			   ? m_info.name()
+			   : tr("No device selected"));
+	m_device->setSubtitle(m_info.isValid()
+			      ? m_info.address().toString()
+			      : "00:00:00:00:00:00");
 }
