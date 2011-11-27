@@ -15,6 +15,8 @@ MOC_DIR		= ./moc
 DESTDIR		= ./out
 	   
 HEADERS		+= \
+		src/BtNdefRecord.h \
+		src/BtPage.h \
 		src/CreatePage.h \
 		src/LabeledTextEdit.h \
 		src/MainPage.h \
@@ -30,6 +32,8 @@ HEADERS		+= \
 
 SOURCES		+= \
 		src/tag-creator.cpp \
+		src/BtNdefRecord.cpp \
+		src/BtPage.cpp \
 		src/CreatePage.cpp \
 		src/LabeledTextEdit.cpp \
 		src/MainPage.cpp \

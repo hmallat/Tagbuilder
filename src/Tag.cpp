@@ -17,7 +17,7 @@
 const QString Tag::BLUETOOTH_TAG = tr("Bluetooth Device");
 const QString Tag::URL_TAG = tr("Bookmark");
 const QString Tag::CALENDAR_TAG = tr("Calendar Entry");
-const QString Tag::CONTACT_TAG = tr("Contact");
+const QString Tag::CONTACT_TAG = tr("Contact Card");
 const QString Tag::TEXT_TAG = tr("Text");
 const QString Tag::WLAN_TAG = tr("Wireless Network");
 const QString Tag::UNKNOWN_TAG = tr("Unknown tag");

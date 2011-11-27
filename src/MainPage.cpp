@@ -6,8 +6,9 @@
  *
  */
 
-#include "MainPage.h"
+#include "BtPage.h"
 #include "CreatePage.h"
+#include "MainPage.h"
 #include "TextPage.h"
 #include "TagStorage.h"
 #include "Tag.h"
@@ -148,7 +149,9 @@ void MainPage::createSelectedTag(QString which)
 {
 	MApplicationPage *page = 0;
 
-	if (which == Tag::TEXT_TAG) {
+	if (which == Tag::BLUETOOTH_TAG) {
+		page = new BtPage();
+	} else if (which == Tag::TEXT_TAG) {
 		page = new TextPage();
 	} else if (which == Tag::URL_TAG) {
 		page = new UrlPage();
@@ -167,7 +170,9 @@ void MainPage::editTag(void)
 	    m_longTapIndex.row() < TagStorage::count()) {
 		MApplicationPage *page = 0;
 		const Tag *tag = TagStorage::tag(m_longTapIndex.row());
-		if (tag->type() == Tag::TEXT_TAG) {
+		if (tag->type() == Tag::BLUETOOTH_TAG) {
+			page = new BtPage(m_longTapIndex.row());
+		} else if (tag->type() == Tag::TEXT_TAG) {
 			page = new TextPage(m_longTapIndex.row());
 		} else if (tag->type() == Tag::URL_TAG) {
 			page = new UrlPage(m_longTapIndex.row());
