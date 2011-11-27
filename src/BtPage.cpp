@@ -14,13 +14,16 @@
 
 #include <MAction>
 #include <MLabel>
+#include <MButton>
 #include <MMessageBox>
+#include <MContentItem>
 #include <QGraphicsAnchorLayout>
 
 BtPage::BtPage(int tag, QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_tag(tag),
 	  m_name(NULL),
+	  m_device(NULL),
 	  m_cancelAction(NULL),
 	  m_storeAction(NULL)
 {
@@ -75,8 +78,39 @@ void BtPage::createContent(void)
 	connect(m_name, SIGNAL(textChanged(void)),
 		this, SLOT(nameChanged(void)));
 
-	/* TODO the meat */
+	MLabel *selected = new MLabel(tr("Selected device"));
+	selected->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	selected->setAlignment(Qt::AlignLeft);
+	layout->addCornerAnchors(selected, Qt::TopLeftCorner,
+				 m_name, Qt::BottomLeftCorner);
+	layout->addAnchor(selected, Qt::AnchorRight,
+			  layout, Qt::AnchorRight);
 
+	m_device = new MContentItem();
+	if (m_tag != -1) {
+		/* TODO */
+	} else {
+		m_device->setImageID("icon-m-content-bluetooth");
+		m_device->setTitle(tr("No device selected"));
+		m_device->setSubtitle("00:00:00:00:00:00");
+	}
+	layout->addCornerAnchors(m_device, Qt::TopLeftCorner,
+				 selected, Qt::BottomLeftCorner);
+	layout->addAnchor(m_device, Qt::AnchorRight,
+			  layout, Qt::AnchorRight);
+
+	MButton *this_button = new MButton(tr("Use this device"));
+	layout->addAnchor(this_button, Qt::AnchorTop,
+			  m_device, Qt::AnchorBottom);
+	
+	MButton *pick_button = new MButton(tr("Choose a paired device"));
+	layout->addAnchor(pick_button, Qt::AnchorTop,
+			  this_button, Qt::AnchorBottom);
+	
+	MButton *scan_button = new MButton(tr("Scan for a device"));
+	layout->addAnchor(scan_button, Qt::AnchorTop,
+			  pick_button, Qt::AnchorBottom);
+	
 	centralWidget()->setLayout(layout);
 }
 

@@ -12,6 +12,7 @@
 #include <MApplicationPage>
 
 class LabeledTextEdit;
+class MContentItem;
 
 class BtPage : public MApplicationPage
 {
@@ -39,6 +40,8 @@ private:
 	int m_tag;
 
 	LabeledTextEdit *m_name;
+
+	MContentItem *m_device;
 
 	MAction *m_cancelAction;
 
