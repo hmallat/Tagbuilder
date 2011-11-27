@@ -18,18 +18,6 @@ class TagTypeListModel : public QAbstractListModel
 
 public:
 
-	static const QString BLUETOOTH_TAG;
-
-	static const QString URL_TAG;
-
-	static const QString CALENDAR_TAG;
-
-	static const QString CONTACT_TAG;
-
-	static const QString TEXT_TAG;
-
-	static const QString WLAN_TAG;
-
 	TagTypeListModel(QObject *parent = 0);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;

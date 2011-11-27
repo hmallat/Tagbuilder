@@ -7,35 +7,9 @@
  */
 
 #include "TagTypeListModel.h"
+#include "Tag.h"
 
 #include <QStringList>
-
-const QString TagTypeListModel::BLUETOOTH_TAG = tr("Bluetooth Device");
-const QString TagTypeListModel::URL_TAG = tr("Bookmark");
-const QString TagTypeListModel::CALENDAR_TAG = tr("Calendar Entry");
-const QString TagTypeListModel::CONTACT_TAG = tr("Contact");
-const QString TagTypeListModel::TEXT_TAG = tr("Text");
-const QString TagTypeListModel::WLAN_TAG = tr("Wireless Network");
-
-#define TYPES 6
-
-static const QString names[TYPES] = {
-	TagTypeListModel::BLUETOOTH_TAG,
-	TagTypeListModel::URL_TAG,
-	TagTypeListModel::CALENDAR_TAG,
-	TagTypeListModel::CONTACT_TAG,
-	TagTypeListModel::TEXT_TAG,
-	TagTypeListModel::WLAN_TAG
-};
-
-static const QString icons[TYPES] = {
-	"icon-m-content-bluetooth", 
-	"icon-m-content-url", 
-	"icon-m-content-calendar", 
-	"icon-m-content-avatar-placeholder", 
-	"icon-m-content-text", 
-	"icon-m-content-wlan" 
-};
 
 TagTypeListModel::TagTypeListModel(QObject *parent)
 	: QAbstractListModel(parent)
@@ -45,41 +19,43 @@ TagTypeListModel::TagTypeListModel(QObject *parent)
 int TagTypeListModel::rowCount(const QModelIndex &parent) const
 {
 	(void) parent;
-	return TYPES;
+	return 6;
 }
 
 QVariant TagTypeListModel::data(const QModelIndex &index, int role) const
 {
 	(void) role;
 	
-	if (index.isValid() == false || 
-	    index.row() >= TYPES) {
-		return QVariant();
-	}
-
 	QStringList parameters;
-	parameters << names[index.row()] << icons[index.row()];
+	parameters << name(index) << icon(index);
 	return qVariantFromValue(parameters);
 }
 
 const QString TagTypeListModel::name(const QModelIndex &index) const
 {
-	if (index.isValid() == false || 
-	    index.row() >= TYPES) {
+	if (index.isValid() == false) {
 		return "";
 	}
 
-	return names[index.row()];
+	switch (index.row()) {
+	case 0: return Tag::BLUETOOTH_TAG;
+	case 1: return Tag::URL_TAG;
+	case 2: return Tag::CALENDAR_TAG;
+	case 3: return Tag::CONTACT_TAG;
+	case 4: return Tag::TEXT_TAG;
+	case 5: return Tag::WLAN_TAG;
+	default: return "";
+	};
+
 }
 
 const QString TagTypeListModel::icon(const QModelIndex &index) const
 {
-	if (index.isValid() == false || 
-	    index.row() >= TYPES) {
+	if (index.isValid() == false) {
 		return "";
 	}
 
-	return icons[index.row()];
+	return Tag::icon(name(index));
 }
 
 

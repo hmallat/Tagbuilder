@@ -12,23 +12,6 @@
 
 #include <QVariant>
 
-static const QString _messageTypeToIcon(const QNdefMessage &message)
-{
-	QNdefRecord record = message.at(0);
-	if (record.typeNameFormat() == QNdefRecord::NfcRtd) {
-		if (record.type() == "T") {
-			return "icon-m-content-text";
-		} else if (record.type() == "U" ||
-			   record.type() == "Sp") {
-			return "icon-m-content-uri";
-		} else {
-			return "";
-		}
-	} else {
-		return "";
-	}
-}
-
 TagListCellCreator::TagListCellCreator(MainPage *page)
 	: MAbstractCellCreator<MContentItem>(),
 	  m_page(page)
@@ -42,5 +25,5 @@ void TagListCellCreator::updateCell(const QModelIndex &index,
 	QVariant data = index.data(Qt::DisplayRole);
 	const Tag *tag = data.value<const Tag *>();
 	contentItem->setTitle(tag->name());
-	contentItem->setImageID(_messageTypeToIcon(tag->message()));
+	contentItem->setImageID(Tag::icon(tag->type()));
 }

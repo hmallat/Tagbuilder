@@ -145,7 +145,7 @@ void MainPage::createTag(void)
 
 void MainPage::createSelectedTag(QString which)
 {
-	if (which == TagTypeListModel::TEXT_TAG) {
+	if (which == Tag::TEXT_TAG) {
 		TextPage *page = new TextPage();
 		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 		connect(page, SIGNAL(disappeared(void)),
@@ -157,10 +157,17 @@ void MainPage::editTag(void)
 {
 	if (m_longTapIndex.isValid() &&
 	    m_longTapIndex.row() < TagStorage::count()) {
-		TextPage *page = new TextPage(m_longTapIndex.row());
-		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
-		connect(page, SIGNAL(disappeared(void)),
-			this, SLOT(refreshList(void)));
+		MApplicationPage *page = 0;
+		const Tag *tag = TagStorage::tag(m_longTapIndex.row());
+		if (tag->type() == Tag::TEXT_TAG) {
+			page = new TextPage(m_longTapIndex.row());
+		}
+		if (page != 0) {
+			page->appear(scene(), 
+				     MSceneWindow::DestroyWhenDismissed);
+			connect(page, SIGNAL(disappeared(void)),
+				this, SLOT(refreshList(void)));
+		}
 		m_longTapIndex = QModelIndex();
 	}
 }
