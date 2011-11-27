@@ -14,6 +14,7 @@
 #include "TagListModel.h"
 #include "TagTypeListModel.h"
 #include "TagListCellCreator.h"
+#include "UrlPage.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -145,8 +146,15 @@ void MainPage::createTag(void)
 
 void MainPage::createSelectedTag(QString which)
 {
+	MApplicationPage *page = 0;
+
 	if (which == Tag::TEXT_TAG) {
-		TextPage *page = new TextPage();
+		page = new TextPage();
+	} else if (which == Tag::URL_TAG) {
+		page = new UrlPage();
+	}
+
+	if (page != 0) {
 		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 		connect(page, SIGNAL(disappeared(void)),
 			this, SLOT(refreshList(void)));
@@ -161,6 +169,8 @@ void MainPage::editTag(void)
 		const Tag *tag = TagStorage::tag(m_longTapIndex.row());
 		if (tag->type() == Tag::TEXT_TAG) {
 			page = new TextPage(m_longTapIndex.row());
+		} else if (tag->type() == Tag::URL_TAG) {
+			page = new UrlPage(m_longTapIndex.row());
 		}
 		if (page != 0) {
 			page->appear(scene(), 

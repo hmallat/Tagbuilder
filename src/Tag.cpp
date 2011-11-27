@@ -8,6 +8,9 @@
 
 #include "Tag.h"
 
+#include <QNdefNfcTextRecord>
+#include <QNdefNfcUriRecord>
+
 /* TODO: maximum name length supported by tag storage is 65535,
    should limit somewhere what names are given to tags */
 
@@ -62,18 +65,15 @@ const QDateTime &Tag::creationTime(void) const
 const QString &Tag::type(void) const
 {
 	QNdefRecord record = m_message.at(0);
-	if (record.typeNameFormat() == QNdefRecord::NfcRtd) {
-		if (record.type() == "T") {
-			return TEXT_TAG;
-		} else if (record.type() == "U" ||
-			   record.type() == "Sp") {
-			return URL_TAG;
-		} else {
-			return UNKNOWN_TAG;
-		}
+	
+	if (record.isRecordType<QNdefNfcTextRecord>()) {
+		return TEXT_TAG;
+	} else if (record.isRecordType<QNdefNfcUriRecord>()) {
+		return URL_TAG;
 	} else {
 		return UNKNOWN_TAG;
 	}
+
 }
 
 const QString &Tag::icon(const QString &type)

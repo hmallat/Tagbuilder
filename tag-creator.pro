@@ -25,7 +25,8 @@ HEADERS		+= \
 		src/TagTypeListModel.h \
 		src/TagStorage.h \
 		src/TextPage.h \
-		src/TextRecordEdit.h
+		src/TextRecordEdit.h \
+		src/UrlPage.h
 
 SOURCES		+= \
 		src/tag-creator.cpp \
@@ -39,7 +40,8 @@ SOURCES		+= \
 		src/TagTypeListModel.cpp \
 		src/TagStorage.cpp \
 		src/TextPage.cpp \
-		src/TextRecordEdit.cpp
+		src/TextRecordEdit.cpp \
+		src/UrlPage.cpp
 
 TRANSLATIONS	= \
 		tag-creator_en.ts \

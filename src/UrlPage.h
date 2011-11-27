@@ -6,26 +6,27 @@
  *
  */
 
-#ifndef _TEXT_PAGE_H_
-#define _TEXT_PAGE_H_
+#ifndef _URL_PAGE_H
+#define _URL_PAGE_H_
 
-#include <QSystemInfo>
 #include <MApplicationPage>
+#include <QList>
 
 class TextRecordEdit;
 class LabeledTextEdit;
 
-class TextPage : public MApplicationPage
+class UrlPage : public MApplicationPage
 {
+
 	Q_OBJECT;
 
 public:
 
-	TextPage(int tag = -1, QGraphicsItem *parent = 0);
+	UrlPage(int tag = -1, QGraphicsItem *parent = 0);
 
-	~TextPage(void);
+	~UrlPage(void);
 
-        virtual void createContent(void);
+	virtual void createContent(void);
 
 private Q_SLOTS:
 
@@ -35,15 +36,15 @@ private Q_SLOTS:
 
 private:
 
-	Q_DISABLE_COPY(TextPage);
+	Q_DISABLE_COPY(UrlPage);
 
 	int m_tag;
 
 	LabeledTextEdit *m_name;
 
-	TextRecordEdit *m_edit;
+	LabeledTextEdit *m_url;
 
-	QtMobility::QSystemInfo *m_sysinfo;
+	QList<TextRecordEdit *> m_titleEdits;
 
 	MAction *m_cancelAction;
 
@@ -51,4 +52,4 @@ private:
 
 };
 
-#endif /* _TEXT_PAGE_H_ */
+#endif /* _URL_PAGE_H_ */

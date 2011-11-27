@@ -6,31 +6,25 @@
  *
  */
 
-#include "TextPage.h"
+#include "UrlPage.h"
 #include "LabeledTextEdit.h"
 #include "TextRecordEdit.h"
-#include "Tag.h"
 #include "TagStorage.h"
+#include "Tag.h"
 
-#include <QGraphicsLinearLayout>
 #include <MAction>
 #include <MLabel>
 #include <MMessageBox>
+#include <QGraphicsAnchorLayout>
+#include <QUrl>
+#include <QNdefNfcUriRecord>
 
-#include <QNdefNfcTextRecord>
-#include <QNdefMessage>
-
-QTM_USE_NAMESPACE;
-
-/* TODO: show a locale specific human readable language name 
-   instead of two-letter code (study QLocale) */
-
-TextPage::TextPage(int tag, QGraphicsItem *parent)
+UrlPage::UrlPage(int tag, QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_tag(tag),
 	  m_name(NULL),
-	  m_edit(NULL),
-	  m_sysinfo(new QSystemInfo(this)),
+	  m_url(NULL),
+	  m_titleEdits(),
 	  m_cancelAction(NULL),
 	  m_storeAction(NULL)
 {
@@ -38,11 +32,11 @@ TextPage::TextPage(int tag, QGraphicsItem *parent)
 				 MApplicationPageModel::Hide);
 }
 
-TextPage::~TextPage(void)
+UrlPage::~UrlPage(void)
 {
 }
 
-void TextPage::createContent(void)
+void UrlPage::createContent(void)
 {
 	m_cancelAction = new MAction(tr("Cancel"), this);
 	m_cancelAction->setLocation(MAction::ToolBarLocation);
@@ -59,15 +53,17 @@ void TextPage::createContent(void)
 		this, SLOT(storeTag()));
 	addAction(m_storeAction);
 
-	QGraphicsLinearLayout *layout = 
-		new QGraphicsLinearLayout(Qt::Vertical);
+	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 
 	MLabel *label = new MLabel(m_tag == -1 
 				   ? tr("<big>Create tag contents</big>")
 				   : tr("<big>Edit tag contents</big>"));
+	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	label->setAlignment(Qt::AlignCenter);
-	layout->addItem(label);
-	layout->setAlignment(label, Qt::AlignHCenter);
+	layout->addCornerAnchors(label, Qt::TopLeftCorner,
+				 layout, Qt::TopLeftCorner);
+	layout->addAnchor(label, Qt::AnchorRight,
+			  layout, Qt::AnchorRight);
 
 	m_name = new LabeledTextEdit(MTextEditModel::SingleLine,
 				     tr("Tag name"),
@@ -75,28 +71,31 @@ void TextPage::createContent(void)
 	if (m_tag != -1) {
 		m_name->setText(TagStorage::tag(m_tag)->name());
 	}
-	layout->addItem(m_name);
-	layout->setAlignment(m_name, Qt::AlignHCenter);
+	m_name->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	layout->addCornerAnchors(m_name, Qt::TopLeftCorner,
+				 label, Qt::BottomLeftCorner);
+	layout->addAnchor(m_name, Qt::AnchorRight,
+			  layout, Qt::AnchorRight);
 	connect(m_name, SIGNAL(textChanged(void)),
 		this, SLOT(nameChanged(void)));
 
+	m_url = new LabeledTextEdit(MTextEditModel::SingleLine,
+				    tr("URL"),
+				    tr("Enter URL"));
 	if (m_tag != -1) {
-		QNdefNfcTextRecord T(TagStorage::tag(m_tag)->message().at(0));
-		m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
-					    T.locale());
-		m_edit->setContents(T.text());
-	} else {
-		m_edit = new TextRecordEdit(m_sysinfo->availableLanguages(),
-					    m_sysinfo->currentLanguage());
+		QNdefNfcUriRecord U(TagStorage::tag(m_tag)->message().at(0));
+		m_url->setText(U.uri().toString());
 	}
-	layout->addItem(m_edit);
-	layout->setAlignment(m_edit, Qt::AlignHCenter);
-	layout->setStretchFactor(m_edit, 999);
+	m_url->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	layout->addCornerAnchors(m_url, Qt::TopLeftCorner,
+				 m_name, Qt::BottomLeftCorner);
+	layout->addAnchor(m_url, Qt::AnchorRight,
+			  layout, Qt::AnchorRight);
 
 	centralWidget()->setLayout(layout);
 }
 
-void TextPage::nameChanged(void)
+void UrlPage::nameChanged(void)
 {
 	if (m_name->text() == "") {
 		/* cannot store without a name */
@@ -106,15 +105,13 @@ void TextPage::nameChanged(void)
 	}
 }
 
-void TextPage::storeTag(void)
+void UrlPage::storeTag(void)
 {
 	QNdefMessage message;
 
-	QNdefNfcTextRecord T;
-	T.setEncoding(QNdefNfcTextRecord::Utf8);
-	T.setLocale(m_edit->language());
-	T.setText(m_edit->contents());
-	message << T;
+	QNdefNfcUriRecord U;
+	U.setUri(m_url->text());
+	message << U;
 	
 	bool success;
 	if (m_tag == -1) {
@@ -132,4 +129,5 @@ void TextPage::storeTag(void)
 	} else {
 		dismiss();
 	}
+
 }
