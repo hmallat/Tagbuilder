@@ -10,9 +10,13 @@
 #define _BT_PAGE_H_
 
 #include <MApplicationPage>
+#include <QBluetoothDeviceDiscoveryAgent>
+#include <QBluetoothDeviceInfo>
 
 class LabeledTextEdit;
 class MContentItem;
+
+QTM_USE_NAMESPACE;
 
 class BtPage : public MApplicationPage
 {
@@ -33,6 +37,18 @@ private Q_SLOTS:
 
 	void storeTag(void);
 
+	void choosePhoneBT(void);
+
+	void chooseExistingBT(void);
+
+	void chooseScannedBT(void);
+
+	void deviceDiscovered(const QBluetoothDeviceInfo &info);
+	
+	void discoveryError(QBluetoothDeviceDiscoveryAgent::Error err);
+
+	void discoveryFinished(void);
+
 private:
 
 	Q_DISABLE_COPY(BtPage);
@@ -46,6 +62,8 @@ private:
 	MAction *m_cancelAction;
 
 	MAction *m_storeAction;
+
+	QBluetoothDeviceDiscoveryAgent *m_discovery;
 
 };
 
