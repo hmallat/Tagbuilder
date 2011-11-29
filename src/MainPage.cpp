@@ -6,6 +6,7 @@
  *
  */
 
+#include "BluezSupplicant.h"
 #include "BtPage.h"
 #include "CreatePage.h"
 #include "MainPage.h"
@@ -31,6 +32,7 @@ MainPage::MainPage(QGraphicsItem *parent)
 	  m_objectMenu(NULL),
 	  m_longTapIndex(QModelIndex())
 {
+	m_bluez = new BluezSupplicant(this);
 }
 
 MainPage::~MainPage(void)
@@ -52,6 +54,8 @@ void MainPage::createObjectMenuActions(void)
 
 void MainPage::createContent(void)
 {
+	m_bluez->start();
+
 	setPannable(false);
 
 	createObjectMenuActions();

@@ -15,6 +15,7 @@ MOC_DIR		= ./moc
 DESTDIR		= ./out
 	   
 HEADERS		+= \
+		src/BluezSupplicant.h \
 		src/BtNdefRecord.h \
 		src/BtPage.h \
 		src/CreatePage.h \
@@ -32,6 +33,7 @@ HEADERS		+= \
 
 SOURCES		+= \
 		src/tag-creator.cpp \
+		src/BluezSupplicant.cpp \
 		src/BtNdefRecord.cpp \
 		src/BtPage.cpp \
 		src/CreatePage.cpp \

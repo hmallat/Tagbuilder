@@ -6,10 +6,6 @@
  *
  */
 
-/* TODO: apparently cannot get already known devices from qt
- * connectivity -- and maybe not local class of device either -- might
- * just as well use bluez all the way? */ 
-
 /* TODO: check what happens if BT is off */
 
 #include "BtPage.h"
@@ -31,14 +27,24 @@
 
 #include <MDebug>
 
+/* NB: looks like Qt hostinfo doesn't return the class of
+   device. Could ask from BlueZ, but that would be just as unportable
+   as hardcoding it (no BlueZ in Symbian!), so here goes. */
+#define N9_COD 0x5a020c
+
+/* NB: looks like Qt doesn't support retrieving a list of already
+   known devices. So implement that using BlueZ D-Bus interface. That
+   cannot be hardcoded... */
+
 BtPage::BtPage(int tag, QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_tag(tag),
-	  m_name(NULL),
-	  m_device(NULL),
-	  m_cancelAction(NULL),
-	  m_storeAction(NULL),
+	  m_name(0),
+	  m_device(0),
+	  m_cancelAction(0),
+	  m_storeAction(0),
 	  m_discovery(new QBluetoothDeviceDiscoveryAgent(this))
+				  
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
@@ -168,7 +174,7 @@ void BtPage::choosePhoneBT(void)
 	if (locals.length() > 0) {
 		QBluetoothDeviceInfo info(locals[0].getAddress(),
 					  locals[0].getName(),
-					  0 /* TODO */);
+					  N9_COD);
 		setDevice(info);
 		return;
 	}
@@ -181,12 +187,13 @@ void BtPage::choosePhoneBT(void)
 
 void BtPage::chooseExistingBT(void)
 {
-	/* TODO */
+	/* TODO: should bring up a list popup here */
 }
 
 void BtPage::chooseScannedBT(void)
 {
 	mDebug(__func__) << "Starting discovery...";
+	/* TODO: should bring up a list popup here */
 	m_discovery->start();
 }
 
@@ -217,3 +224,4 @@ void BtPage::setDevice(const QBluetoothDeviceInfo &info)
 			      ? m_info.address().toString()
 			      : "00:00:00:00:00:00");
 }
+

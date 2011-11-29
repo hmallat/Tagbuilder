@@ -14,6 +14,7 @@
 
 class QGraphicsAnchorLayout;
 class MObjectMenu;
+class BluezSupplicant;
 
 class MainPage : public MApplicationPage
 {
@@ -57,6 +58,8 @@ private:
 	MObjectMenu *m_objectMenu;
 
 	QModelIndex m_longTapIndex;
+
+	BluezSupplicant *m_bluez;
 
 };
 

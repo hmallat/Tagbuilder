@@ -15,6 +15,7 @@
 
 class LabeledTextEdit;
 class MContentItem;
+class MButton;
 
 QTM_USE_NAMESPACE;
 
