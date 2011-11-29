@@ -31,4 +31,9 @@ const QDBusObjectPath BluezDevice::path(void) const
 	return m_path;
 }
 
+QDBusInterface *BluezDevice::interface(void) const
+{
+	return m_interface;
+}
+
 

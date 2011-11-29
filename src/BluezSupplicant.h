@@ -16,6 +16,7 @@
 #include <QObject>
 #include <QDBusObjectPath>
 #include <QDBusConnection>
+#include <QDBusVariant>
 
 class BluezDevice;
 class QDBusInterface;
@@ -62,11 +63,22 @@ private Q_SLOTS:
 
 	void deviceRemoved(const QDBusObjectPath which);
 
+	void getDevicePropertiesDone(QDBusPendingCallWatcher *watcher);
+
+	void devicePropertyChanged(QString name,
+				   QDBusVariant value);
+
 private:
 
 	Q_DISABLE_COPY(BluezSupplicant);
 
+	void callPending(void);
+
+	void callFinished(void);
+
 	bool m_started;
+
+	bool m_initialized;
 
 	int m_pendingCalls;
 

@@ -27,6 +27,8 @@ public:
 
 	const QDBusObjectPath path(void) const;
 
+	QDBusInterface *interface(void) const;
+
 private:
 
 	Q_DISABLE_COPY(BluezDevice);
