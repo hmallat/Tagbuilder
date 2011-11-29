@@ -3,6 +3,7 @@ CONFIG		+= meegotouch mobility debug
 #CONFIG		+= console
 MOBILITY	+= connectivity systeminfo
 QT		+= core
+QT		+= dbus
 
 TARGET		 = tag-creator
 
@@ -15,6 +16,7 @@ MOC_DIR		= ./moc
 DESTDIR		= ./out
 	   
 HEADERS		+= \
+		src/BluezDevice.h \
 		src/BluezSupplicant.h \
 		src/BtNdefRecord.h \
 		src/BtPage.h \
@@ -33,6 +35,7 @@ HEADERS		+= \
 
 SOURCES		+= \
 		src/tag-creator.cpp \
+		src/BluezDevice.cpp \
 		src/BluezSupplicant.cpp \
 		src/BtNdefRecord.cpp \
 		src/BtPage.cpp \

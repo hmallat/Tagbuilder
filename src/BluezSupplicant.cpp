@@ -7,6 +7,12 @@
  */
 
 #include "BluezSupplicant.h"
+#include "BluezDevice.h"
+
+extern "C"
+{
+#include <assert.h>
+}
 
 #include <QDBusInterface>
 #include <QDBusPendingCall>
@@ -16,11 +22,14 @@
 #include <MDebug>
 
 /*
- * When started, fills in the list for known adapters and for each
- * adapter fills in the list of known devices; populates device
- * structures with attributes so that Qt bluetooth device info
- * is available. Monitors for changes in any and all. 
+ * When started, queries for the default adapter and fills in the list
+ * of known devices; populates device structures with attributes so
+ * that Qt bluetooth device info is available. Monitors for changes in
+ * any and all to keep the structures up to date. 
  */
+
+/* TODO: get enough device props to construct qt bt device infos */
+/* TODO: emit signals for device list changes after initialization */
 
 BluezSupplicant::BluezSupplicant(QObject *parent)
 	: QObject(parent),
@@ -31,12 +40,17 @@ BluezSupplicant::BluezSupplicant(QObject *parent)
 				       "org.bluez.Manager",
 				       m_sys,
 				       this)),
-	  m_adapters()
+	  m_adapter(0)
 {
 }
 
 BluezSupplicant::~BluezSupplicant(void)
 {
+}
+
+bool BluezSupplicant::isInitialized(void)
+{
+	return (m_started == true && m_pendingCalls == 0);
 }
 
 void BluezSupplicant::start(void)
@@ -53,9 +67,9 @@ void BluezSupplicant::start(void)
 	m_sys.connect("org.bluez",
 		      "/",
 		      "org.bluez.Manager",
-		      "AdapterAdded",
+		      "DefaultAdapterChanged",
 		      this,
-		      SLOT(adapterAdded(const QDBusObjectPath)));
+		      SLOT(adapterChanged(const QDBusObjectPath)));
 	
 	m_sys.connect("org.bluez",
 		      "/",
@@ -64,192 +78,200 @@ void BluezSupplicant::start(void)
 		      this,
 		      SLOT(adapterRemoved(const QDBusObjectPath)));
 	
+	m_pendingCalls++;
 	QDBusPendingCall call =
-		m_manager->asyncCall("ListAdapters");
+		m_manager->asyncCall("DefaultAdapter");
 	QDBusPendingCallWatcher *watcher =
 		new QDBusPendingCallWatcher(call, this);
 	connect(watcher, 
 		SIGNAL(finished(QDBusPendingCallWatcher *)),
 		this, 
-		SLOT(listAdaptersDone(QDBusPendingCallWatcher *)));
+		SLOT(defaultAdapterDone(QDBusPendingCallWatcher *)));
 }
 
-void BluezSupplicant::listAdaptersDone(QDBusPendingCallWatcher *watcher)
+void BluezSupplicant::defaultAdapterDone(QDBusPendingCallWatcher *watcher)
 {
-	QList<QDBusObjectPath> paths;
-
-	QDBusPendingReply< QList<QDBusObjectPath> > reply = *watcher;
-	if (reply.isError()) {
-		mDebug(__func__) << "Failed to get adapter list. ";
-	} else {
-		paths = reply.argumentAt<0>();
-		mDebug(__func__) << paths.length() << " adapters found. ";
-		for (int i = 0; i < paths.length(); i++) {
-			adapterAdded(paths[i]);
-		}
-	}
-
-	watcher->deleteLater();
-}
-
-void BluezSupplicant::adapterAdded(const QDBusObjectPath which)
-{
-
-	for (int i = 0; i < m_adapters.length(); i++) {
-		if (m_adapters[i]->path() == which.path()) {
-			mDebug(__func__) 
-				<< "Adapter " << which.path() << " "
-				<< "already known, not adding twice. ";
-			return;
-		}
-	}
-
-	m_adapters << new QDBusInterface("org.bluez",
-					 which.path(),
-					 "org.bluez.Adapter",
-					 m_sys,
-					 this);
-
-	/* TODO: monitor for device add/rm signals for this adapter,
-	   query device list. */
-
-	mDebug(__func__) << "Adapter " << which.path() << " removed. ";
-	Q_EMIT(bluezAdapterAdded(which));
-
-}
-
-void BluezSupplicant::adapterRemoved(const QDBusObjectPath which)
-{
-
-	for (int i = 0; i < m_adapters.length(); i++) {
-		if (m_adapters[i]->path() == which.path()) {
-			
-			/* TODO: stop monitoring device add/rm signals
-			   for this adapter, remove devices for this
-			   adapter from known list. */
-
-			QDBusInterface *adapter = m_adapters[i];
-			m_adapters.removeAt(i);
-			delete adapter;
-
-			mDebug(__func__) 
-				<< "Adapter " << which.path() << " removed. ";
-			Q_EMIT(bluezAdapterRemoved(which));
-
-			return;
-		}
-	}
-
-	mDebug(__func__) 
-		<< "Adapter " << which.path() << " "
-		<< "not known, not removing. ";
-
-}
-
-#if 0
-
-
-
-
-
-
-
-
-
-
-
-
-bool BluezSupplicant::queryDefaultAdapter(void)
-{
-	QDBusPendingCall call;
-	QDBusPendingCallWatcher *watcher;
-
-	switch (m_adapterQuery) {
-
-	case QueryNotStarted:
-		m_adapterQueryState = QueryInProgress;
-
-		call = m_bluezManagerInterface->asyncCall("DefaultAdapter");
-		watcher = new QDBusPendingCallWatcher(call, this);
-		connect(watcher, 
-			SIGNAL(finished(QDBusPendingCallWatcher *)),
-			this, 
-			SLOT(defaultAdapterQueryDone
-			     (QDBusPendingCallWatcher *)));
-		return true;
-
-	case QueryPending:
-		/* should not happen */
-		m_adapterQueryState = QueryNotStarted;
-		return false;
-
-	case QueryInProgress:
-		/* thou shalt be signaled */
-		return true;
-
-	case QueryFinished:
-		if (m_bluezAdapterInterface != 0) {
-			Q_EMIT(defaultAdapterQueried(true));
-		} else {
-			Q_EMIT(defaultAdapterQueried(false));
-		}
-		return true;
-
-	};
-}
-
-bool BluezSupplicant::queryKnownDevices(void)
-{
-	return push(QueryKnownDevices);
-
-	QDBusPendingCall call =
-		m_bluezAdapterInterface->asyncCall("ListDevices");
-	QDBusPendingCallWatcher *watcher = 
-		new QDBusPendingCallWatcher(call, this);
-	connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)),
-		this, SLOT(defaultAdapterQueried(QDBusPendingCallWatcher *)));
-}
-
-void BluezSupplicant::defaultAdapterQueried(QDBusPendingCallWatcher *watcher)
-{
-	QDBusObjectPath adapter;
+	mDebug(__func__) << "ENTER";
 
 	QDBusPendingReply<QDBusObjectPath> reply = *watcher;
 	if (reply.isError()) {
 		mDebug(__func__) << "Failed to get default adapter. ";
 	} else {
-		adapter = reply.argumentAt<0>();
-		m_bluezAdapterInterface = 
-			new QDBusInterface("org.bluez",
-					   adapter.path(),
-					   "org.bluez.Adapter",
-					   QDBusConnection::systemBus(),
-					   this);
+		adapterChanged(reply.argumentAt<0>());
 	}
 
 	watcher->deleteLater();
-	m_defaultAdapterQueryState = QueryIdle;
 
-	if (m_knownDeviceQueryState == QueryPending) {
-		if (m_bluezAdapterInterface == NULL) {
-			Q_EMIT(knownDevicesQueryError(...));
-			m_knownDeviceQueryState = QueryIdle;
-		} else {
-			...
-		}
+	m_pendingCalls--;
+	if (m_pendingCalls == 0) {
+		Q_EMIT(initialized());
 	}
 }
 
-void BluezSupplicant::knownDevicesQueried(QDBusPendingCallWatcher *watcher) 
+void BluezSupplicant::adapterChanged(const QDBusObjectPath which)
 {
+	mDebug(__func__) << "ENTER";
+
+	if (m_adapter != 0 && which.path() == m_adapter->path()) {
+		mDebug(__func__) 
+			<< "Adapter " << which.path() << " "
+			<< "already known, not changing. ";
+		return;
+	}
+
+	if (m_adapter != 0) {
+		adapterRemoved(QDBusObjectPath(m_adapter->path()));
+	}
+
+	assert (m_adapter == 0);
+	assert (m_devices.length() == 0);
+
+	m_adapter = new QDBusInterface("org.bluez",
+				       which.path(),
+				       "org.bluez.Adapter",
+				       m_sys,
+				       this);
+
+	m_sys.connect("org.bluez",
+		      which.path(),
+		      "org.bluez.Adapter",
+		      "DeviceCreated",
+		      this,
+		      SLOT(deviceCreated(const QDBusObjectPath)));
+	
+	m_sys.connect("org.bluez",
+		      which.path(),
+		      "org.bluez.Adapter",
+		      "DeviceRemoved",
+		      this,
+		      SLOT(deviceRemoved(const QDBusObjectPath)));
+	
+	m_pendingCalls++;
+	QDBusPendingCall call =
+		m_adapter->asyncCall("ListDevices");
+	QDBusPendingCallWatcher *watcher =
+		new QDBusPendingCallWatcher(call, this);
+	connect(watcher, 
+		SIGNAL(finished(QDBusPendingCallWatcher *)),
+		this, 
+		SLOT(listDevicesDone(QDBusPendingCallWatcher *)));
+
+	mDebug(__func__) << "Adapter " << which.path() << " changed. ";
+	Q_EMIT(bluezAdapterChanged(which));
+
+}
+
+void BluezSupplicant::adapterRemoved(const QDBusObjectPath which)
+{
+	mDebug(__func__) << "ENTER";
+
+	if (m_adapter == 0 || m_adapter->path() != which.path()) {
+		mDebug(__func__) 
+			<< "Adapter " << which.path() << " "
+			<< "not known, not removing. ";
+		return;
+	}
+
+	/* Stop listening to this adapter's signals */
+	m_sys.disconnect("org.bluez",
+			 which.path(),
+			 "org.bluez.Adapter",
+			 "DeviceCreated",
+			 this,
+			 SLOT(deviceCreated(const QDBusObjectPath)));
+	
+	m_sys.disconnect("org.bluez",
+			 which.path(),
+			 "org.bluez.Adapter",
+			 "DeviceRemoved",
+			 this,
+			 SLOT(deviceRemoved(const QDBusObjectPath)));
+	
+	/* Remove all devices associated with the path */
+	while (m_devices.length() != 0) {
+		deviceRemoved(m_devices[0]->path());
+	}
+
+	delete m_adapter;
+	m_adapter = 0;
+	
+	mDebug(__func__) << "Adapter " << which.path() << " removed. ";
+	Q_EMIT(bluezAdapterRemoved(which));
+	
+}
+
+void BluezSupplicant::listDevicesDone(QDBusPendingCallWatcher *watcher)
+{
+	mDebug(__func__) << "ENTER";
+
 	QDBusPendingReply< QList<QDBusObjectPath> > reply = *watcher;
 	if (reply.isError()) {
-		mDebug(__func__) << "Failed to get default adapter. ";
-		goto exit;
-	} 
+		mDebug(__func__) << "Failed to get device list. ";
+	} else {
+		QList<QDBusObjectPath> paths = reply.argumentAt<0>();
+		mDebug(__func__) << paths.length() << " devices found. ";
+		for (int i = 0; i < paths.length(); i++) {
+			deviceCreated(paths[i]);
+		}
+	}
 
-exit:
 	watcher->deleteLater();
+
+	m_pendingCalls--;
+	if (m_pendingCalls == 0) {
+		Q_EMIT(initialized());
+	}
 }
 
-#endif
+void BluezSupplicant::deviceCreated(const QDBusObjectPath which)
+{
+	mDebug(__func__) << "ENTER";
+
+	for (int i = 0; i < m_devices.length(); i++) {
+		if (m_devices[i]->path().path() == which.path()) {
+			mDebug(__func__) 
+				<< "Device " << which.path() << " "
+				<< "already known, not adding twice. ";
+			return;
+		}
+	}
+
+	BluezDevice *device = new BluezDevice(which, this);
+	m_devices << device;
+
+	/* TODO: get properties (and maybe monitor property changes?) */
+
+	mDebug(__func__) << "Device " << which.path() << " added. ";
+	Q_EMIT(bluezDeviceCreated(which));
+
+}
+
+void BluezSupplicant::deviceRemoved(const QDBusObjectPath which)
+{
+	mDebug(__func__) << "ENTER";
+
+	int i;
+
+	for (i = 0; i < m_devices.length(); i++) {
+		if (m_devices[i]->path().path() == which.path()) {
+			break;
+		}
+	}
+
+	if (i == m_devices.length()) {
+		mDebug(__func__) 
+			<< "Device " << which.path() << " "
+			<< "not known, not removing. ";
+		return;
+	}
+
+	/* Finally, kill the device itself */
+	BluezDevice *device = m_devices[i];
+	m_devices.removeAt(i);
+	delete device;
+	
+	mDebug(__func__) << "Device " << which.path() << " removed. ";
+	Q_EMIT(bluezDeviceRemoved(which));
+	
+}
+

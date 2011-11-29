@@ -17,6 +17,7 @@
 #include <QDBusObjectPath>
 #include <QDBusConnection>
 
+class BluezDevice;
 class QDBusInterface;
 class QDBusPendingCallWatcher;
 
@@ -33,21 +34,33 @@ public:
 
 	void start(void);
 
-	const QDBusObjectPath defaultAdapter(void) const;
+	bool isInitialized(void);
 
 signals:
 
-	void bluezAdapterAdded(QDBusObjectPath which);
+	void initialized(void);
+
+	void bluezAdapterChanged(QDBusObjectPath which);
 
 	void bluezAdapterRemoved(QDBusObjectPath which);
 
+	void bluezDeviceCreated(QDBusObjectPath which);
+
+	void bluezDeviceRemoved(QDBusObjectPath which);
+
 private Q_SLOTS:
 
-	void listAdaptersDone(QDBusPendingCallWatcher *watcher);
+	void defaultAdapterDone(QDBusPendingCallWatcher *watcher);
 
-	void adapterAdded(const QDBusObjectPath which);
+	void adapterChanged(const QDBusObjectPath which);
 
 	void adapterRemoved(const QDBusObjectPath which);
+
+	void listDevicesDone(QDBusPendingCallWatcher *watcher);
+
+	void deviceCreated(const QDBusObjectPath which);
+
+	void deviceRemoved(const QDBusObjectPath which);
 
 private:
 
@@ -55,11 +68,15 @@ private:
 
 	bool m_started;
 
+	int m_pendingCalls;
+
 	QDBusConnection m_sys;
 
 	QDBusInterface *m_manager;
 
-	QList<QDBusInterface *> m_adapters;
+	QDBusInterface *m_adapter;
+
+	QList<BluezDevice *> m_devices;
 
 };
 
