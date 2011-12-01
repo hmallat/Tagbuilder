@@ -63,11 +63,6 @@ private Q_SLOTS:
 
 	void deviceRemoved(const QDBusObjectPath which);
 
-	void getDevicePropertiesDone(QDBusPendingCallWatcher *watcher);
-
-	void devicePropertyChanged(QString name,
-				   QDBusVariant value);
-
 private:
 
 	Q_DISABLE_COPY(BluezSupplicant);

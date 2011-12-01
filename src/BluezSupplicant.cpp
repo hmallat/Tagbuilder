@@ -42,7 +42,8 @@ BluezSupplicant::BluezSupplicant(QObject *parent)
 				       "org.bluez.Manager",
 				       m_sys,
 				       this)),
-	  m_adapter(0)
+	  m_adapter(0),
+	  m_devices()
 {
 }
 
@@ -251,25 +252,6 @@ void BluezSupplicant::deviceCreated(const QDBusObjectPath which)
 	BluezDevice *device = new BluezDevice(which, this);
 	m_devices << device;
 
-	m_sys.connect("org.bluez",
-		      which.path(),
-		      "org.bluez.Device",
-		      "PropertyChanged",
-		      this,
-		      SLOT(devicePropertyChanged(QString, 
-						 QDBusVariant)));
-	
-	callPending();
-
-	QDBusPendingCall call =
-		device->interface()->asyncCall("GetProperties");
-	QDBusPendingCallWatcher *watcher =
-		new QDBusPendingCallWatcher(call, this);
-	connect(watcher, 
-		SIGNAL(finished(QDBusPendingCallWatcher *)),
-		this, 
-		SLOT(getDevicePropertiesDone(QDBusPendingCallWatcher *)));
-
 	mDebug(__func__) << "Device " << which.path() << " added. ";
 	Q_EMIT(bluezDeviceCreated(which));
 
@@ -312,30 +294,4 @@ void BluezSupplicant::deviceRemoved(const QDBusObjectPath which)
 	Q_EMIT(bluezDeviceRemoved(which));
 	
 }
-
-void BluezSupplicant::getDevicePropertiesDone(QDBusPendingCallWatcher *watcher)
-{
-	mDebug(__func__) << "ENTER";
-
-	QDBusPendingReply< QMap<QString, QVariant> > reply = *watcher;
-	if (reply.isError()) {
-		mDebug(__func__) << "Failed to get device properties. ";
-	} else {
-		/* TODO handle them properties */
-	}
-
-	watcher->deleteLater();
-
-	callFinished();
-}
-void BluezSupplicant::devicePropertyChanged(QString name,
-					    QDBusVariant value)
-{
-	mDebug(__func__) << "ENTER";
-
-	(void) name, (void) value;
-
-	/* TODO */
-}
-
 
