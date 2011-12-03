@@ -8,18 +8,61 @@
 
 #include "BtNdefRecord.h"
 
+#include <MDebug>
+
 #define BDADDR_OFFSET 2
-#define COD_OFFSET 8
+#define COD_OFFSET 10
 #define NAME_OFFSET 13
 
 const QString BtNdefRecord::name(void) const
 {
-	return ""; /* TODO */
+	QByteArray data = payload();
+	char *ptr = data.data();
+	int len = data.length();
+	quint8 fieldlen;
+	quint8 code;
+	int pos = NAME_OFFSET;
+
+	if (pos >= len) {
+		goto fail;
+	}
+	fieldlen = ptr[pos++];
+
+	if (pos + fieldlen > len) {
+		goto fail;
+	}
+
+	code = ptr[pos++];
+	fieldlen--;
+	if (code != 0x08 && code != 0x09) { /* no need to support others */
+		goto fail;
+	}
+
+	return QString::fromUtf8(&(ptr[pos]), fieldlen);
+
+fail:
+	return "";
 }
 
 void BtNdefRecord::setName(const QString name)
 {
-	(void) name; /* TODO */
+	char code = 0x09;
+	QByteArray utf8 = name.toUtf8();
+	if (utf8.length() > 248) { /* Maximum local name length */
+		utf8.chop(248);
+		code = 0x08;
+	}
+
+	int total = 15 + utf8.length();
+
+	QByteArray data = payload();
+	data.truncate(NAME_OFFSET);
+	data.append((char)(1 + utf8.length()));
+	data.append(code);
+	data.append(utf8);
+	data[0] = (total >> 0) & 0xff;
+	data[1] = (total >> 8) & 0xff;
+	setPayload(data);
 }
 
 const QBluetoothAddress BtNdefRecord::address(void) const
@@ -42,6 +85,7 @@ void BtNdefRecord::setAddress(const QBluetoothAddress address)
 		data[BDADDR_OFFSET + i] = bytes & 0xff;
 		bytes >>= 8;
 	}
+	setPayload(data);
 }
 
 quint32 BtNdefRecord::classOfDevice(void) const
@@ -63,4 +107,5 @@ void BtNdefRecord::setClassOfDevice(quint32 cod)
 		data[COD_OFFSET + i] = cod & 0xff;
 		cod >>= 8;
 	}
+	setPayload(data);
 }

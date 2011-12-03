@@ -182,8 +182,6 @@ void MainPage::editTag(void)
 			page = new TextPage(m_longTapIndex.row());
 		} else if (tag->type() == Tag::URL_TAG) {
 			page = new UrlPage(m_longTapIndex.row());
-		} else {
-			mDebug(__func__) << "GAH";
 		}
 		if (page != 0) {
 			page->appear(scene(), 

@@ -22,11 +22,10 @@ public:
 	Q_DECLARE_NDEF_RECORD(BtNdefRecord,
 			      QNdefRecord::Mime,
 			      "application/vnd.bluetooth.ep.oob",
-			      QByteArray("\x0f\x00"
+			      QByteArray("\x0d\x00"
 					 "\x00\x00\x00\x00\x00\x00"
-					 "\x04\x0d\x00\x00\x00"
-					 "\x01\x09", 
-					 15));
+					 "\x04\x0d\x00\x00\x00",
+					 13));
 
 	const QString name(void) const;
 
