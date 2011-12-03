@@ -111,19 +111,19 @@ void BluezDevice::propertyChanged(const QString name, const QVariant value)
 	if (name == "Address") {
 		m_address = value.toString();
 		mDebug(__func__) << "Address = " << m_address;
-		Q_EMIT(deviceUpdated());
+		Q_EMIT(deviceUpdated(path()));
 	} else if (name == "Name") {
 		m_name = value.toString();
 		mDebug(__func__) << "Name = " << m_name;
-		Q_EMIT(deviceUpdated());
+		Q_EMIT(deviceUpdated(path()));
 	} else if (name == "Alias") {
 		m_alias = value.toString();
 		mDebug(__func__) << "Alias = " << m_alias;
-		Q_EMIT(deviceUpdated());
+		Q_EMIT(deviceUpdated(path()));
 	} else if (name == "Class") {
 		m_cod = value.toUInt();
 		mDebug(__func__) << "CoD = " << m_cod;
-		Q_EMIT(deviceUpdated());
+		Q_EMIT(deviceUpdated(path()));
 	}
 }
 

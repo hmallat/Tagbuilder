@@ -43,7 +43,7 @@ public:
 
 signals:
 
-	void deviceUpdated(void);
+	void deviceUpdated(QDBusObjectPath which);
 
 private slots:
 

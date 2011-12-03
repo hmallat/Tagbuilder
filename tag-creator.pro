@@ -20,6 +20,10 @@ HEADERS		+= \
 		src/BluezSupplicant.h \
 		src/BtNdefRecord.h \
 		src/BtPage.h \
+		src/BtSelectionPage.h \
+		src/BtSelectionPageListCellCreator.h \
+		src/BtSelectionPageExistingListModel.h \
+		src/BtSelectionPageListModel.h \
 		src/CreatePage.h \
 		src/LabeledTextEdit.h \
 		src/MainPage.h \
@@ -39,6 +43,10 @@ SOURCES		+= \
 		src/BluezSupplicant.cpp \
 		src/BtNdefRecord.cpp \
 		src/BtPage.cpp \
+		src/BtSelectionPage.cpp \
+		src/BtSelectionPageListCellCreator.cpp \
+		src/BtSelectionPageExistingListModel.cpp \
+		src/BtSelectionPageListModel.cpp \
 		src/CreatePage.cpp \
 		src/LabeledTextEdit.cpp \
 		src/MainPage.cpp \

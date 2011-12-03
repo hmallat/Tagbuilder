@@ -16,6 +16,7 @@
 class LabeledTextEdit;
 class MContentItem;
 class MButton;
+class BluezSupplicant;
 
 QTM_USE_NAMESPACE;
 
@@ -26,7 +27,9 @@ class BtPage : public MApplicationPage
 
 public:
 
-	BtPage(int tag = -1, QGraphicsItem *parent = 0);
+	BtPage(BluezSupplicant *bluez,
+	       int tag = -1, 
+	       QGraphicsItem *parent = 0);
 
 	~BtPage(void);
 
@@ -50,7 +53,7 @@ private Q_SLOTS:
 
 	void discoveryFinished(void);
 
-	void setDevice(const QBluetoothDeviceInfo &info);
+	void setDevice(const QBluetoothDeviceInfo info);
 
 private:
 
@@ -69,6 +72,8 @@ private:
 	QBluetoothDeviceDiscoveryAgent *m_discovery;
 
 	QBluetoothDeviceInfo m_info;
+
+	BluezSupplicant *m_bluez;
 
 };
 

@@ -13,6 +13,8 @@
 #include "LabeledTextEdit.h"
 #include "TagStorage.h"
 #include "Tag.h"
+#include "BluezSupplicant.h"
+#include "BtSelectionPage.h"
 
 #include <MAction>
 #include <MLabel>
@@ -36,14 +38,15 @@
    known devices. So implement that using BlueZ D-Bus interface. That
    cannot be hardcoded... */
 
-BtPage::BtPage(int tag, QGraphicsItem *parent)
+BtPage::BtPage(BluezSupplicant *bluez, int tag, QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_tag(tag),
 	  m_name(0),
 	  m_device(0),
 	  m_cancelAction(0),
 	  m_storeAction(0),
-	  m_discovery(new QBluetoothDeviceDiscoveryAgent(this))
+	  m_discovery(new QBluetoothDeviceDiscoveryAgent(this)),
+	  m_bluez(bluez)
 				  
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
@@ -187,7 +190,12 @@ void BtPage::choosePhoneBT(void)
 
 void BtPage::chooseExistingBT(void)
 {
-	/* TODO: should bring up a list popup here */
+	BtSelectionPage *page = 
+		new BtSelectionPage(m_bluez, 
+				    BtSelectionPage::SelectFromExisting);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const QBluetoothDeviceInfo)),
+		this, SLOT(setDevice(const QBluetoothDeviceInfo)));
 }
 
 void BtPage::chooseScannedBT(void)
@@ -212,7 +220,7 @@ void BtPage::discoveryFinished(void)
 	mDebug(__func__) << "done. ";
 }
 
-void BtPage::setDevice(const QBluetoothDeviceInfo &info)
+void BtPage::setDevice(const QBluetoothDeviceInfo info)
 {
 	m_info = info;
 

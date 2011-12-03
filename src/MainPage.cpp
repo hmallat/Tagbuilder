@@ -92,7 +92,7 @@ void MainPage::createTagButtons(QGraphicsAnchorLayout *layout)
 	MList *list = new MList();
 	TagListCellCreator *creator = new TagListCellCreator(this);
 	list->setCellCreator(creator);
-	TagListModel *model = new TagListModel;
+	TagListModel *model = new TagListModel(list);
 	list->setItemModel(model);
 
 	MPannableViewport *view = new MPannableViewport();
@@ -154,7 +154,7 @@ void MainPage::createSelectedTag(QString which)
 	MApplicationPage *page = 0;
 
 	if (which == Tag::BLUETOOTH_TAG) {
-		page = new BtPage();
+		page = new BtPage(m_bluez);
 	} else if (which == Tag::TEXT_TAG) {
 		page = new TextPage();
 	} else if (which == Tag::URL_TAG) {
@@ -175,7 +175,7 @@ void MainPage::editTag(void)
 		MApplicationPage *page = 0;
 		const Tag *tag = TagStorage::tag(m_longTapIndex.row());
 		if (tag->type() == Tag::BLUETOOTH_TAG) {
-			page = new BtPage(m_longTapIndex.row());
+			page = new BtPage(m_bluez, m_longTapIndex.row());
 		} else if (tag->type() == Tag::TEXT_TAG) {
 			page = new TextPage(m_longTapIndex.row());
 		} else if (tag->type() == Tag::URL_TAG) {

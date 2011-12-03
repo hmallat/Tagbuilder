@@ -17,10 +17,13 @@
 #include <QDBusObjectPath>
 #include <QDBusConnection>
 #include <QDBusVariant>
+#include <QBluetoothDeviceInfo>
 
 class BluezDevice;
 class QDBusInterface;
 class QDBusPendingCallWatcher;
+
+QTM_USE_NAMESPACE;
 
 class BluezSupplicant : public QObject
 {
@@ -37,6 +40,10 @@ public:
 
 	bool isInitialized(void);
 
+	QBluetoothDeviceInfo device(QDBusObjectPath which);
+	
+	QList<QBluetoothDeviceInfo> devices(void);
+
 signals:
 
 	void initialized(void);
@@ -48,6 +55,8 @@ signals:
 	void bluezDeviceCreated(QDBusObjectPath which);
 
 	void bluezDeviceRemoved(QDBusObjectPath which);
+
+	void bluezDeviceUpdated(QDBusObjectPath which);
 
 private Q_SLOTS:
 
@@ -62,6 +71,8 @@ private Q_SLOTS:
 	void deviceCreated(const QDBusObjectPath which);
 
 	void deviceRemoved(const QDBusObjectPath which);
+
+	void deviceUpdated(const QDBusObjectPath which);
 
 private:
 

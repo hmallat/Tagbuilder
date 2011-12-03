@@ -18,6 +18,7 @@ extern "C"
 #include <QDBusPendingCall>
 #include <QDBusPendingReply>
 #include <QDBusPendingCallWatcher>
+#include <QBluetoothAddress>
 
 #include <MDebug>
 
@@ -252,6 +253,9 @@ void BluezSupplicant::deviceCreated(const QDBusObjectPath which)
 	BluezDevice *device = new BluezDevice(which, this);
 	m_devices << device;
 
+	connect(device, SIGNAL(deviceUpdated(QDBusObjectPath)),
+		this, SLOT(deviceUpdated(QDBusObjectPath)));
+
 	mDebug(__func__) << "Device " << which.path() << " added. ";
 	Q_EMIT(bluezDeviceCreated(which));
 
@@ -294,4 +298,38 @@ void BluezSupplicant::deviceRemoved(const QDBusObjectPath which)
 	Q_EMIT(bluezDeviceRemoved(which));
 	
 }
+
+void BluezSupplicant::deviceUpdated(const QDBusObjectPath which)
+{
+	Q_EMIT(bluezDeviceUpdated(which));
+}
+
+QBluetoothDeviceInfo BluezSupplicant::device(QDBusObjectPath which)
+{
+	for (int i = 0; i < m_devices.length(); i++) {
+		if (m_devices[i]->path().path() == which.path()) {
+			QBluetoothAddress address(m_devices[i]->address());
+			return QBluetoothDeviceInfo(address,
+						    m_devices[i]->alias(),
+						    m_devices[i]->cod());
+		}
+	}
+
+	return QBluetoothDeviceInfo();
+}
+
+QList<QBluetoothDeviceInfo> BluezSupplicant::devices(void)
+{
+	QList<QBluetoothDeviceInfo> list;
+
+	for (int i = 0; i < m_devices.length(); i++) {
+		QBluetoothAddress address(m_devices[i]->address());
+		list << QBluetoothDeviceInfo(address,
+					     m_devices[i]->alias(),
+					     m_devices[i]->cod());
+	}
+
+	return list;
+}
+
 

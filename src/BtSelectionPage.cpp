@@ -6,10 +6,10 @@
  *
  */
 
-#include "CreatePage.h"
-#include "TextPage.h"
-#include "TagTypeListModel.h"
-#include "TagTypeListCellCreator.h"
+#include "BtSelectionPage.h"
+#include "BtSelectionPageListCellCreator.h"
+#include "BtSelectionPageExistingListModel.h"
+#include "BluezSupplicant.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -18,23 +18,24 @@
 #include <MContentItem>
 #include <MPannableViewport>
 
-/* TODO: own buttons for SMS and CALLTO? What about other URI types? 
-   Codewise could use the same page anyway...
- */
-
-CreatePage::CreatePage(QGraphicsItem *parent)
+BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
+				 enum BtSelectionPage::Type type,
+				 QGraphicsItem *parent)
 	: MApplicationPage(parent),
-	  m_model(NULL)
+	  m_model(0)
 {
+	m_model = (type == SelectFromExisting)
+		? new BtSelectionPageExistingListModel(bluez, this)
+		: 0 /* TODO */;
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
 }
 
-CreatePage::~CreatePage(void)
+BtSelectionPage::~BtSelectionPage(void)
 {
 }
 
-void CreatePage::createContent(void)
+void BtSelectionPage::createContent(void)
 {
 	MAction *cancelAction = new MAction(tr("Cancel"), this);
 	cancelAction->setLocation(MAction::ToolBarLocation);
@@ -45,17 +46,17 @@ void CreatePage::createContent(void)
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	centralWidget()->setLayout(layout);
 
-	MLabel *label = new MLabel(tr("<big>Select the type of tag "
-				      "to create</big>"));
+	MLabel *label = new MLabel(tr("<big>Select the device "
+				      "to use</big>"));
 	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	label->setAlignment(Qt::AlignLeft);
 	layout->addCornerAnchors(label, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
 
 	MList *list = new MList();
-	TagTypeListCellCreator *creator = new TagTypeListCellCreator;
+	BtSelectionPageListCellCreator *creator = 
+		new BtSelectionPageListCellCreator;
 	list->setCellCreator(creator);
-	m_model = new TagTypeListModel(list);
 	list->setItemModel(m_model);
 
 	MPannableViewport *view = new MPannableViewport();
@@ -69,12 +70,14 @@ void CreatePage::createContent(void)
 				 layout, Qt::BottomRightCorner);
 
 	connect(list, SIGNAL(itemClicked(const QModelIndex &)),
-		this, SLOT(tagTypeSelected(const QModelIndex &)));
+		this, SLOT(deviceSelected(const QModelIndex &)));
 }
 
-void CreatePage::tagTypeSelected(const QModelIndex &which)
+void BtSelectionPage::deviceSelected(const QModelIndex &which)
 {
 	dismiss();
-	Q_EMIT(selected(m_model != 0 ? m_model->name(which) : ""));
+	Q_EMIT(selected(m_model->device(which)));
 }
+
+
 
