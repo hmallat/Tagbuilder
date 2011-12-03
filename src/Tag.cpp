@@ -7,6 +7,7 @@
  */
 
 #include "Tag.h"
+#include "BtNdefRecord.h"
 
 #include <QNdefNfcTextRecord>
 #include <QNdefNfcUriRecord>
@@ -70,6 +71,8 @@ const QString &Tag::type(void) const
 		return TEXT_TAG;
 	} else if (record.isRecordType<QNdefNfcUriRecord>()) {
 		return URL_TAG;
+	} else if (record.isRecordType<BtNdefRecord>()) {
+		return BLUETOOTH_TAG;
 	} else {
 		return UNKNOWN_TAG;
 	}

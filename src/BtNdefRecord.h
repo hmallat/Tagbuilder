@@ -12,7 +12,9 @@
 #include <QNdefRecord>
 #include <QBluetoothAddress>
 
-class BtNdefRecord : public QtMobility::QNdefRecord
+QTM_USE_NAMESPACE;
+
+class BtNdefRecord : public QNdefRecord
 {
 
 public:
@@ -30,9 +32,9 @@ public:
 
 	void setName(const QString name);
 
-	const QtMobility::QBluetoothAddress address(void) const;
+	const QBluetoothAddress address(void) const;
 
-	void setAddress(const QtMobility::QBluetoothAddress address);
+	void setAddress(const QBluetoothAddress address);
 
 	quint32 classOfDevice(void) const;
 

@@ -14,15 +14,15 @@
 
 const QString BtNdefRecord::name(void) const
 {
-	return "";
+	return ""; /* TODO */
 }
 
 void BtNdefRecord::setName(const QString name)
 {
-	(void) name;
+	(void) name; /* TODO */
 }
 
-const QtMobility::QBluetoothAddress BtNdefRecord::address(void) const
+const QBluetoothAddress BtNdefRecord::address(void) const
 {
 	QByteArray data = payload();
 	quint64 bytes = 0;
@@ -31,10 +31,10 @@ const QtMobility::QBluetoothAddress BtNdefRecord::address(void) const
 		bytes |= ((quint64)data[BDADDR_OFFSET + i] & 0xff);
 	}
 
-	return QtMobility::QBluetoothAddress(bytes);
+	return QBluetoothAddress(bytes);
 }
 
-void BtNdefRecord::setAddress(const QtMobility::QBluetoothAddress address)
+void BtNdefRecord::setAddress(const QBluetoothAddress address)
 {
 	QByteArray data = payload();
 	quint64 bytes = address.toUInt64();

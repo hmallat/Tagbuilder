@@ -9,11 +9,12 @@
 #ifndef _TAG_STORAGE_H_
 #define _TAG_STORAGE_H_
 
+#include <QNdefMessage>
+
 class Tag;
 class QString;
-namespace QtMobility {
-	class QNdefMessage;
-}
+
+QTM_USE_NAMESPACE;
 
 class TagStorage
 {
@@ -25,11 +26,11 @@ public:
 	static const Tag *tag(int which);
 
 	static bool append(const QString &name,
-			   const QtMobility::QNdefMessage &message);
+			   const QNdefMessage &message);
 
 	static bool update(int which, 
 			   const QString &name,
-			   const QtMobility::QNdefMessage &message);
+			   const QNdefMessage &message);
 
 	static bool remove(int which);
 

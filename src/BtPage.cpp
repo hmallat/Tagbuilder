@@ -104,7 +104,10 @@ void BtPage::createContent(void)
 	m_device = new MContentItem();
 	m_device->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	if (m_tag != -1) {
-		/* TODO */
+		BtNdefRecord bt(TagStorage::tag(m_tag)->message().at(0));
+		setDevice(QBluetoothDeviceInfo(bt.address(), 
+					       bt.name(), 
+					       bt.classOfDevice()));
 	} else {
 		setDevice(QBluetoothDeviceInfo());
 	}
@@ -149,11 +152,6 @@ void BtPage::nameChanged(void)
 	} else {
 		m_storeAction->setEnabled(true);
 	}
-}
-
-void BtPage::storeTag(void)
-{
-	/* TODO */
 }
 
 void BtPage::choosePhoneBT(void)
@@ -204,5 +202,39 @@ void BtPage::setDevice(const QBluetoothDeviceInfo info)
 	m_device->setSubtitle(m_info.isValid()
 			      ? m_info.address().toString()
 			      : "00:00:00:00:00:00");
+}
+
+void BtPage::storeTag(void)
+{
+	QNdefMessage message;
+
+	quint32 cod =
+		((m_info.serviceClasses() & 0x7ff) << 13) | 
+		((m_info.majorDeviceClass() & 0x1f) << 8) |
+		((m_info.minorDeviceClass() & 0x3f) << 2);
+
+	BtNdefRecord bt;
+	bt.setAddress(m_info.address());
+	bt.setClassOfDevice(cod);
+	bt.setName(m_info.name());
+	message << bt;
+	
+	bool success;
+	if (m_tag == -1) {
+		success = TagStorage::append(m_name->text(), message);
+	} else {
+		success = TagStorage::update(m_tag,
+					     m_name->text(),
+					     message);
+	}
+	
+	if (success == false) {
+		MMessageBox *box = 
+			new MMessageBox(tr("Cannot store the tag. "));
+		box->appear();
+	} else {
+		dismiss();
+	}
+
 }
 

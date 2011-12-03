@@ -15,6 +15,8 @@
 class TextRecordEdit;
 class LabeledTextEdit;
 
+QTM_USE_NAMESPACE;
+
 class TextPage : public MApplicationPage
 {
 	Q_OBJECT;
@@ -43,7 +45,7 @@ private:
 
 	TextRecordEdit *m_edit;
 
-	QtMobility::QSystemInfo *m_sysinfo;
+	QSystemInfo *m_sysinfo;
 
 	MAction *m_cancelAction;
 

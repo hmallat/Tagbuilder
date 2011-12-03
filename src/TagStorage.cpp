@@ -302,7 +302,7 @@ const Tag *TagStorage::tag(int which)
 }
 
 bool TagStorage::append(const QString &name, 
-			const QtMobility::QNdefMessage &message)
+			const QNdefMessage &message)
 {
 	Tag *tag = new Tag(name, message);
 	return storage()->append(tag);
@@ -310,7 +310,7 @@ bool TagStorage::append(const QString &name,
 
 bool TagStorage::update(int which, 
 			const QString &name,
-			const QtMobility::QNdefMessage &message)
+			const QNdefMessage &message)
 {
 	Tag *tag = new Tag(name, message);
 	return storage()->update(which, tag);
