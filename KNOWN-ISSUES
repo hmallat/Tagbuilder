@@ -1,0 +1,4 @@
+* When creating a Bluetooth tag, the class of device for BT devices
+  paired via NFC touch will be zero, because for those devices the
+  bluetooth daemon did not perform a scan. 
+
