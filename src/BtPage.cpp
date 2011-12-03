@@ -23,7 +23,6 @@
 #include <MContentItem>
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
-#include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
 
@@ -45,25 +44,11 @@ BtPage::BtPage(BluezSupplicant *bluez, int tag, QGraphicsItem *parent)
 	  m_device(0),
 	  m_cancelAction(0),
 	  m_storeAction(0),
-	  m_discovery(new QBluetoothDeviceDiscoveryAgent(this)),
 	  m_bluez(bluez)
 				  
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
-	connect(m_discovery, 
-		SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo &)),
-		this, 
-		SLOT(deviceDiscovered(const QBluetoothDeviceInfo &)));
-
-	connect(m_discovery, 
-		SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)),
-		this, 
-		SLOT(discoveryError(QBluetoothDeviceDiscoveryAgent::Error)));
-
-	connect(m_discovery, SIGNAL(finished()),
-		this, SLOT(discoveryFinished()));
-
 }
 
 BtPage::~BtPage(void)
@@ -200,24 +185,12 @@ void BtPage::chooseExistingBT(void)
 
 void BtPage::chooseScannedBT(void)
 {
-	mDebug(__func__) << "Starting discovery...";
-	/* TODO: should bring up a list popup here */
-	m_discovery->start();
-}
-
-void BtPage::deviceDiscovered(const QBluetoothDeviceInfo &info)
-{
-	mDebug(__func__) << "Found " << info.address().toString();
-}
-
-void BtPage::discoveryError(QBluetoothDeviceDiscoveryAgent::Error err)
-{
-	mDebug(__func__) << "Error " << err;
-}
-
-void BtPage::discoveryFinished(void)
-{
-	mDebug(__func__) << "done. ";
+	BtSelectionPage *page = 
+		new BtSelectionPage(m_bluez, 
+				    BtSelectionPage::SelectFromScanned);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const QBluetoothDeviceInfo)),
+		this, SLOT(setDevice(const QBluetoothDeviceInfo)));
 }
 
 void BtPage::setDevice(const QBluetoothDeviceInfo info)

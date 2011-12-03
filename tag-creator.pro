@@ -23,6 +23,7 @@ HEADERS		+= \
 		src/BtSelectionPage.h \
 		src/BtSelectionPageListCellCreator.h \
 		src/BtSelectionPageExistingListModel.h \
+		src/BtSelectionPageScanListModel.h \
 		src/BtSelectionPageListModel.h \
 		src/CreatePage.h \
 		src/LabeledTextEdit.h \
@@ -46,6 +47,7 @@ SOURCES		+= \
 		src/BtSelectionPage.cpp \
 		src/BtSelectionPageListCellCreator.cpp \
 		src/BtSelectionPageExistingListModel.cpp \
+		src/BtSelectionPageScanListModel.cpp \
 		src/BtSelectionPageListModel.cpp \
 		src/CreatePage.cpp \
 		src/LabeledTextEdit.cpp \

@@ -35,6 +35,7 @@ extern "C"
 BluezSupplicant::BluezSupplicant(QObject *parent)
 	: QObject(parent),
 	  m_started(false),
+	  m_scanning(false),
 	  m_initialized(false),
 	  m_pendingCalls(0),
 	  m_sys(QDBusConnection::systemBus()),
@@ -44,7 +45,8 @@ BluezSupplicant::BluezSupplicant(QObject *parent)
 				       m_sys,
 				       this)),
 	  m_adapter(0),
-	  m_devices()
+	  m_devices(),
+	  m_scannedDevices()
 {
 }
 
@@ -304,26 +306,112 @@ void BluezSupplicant::deviceUpdated(const QDBusObjectPath which)
 	Q_EMIT(bluezDeviceUpdated(which));
 }
 
-const BluezDevice *BluezSupplicant::device(QDBusObjectPath which) const
+QBluetoothDeviceInfo BluezSupplicant::device(QDBusObjectPath which) const
 {
 	for (int i = 0; i < m_devices.length(); i++) {
 		if (m_devices[i]->path().path() == which.path()) {
-			return m_devices[i];
+			return m_devices[i]->toBluetoothDeviceInfo();
 		}
 	}
 
-	return 0;
+	return QBluetoothDeviceInfo();
 }
 
-QList<const BluezDevice *> BluezSupplicant::devices(void) const
+QList< QPair<QDBusObjectPath, QBluetoothDeviceInfo> > 
+BluezSupplicant::devices(void) const
 {
-	QList<const BluezDevice *> list;
+	QList< QPair<QDBusObjectPath, QBluetoothDeviceInfo> > list;
 
 	for (int i = 0; i < m_devices.length(); i++) {
-		list << m_devices[i];
+		QPair<QDBusObjectPath, QBluetoothDeviceInfo> 
+			pair(m_devices[i]->path(), 
+			     m_devices[i]->toBluetoothDeviceInfo());
+		list << pair;
 	}
 
 	return list;
 }
 
+bool BluezSupplicant::beginScan(void)
+{
+	if (isInitialized() == false) {
+		mDebug("Not yet initialized. ");
+		return false;
+	}
+
+	if (m_scanning == true) {
+		mDebug(__func__) << "Already scanning. ";
+		return true;
+	}
+
+	m_sys.connect("org.bluez",
+		      m_adapter->path(),
+		      "org.bluez.Adapter",
+		      "DeviceFound",
+		      this,
+		      SLOT(deviceFound(const QString, 
+				       const QMap<QString, QVariant>)));
+	
+	m_sys.connect("org.bluez",
+		      m_adapter->path(),
+		      "org.bluez.Adapter",
+		      "DeviceLost",
+		      this,
+		      SLOT(deviceRemoved(const QString)));
+	
+	m_adapter->asyncCall("StartDiscovery");
+
+	m_scanning = true;
+
+	return true;
+}
+
+void BluezSupplicant::endScan(void)
+{
+	if (isInitialized() == false) {
+		mDebug("Not yet initialized. ");
+		return;
+	}
+
+	if (m_scanning == false) {
+		mDebug(__func__) << "Already not scanning. ";
+		return;
+	}
+
+	m_sys.disconnect("org.bluez",
+			 m_adapter->path(),
+			 "org.bluez.Adapter",
+			 "DeviceFound",
+			 this,
+			 SLOT(deviceFound(const QString, 
+					  const QMap<QString, QVariant>)));
+	
+	m_sys.disconnect("org.bluez",
+			 m_adapter->path(),
+			 "org.bluez.Adapter",
+			 "DeviceLost",
+			 this,
+			 SLOT(deviceRemoved(const QString)));
+	
+	m_adapter->asyncCall("StopDiscovery");
+
+	while (m_scannedDevices.length() != 0) {
+		BluezDevice *device = m_scannedDevices.takeFirst();
+		delete device;
+	}
+
+	m_scanning = false;
+}
+
+void BluezSupplicant::deviceFound(const QString address, 
+				  const QMap<QString, QVariant> properties)
+{
+	(void) properties;
+	mDebug(__func__) << "Found " << address;
+}
+
+void BluezSupplicant::deviceLost(const QString address)
+{
+	mDebug(__func__) << "Lost " << address;
+}
 

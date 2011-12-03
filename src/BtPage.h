@@ -10,7 +10,6 @@
 #define _BT_PAGE_H_
 
 #include <MApplicationPage>
-#include <QBluetoothDeviceDiscoveryAgent>
 #include <QBluetoothDeviceInfo>
 
 class LabeledTextEdit;
@@ -47,12 +46,6 @@ private Q_SLOTS:
 
 	void chooseScannedBT(void);
 
-	void deviceDiscovered(const QBluetoothDeviceInfo &info);
-	
-	void discoveryError(QBluetoothDeviceDiscoveryAgent::Error err);
-
-	void discoveryFinished(void);
-
 	void setDevice(const QBluetoothDeviceInfo info);
 
 private:
@@ -68,8 +61,6 @@ private:
 	MAction *m_cancelAction;
 
 	MAction *m_storeAction;
-
-	QBluetoothDeviceDiscoveryAgent *m_discovery;
 
 	QBluetoothDeviceInfo m_info;
 

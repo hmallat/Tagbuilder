@@ -9,6 +9,7 @@
 #include "BtSelectionPage.h"
 #include "BtSelectionPageListCellCreator.h"
 #include "BtSelectionPageExistingListModel.h"
+#include "BtSelectionPageScanListModel.h"
 #include "BluezSupplicant.h"
 
 #include <QGraphicsAnchorLayout>
@@ -25,8 +26,8 @@ BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
 	  m_model(0)
 {
 	m_model = (type == SelectFromExisting)
-		? new BtSelectionPageExistingListModel(bluez, this)
-		: 0 /* TODO */;
+		? static_cast<BtSelectionPageListModel *>(new BtSelectionPageExistingListModel(bluez, this))
+		: static_cast<BtSelectionPageListModel *>(new BtSelectionPageScanListModel(bluez, this));
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
 }

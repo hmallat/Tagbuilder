@@ -14,13 +14,17 @@
 #define _BLUEZ_SUPPLICANT_H_
 
 #include <QObject>
+#include <QPair>
 #include <QDBusObjectPath>
 #include <QDBusConnection>
 #include <QDBusVariant>
+#include <QBluetoothDeviceInfo>
 
 class BluezDevice;
 class QDBusInterface;
 class QDBusPendingCallWatcher;
+
+QTM_USE_NAMESPACE;
 
 class BluezSupplicant : public QObject
 {
@@ -37,9 +41,14 @@ public:
 
 	bool isInitialized(void) const;
 
-	const BluezDevice *device(QDBusObjectPath which) const;
+	QBluetoothDeviceInfo device(QDBusObjectPath which) const;
 	
-	QList<const BluezDevice *> devices(void) const;
+	QList< QPair<QDBusObjectPath, QBluetoothDeviceInfo> > 
+		devices(void) const;
+
+	bool beginScan(void);
+
+	void endScan(void);
 
 signals:
 
@@ -54,6 +63,10 @@ signals:
 	void bluezDeviceRemoved(QDBusObjectPath which);
 
 	void bluezDeviceUpdated(QDBusObjectPath which);
+
+	void bluezDeviceFound(QDBusObjectPath which);
+
+	void bluezDeviceLost(QDBusObjectPath which);
 
 private Q_SLOTS:
 
@@ -71,6 +84,10 @@ private Q_SLOTS:
 
 	void deviceUpdated(const QDBusObjectPath which);
 
+	void deviceFound(const QString, const QMap<QString, QVariant>);
+
+	void deviceLost(const QString);
+
 private:
 
 	Q_DISABLE_COPY(BluezSupplicant);
@@ -80,6 +97,8 @@ private:
 	void callFinished(void);
 
 	bool m_started;
+
+	bool m_scanning;
 
 	bool m_initialized;
 
@@ -92,6 +111,8 @@ private:
 	QDBusInterface *m_adapter;
 
 	QList<BluezDevice *> m_devices;
+
+	QList<BluezDevice *> m_scannedDevices;
 
 };
 

@@ -11,6 +11,9 @@
 
 #include <QAbstractListModel>
 #include <QBluetoothDeviceInfo>
+#include <QDBusObjectPath>
+
+class BluezSupplicant;
 
 QTM_USE_NAMESPACE;
 
@@ -21,7 +24,8 @@ class BtSelectionPageListModel : public QAbstractListModel
 
 public:
 
-	BtSelectionPageListModel(QObject *parent = 0);
+	BtSelectionPageListModel(BluezSupplicant *bluez,
+				 QObject *parent = 0);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -31,17 +35,15 @@ public:
 
 	const QString icon(const QModelIndex &index) const;
 
-	virtual QBluetoothDeviceInfo device(const QModelIndex &index) const = 0;
+	QBluetoothDeviceInfo device(const QModelIndex &index) const;
 
-private:
+protected:
 
-	virtual int modelRowCount(const QModelIndex &parent = QModelIndex()) const = 0;
+	BluezSupplicant *m_bluez;
 
-	virtual QVariant indexData(const QModelIndex &index, int role) const = 0;
+	QList<QDBusObjectPath> m_device_ids;
 
-	virtual QString indexName(const QModelIndex &index) const = 0;
-
-	virtual QString indexIcon(const QModelIndex &index) const = 0;
+	QMap<QDBusObjectPath, QBluetoothDeviceInfo> m_devices;
 
 };
 

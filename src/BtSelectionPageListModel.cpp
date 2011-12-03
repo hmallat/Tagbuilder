@@ -8,28 +8,55 @@
 
 #include "BtSelectionPageListModel.h"
 
-BtSelectionPageListModel::BtSelectionPageListModel(QObject *parent)
-	: QAbstractListModel(parent)
+#include <QDBusObjectPath>
+#include <QStringList>
+#include <QBluetoothAddress>
+
+QTM_USE_NAMESPACE;
+
+BtSelectionPageListModel::BtSelectionPageListModel(BluezSupplicant *bluez,
+						   QObject *parent)
+	: QAbstractListModel(parent),
+	  m_bluez(bluez)
 {
 }
 
 int BtSelectionPageListModel::rowCount(const QModelIndex &parent) const
 {
-	return modelRowCount(parent);
+	(void) parent;
+	return m_device_ids.length();
 }
 
 QVariant BtSelectionPageListModel::data(const QModelIndex &index, 
 					int role) const
 {
-	return indexData(index, role);
+	(void) role;
+
+	QDBusObjectPath path = m_device_ids[index.row()];
+	QBluetoothDeviceInfo info = m_devices[path];
+	QStringList parameters;
+	parameters 
+		<< info.name() 
+		<< info.address().toString() 
+		<< "icon-m-content-bluetooth" /* TODO */;
+	return qVariantFromValue(parameters);
 }
 
 const QString BtSelectionPageListModel::name(const QModelIndex &index) const
 {
-	return indexName(index);
+	QDBusObjectPath path = m_device_ids[index.row()];
+	QBluetoothDeviceInfo info = m_devices[path];
+	return info.name();
 }
 
 const QString BtSelectionPageListModel::icon(const QModelIndex &index) const
 {
-	return indexIcon(index);
+	(void)index;
+	return "icon-m-content-bluetooth" /* TODO */;
+}
+
+QBluetoothDeviceInfo BtSelectionPageListModel::device(const QModelIndex &index) const
+{
+	QDBusObjectPath path = m_device_ids[index.row()];
+	return m_devices[path];
 }
