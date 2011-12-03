@@ -30,6 +30,10 @@ public:
 
 	BluezDevice(const QDBusObjectPath path, QObject *parent = 0);
 
+	BluezDevice(const QString address,
+		    QMap<QString, QVariant> properties,
+		    QObject *parent = 0);
+
 	~BluezDevice(void);
 
 	const QDBusObjectPath path(void) const;

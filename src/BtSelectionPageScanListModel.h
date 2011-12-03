@@ -10,7 +10,6 @@
 #define _BT_SELECTION_PAGE_SCAN_LIST_MODEL_H_
 
 #include "BtSelectionPageListModel.h"
-#include <QDBusObjectPath>
 
 class BtSelectionPageScanListModel : public BtSelectionPageListModel
 {
@@ -28,9 +27,9 @@ private slots:
 
 	void initialized(void);
 
-	void deviceFound(QDBusObjectPath which);
+	void deviceFound(QString which);
 
-	void deviceLost(QDBusObjectPath which);
+	void deviceLost(QString which);
 
 };
 

@@ -406,12 +406,73 @@ void BluezSupplicant::endScan(void)
 void BluezSupplicant::deviceFound(const QString address, 
 				  const QMap<QString, QVariant> properties)
 {
-	(void) properties;
-	mDebug(__func__) << "Found " << address;
+	mDebug(__func__) << "ENTER";
+
+	for (int i = 0; i < m_scannedDevices.length(); i++) {
+		if (m_scannedDevices[i]->address() == address) {
+			mDebug(__func__) 
+				<< "Device " << address << " "
+				<< "already known, not adding twice. ";
+			return;
+		}
+	}
+
+	BluezDevice *device = new BluezDevice(address, properties, this);
+	m_scannedDevices << device;
+
+	mDebug(__func__) << "Device " << address << " added. ";
+	Q_EMIT(bluezDeviceFound(address));
 }
 
 void BluezSupplicant::deviceLost(const QString address)
 {
-	mDebug(__func__) << "Lost " << address;
+	mDebug(__func__) << "ENTER";
+
+	int i;
+
+	for (i = 0; i < m_scannedDevices.length(); i++) {
+		if (m_scannedDevices[i]->address() == address) {
+			break;
+		}
+	}
+
+	if (i == m_scannedDevices.length()) {
+		mDebug(__func__) 
+			<< "Device " << address << " "
+			<< "not known, not removing. ";
+		return;
+	}
+
+	BluezDevice *device = m_scannedDevices[i];
+	m_scannedDevices.removeAt(i);
+	delete device;
+	
+	mDebug(__func__) << "Device " << address << " removed. ";
+	Q_EMIT(bluezDeviceLost(address));
 }
 
+QBluetoothDeviceInfo BluezSupplicant::scannedDevice(QString which) const
+{
+	for (int i = 0; i < m_scannedDevices.length(); i++) {
+		if (m_scannedDevices[i]->address() == which) {
+			return m_scannedDevices[i]->toBluetoothDeviceInfo();
+		}
+	}
+
+	return QBluetoothDeviceInfo();
+}
+
+QList< QPair<QString, QBluetoothDeviceInfo> > 
+BluezSupplicant::scannedDevices(void) const
+{
+	QList< QPair<QString, QBluetoothDeviceInfo> > list;
+
+	for (int i = 0; i < m_scannedDevices.length(); i++) {
+		QPair<QString, QBluetoothDeviceInfo> 
+			pair(m_scannedDevices[i]->address(), 
+			     m_scannedDevices[i]->toBluetoothDeviceInfo());
+		list << pair;
+	}
+
+	return list;
+}

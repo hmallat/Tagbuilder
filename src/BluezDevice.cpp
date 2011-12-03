@@ -48,6 +48,27 @@ BluezDevice::BluezDevice(const QDBusObjectPath path, QObject *parent)
 
 }
 
+BluezDevice::BluezDevice(const QString address,
+			 QMap<QString, QVariant> properties,
+			 QObject *parent)
+	: QObject(parent),
+	  m_sys(QDBusConnection::systemBus()),
+	  m_path("/fake"),
+	  m_interface(0),
+	  m_address(address),
+	  m_name(""),
+	  m_alias(""),
+	  m_cod(0)
+{
+	QMapIterator<QString, QVariant> p(properties);
+	while(p.hasNext()) {
+		p.next();
+		QString name = p.key();
+		QVariant value = p.value();
+		propertyChanged(name, value);
+	}
+}
+
 BluezDevice::~BluezDevice(void)
 {
 }

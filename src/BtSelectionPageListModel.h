@@ -11,7 +11,6 @@
 
 #include <QAbstractListModel>
 #include <QBluetoothDeviceInfo>
-#include <QDBusObjectPath>
 
 class BluezSupplicant;
 
@@ -41,9 +40,9 @@ protected:
 
 	BluezSupplicant *m_bluez;
 
-	QList<QDBusObjectPath> m_device_ids;
+	QList<QString> m_device_ids;
 
-	QMap<QDBusObjectPath, QBluetoothDeviceInfo> m_devices;
+	QMap<QString, QBluetoothDeviceInfo> m_devices;
 
 };
 

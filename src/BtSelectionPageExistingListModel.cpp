@@ -40,15 +40,15 @@ void BtSelectionPageExistingListModel::initialized(void)
 	QList< QPair<QDBusObjectPath, QBluetoothDeviceInfo> > 
 		devices = m_bluez->devices();
 	for (int i = 0; i < devices.length(); i++) {
-		m_device_ids << devices[i].first;
-		m_devices[devices[i].first] = devices[i].second;
+		m_device_ids << devices[i].first.path();
+		m_devices[devices[i].first.path()] = devices[i].second;
 	}
 }
 
 void BtSelectionPageExistingListModel::deviceCreated(QDBusObjectPath which)
 {
 	for (int i = 0; i < m_device_ids.length(); i++) {
-		if (m_device_ids[i] == which) {
+		if (m_device_ids[i] == which.path()) {
 			mDebug(__func__) 
 				<< "Device created but already known, "
 				<< "ignoring. ";
@@ -65,17 +65,17 @@ void BtSelectionPageExistingListModel::deviceCreated(QDBusObjectPath which)
 	beginInsertRows(QModelIndex(), 
 			m_device_ids.length(), 
 			m_device_ids.length());
-	m_device_ids << which;
-	m_devices[which] = created;
+	m_device_ids << which.path();
+	m_devices[which.path()] = created;
 	endInsertRows();
 }
 
 void BtSelectionPageExistingListModel::deviceRemoved(QDBusObjectPath which)
 {
 	for (int i = 0; i < m_device_ids.length(); i++) {
-		if (m_device_ids[i] == which) {
+		if (m_device_ids[i] == which.path()) {
 			beginRemoveRows(QModelIndex(), i, i);
-			m_devices.remove(which);
+			m_devices.remove(which.path());
 			m_device_ids.removeAt(i);
 			endRemoveRows();
 			return;
@@ -94,8 +94,8 @@ void BtSelectionPageExistingListModel::deviceUpdated(QDBusObjectPath which)
 	} 
 
 	for (int i = 0; i < m_device_ids.length(); i++) {
-		if (m_device_ids[i] == which) {
-			m_devices[which] = changed;
+		if (m_device_ids[i] == which.path()) {
+			m_devices[which.path()] = changed;
 			dataChanged(createIndex(i, 0), createIndex(i, 0));
 			return;
 		}

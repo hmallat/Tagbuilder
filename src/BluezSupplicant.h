@@ -50,6 +50,11 @@ public:
 
 	void endScan(void);
 
+	QBluetoothDeviceInfo scannedDevice(QString which) const;
+	
+	QList< QPair<QString, QBluetoothDeviceInfo> > 
+		scannedDevices(void) const;
+
 signals:
 
 	void initialized(void);
@@ -64,9 +69,9 @@ signals:
 
 	void bluezDeviceUpdated(QDBusObjectPath which);
 
-	void bluezDeviceFound(QDBusObjectPath which);
+	void bluezDeviceFound(QString which);
 
-	void bluezDeviceLost(QDBusObjectPath which);
+	void bluezDeviceLost(QString which);
 
 private Q_SLOTS:
 

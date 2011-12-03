@@ -34,33 +34,58 @@ BtSelectionPageScanListModel::~BtSelectionPageScanListModel(void)
 
 void BtSelectionPageScanListModel::initialized(void)
 {
-	connect(m_bluez, SIGNAL(bluezDeviceCreated(QDBusObjectPath)),
-		this, SLOT(deviceFound(QDBusObjectPath)));
+	connect(m_bluez, SIGNAL(bluezDeviceFound(QString)),
+		this, SLOT(deviceFound(QString)));
 
-	connect(m_bluez, SIGNAL(bluezDeviceRemoved(QDBusObjectPath)),
-		this, SLOT(deviceLost(QDBusObjectPath)));
+	connect(m_bluez, SIGNAL(bluezDeviceLost(QString)),
+		this, SLOT(deviceLost(QString)));
 
-#if 0
-	QList< QPair<QDBusObjectPath, QBluetoothDeviceInfo> > 
-		devices = m_bluez->scannedDevices();
-	for (int i = 0; i < devices.length(); i++) {
-		m_device_ids << devices[i].first;
-		m_devices[devices[i].first] = devices[i].second;
+	QList< QPair<QString, QBluetoothDeviceInfo> > 
+		scannedDevices = m_bluez->scannedDevices();
+	for (int i = 0; i < scannedDevices.length(); i++) {
+		m_device_ids << scannedDevices[i].first;
+		m_devices[scannedDevices[i].first] = scannedDevices[i].second;
 	}
-#endif
 
 	m_bluez->beginScan();
 }
 
-void BtSelectionPageScanListModel::deviceFound(QDBusObjectPath which)
+void BtSelectionPageScanListModel::deviceFound(QString which)
 {
-	(void) which;
-	/* TODO */
+	for (int i = 0; i < m_device_ids.length(); i++) {
+		if (m_device_ids[i] == which) {
+			mDebug(__func__) 
+				<< "Device found but already known, "
+				<< "ignoring. ";
+			return;
+		}
+	}
+
+	QBluetoothDeviceInfo created = m_bluez->scannedDevice(which);
+	if (created.isValid() == false) {
+		mDebug(__func__) << "Device found but not found, ignoring. ";
+		return;
+	} 
+
+	beginInsertRows(QModelIndex(), 
+			m_device_ids.length(), 
+			m_device_ids.length());
+	m_device_ids << which;
+	m_devices[which] = created;
+	endInsertRows();
 }
 
-void BtSelectionPageScanListModel::deviceLost(QDBusObjectPath which)
+void BtSelectionPageScanListModel::deviceLost(QString which)
 {
-	(void) which;
-	/* TODO */
-}
+	for (int i = 0; i < m_device_ids.length(); i++) {
+		if (m_device_ids[i] == which) {
+			beginRemoveRows(QModelIndex(), i, i);
+			m_devices.remove(which);
+			m_device_ids.removeAt(i);
+			endRemoveRows();
+			return;
+		}
+	}
 
+	mDebug(__func__) << "Device lost but not found, ignoring. ";
+}
