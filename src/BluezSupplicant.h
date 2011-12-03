@@ -17,13 +17,10 @@
 #include <QDBusObjectPath>
 #include <QDBusConnection>
 #include <QDBusVariant>
-#include <QBluetoothDeviceInfo>
 
 class BluezDevice;
 class QDBusInterface;
 class QDBusPendingCallWatcher;
-
-QTM_USE_NAMESPACE;
 
 class BluezSupplicant : public QObject
 {
@@ -38,11 +35,11 @@ public:
 
 	void start(void);
 
-	bool isInitialized(void);
+	bool isInitialized(void) const;
 
-	QBluetoothDeviceInfo device(QDBusObjectPath which);
+	const BluezDevice *device(QDBusObjectPath which) const;
 	
-	QList<QBluetoothDeviceInfo> devices(void);
+	QList<const BluezDevice *> devices(void) const;
 
 signals:
 

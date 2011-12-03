@@ -12,6 +12,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
+#include <QBluetoothAddress>
 
 #include <MDebug>
 
@@ -132,3 +133,11 @@ void BluezDevice::propertyChanged(const QString name, const QDBusVariant value)
 	mDebug(__func__) << "ENTER";
 	propertyChanged(name, value.variant());
 }
+
+QBluetoothDeviceInfo BluezDevice::toBluetoothDeviceInfo(void) const
+{
+	return QBluetoothDeviceInfo(QBluetoothAddress(address()),
+				    alias(),
+				    cod());
+}
+

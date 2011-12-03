@@ -8,6 +8,7 @@
 
 #include "BtSelectionPageExistingListModel.h"
 #include "BluezSupplicant.h"
+#include "BluezDevice.h"
 
 #include <QStringList>
 #include <QBluetoothAddress>
@@ -30,34 +31,76 @@ BtSelectionPageExistingListModel(BluezSupplicant *bluez, QObject *parent)
 	connect(m_bluez, SIGNAL(bluezDeviceUpdated(QDBusObjectPath)),
 		this, SLOT(deviceUpdated(QDBusObjectPath)));
 
-	m_devices = bluez->devices();
+	QList<const BluezDevice *> devices = bluez->devices();
+	for (int i = 0; i < devices.length(); i++) {
+		m_device_ids << devices[i]->path();
+		m_devices[devices[i]->path()] =
+			devices[i]->toBluetoothDeviceInfo();
+	}
+
 }
 
 void BtSelectionPageExistingListModel::deviceCreated(QDBusObjectPath which)
 {
-	(void) which;
-	/* TODO */
-	mDebug(__func__) << "device created, should update. ";
+	for (int i = 0; i < m_device_ids.length(); i++) {
+		if (m_device_ids[i] == which) {
+			mDebug(__func__) 
+				<< "Device created but already known, "
+				<< "ignoring. ";
+			return;
+		}
+	}
+
+	const BluezDevice *created = m_bluez->device(which);
+	if (created == 0) {
+		mDebug(__func__) << "Device created but not found, ignoring. ";
+		return;
+	} 
+
+	beginInsertRows(QModelIndex(), 
+			m_device_ids.length(), 
+			m_device_ids.length());
+	m_device_ids << which;
+	m_devices[which] = created->toBluetoothDeviceInfo();
+	endInsertRows();
 }
 
 void BtSelectionPageExistingListModel::deviceRemoved(QDBusObjectPath which)
 {
-	(void) which;
-	/* TODO */
-	mDebug(__func__) << "device removed, should update. ";
+	for (int i = 0; i < m_device_ids.length(); i++) {
+		if (m_device_ids[i] == which) {
+			beginRemoveRows(QModelIndex(), i, i);
+			m_devices.remove(which);
+			m_device_ids.removeAt(i);
+			endRemoveRows();
+			return;
+		}
+	}
+
+	mDebug(__func__) << "Device removed but not found, ignoring. ";
 }
 
 void BtSelectionPageExistingListModel::deviceUpdated(QDBusObjectPath which)
 {
-	(void) which;
-	/* TODO */
-	mDebug(__func__) << "device changed, should update. ";
+	const BluezDevice *changed = m_bluez->device(which);
+	if (changed == 0) {
+		mDebug(__func__) << "Device changed but not found, ignoring. ";
+		return;
+	} 
+
+	for (int i = 0; i < m_device_ids.length(); i++) {
+		if (m_device_ids[i] == which) {
+			m_devices[which] = changed->toBluetoothDeviceInfo();
+			dataChanged(createIndex(i, 0), createIndex(i, 0));
+			return;
+		}
+	}
 }
 
 int BtSelectionPageExistingListModel::modelRowCount(const QModelIndex &parent) const
 {
 	(void) parent;
-	return m_devices.length();
+	return m_device_ids.length();
 }
 
 QVariant BtSelectionPageExistingListModel::indexData(const QModelIndex &index,
@@ -65,7 +108,8 @@ QVariant BtSelectionPageExistingListModel::indexData(const QModelIndex &index,
 {
 	(void) role;
 
-	QBluetoothDeviceInfo info = m_devices[index.row()];
+	QDBusObjectPath path = m_device_ids[index.row()];
+	QBluetoothDeviceInfo info = m_devices[path];
 	QStringList parameters;
 	parameters 
 		<< info.name() 
@@ -76,7 +120,8 @@ QVariant BtSelectionPageExistingListModel::indexData(const QModelIndex &index,
 
 QString BtSelectionPageExistingListModel::indexName(const QModelIndex &index) const 
 {
-	QBluetoothDeviceInfo info = m_devices[index.row()];
+	QDBusObjectPath path = m_device_ids[index.row()];
+	QBluetoothDeviceInfo info = m_devices[path];
 	return info.name();
 }
 
@@ -89,5 +134,6 @@ QString BtSelectionPageExistingListModel::indexIcon(const QModelIndex &index) co
 
 QBluetoothDeviceInfo BtSelectionPageExistingListModel::device(const QModelIndex &index) const
 {
-	return m_devices[index.row()];
+	QDBusObjectPath path = m_device_ids[index.row()];
+	return m_devices[path];
 }

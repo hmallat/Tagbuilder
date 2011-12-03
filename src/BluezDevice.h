@@ -12,11 +12,14 @@
 #include <QObject>
 #include <QDBusObjectPath>
 #include <QDBusConnection>
+#include <QBluetoothDeviceInfo>
 
 class QDBusInterface;
 class QDBusVariant;
 class QDBusPendingCallWatcher;
 class QDBusVariant;
+
+QTM_USE_NAMESPACE;
 
 class BluezDevice : public QObject
 {
@@ -40,6 +43,8 @@ public:
 	const QString alias(void) const;
 
 	uint cod(void) const;
+
+	QBluetoothDeviceInfo toBluetoothDeviceInfo(void) const;
 
 signals:
 

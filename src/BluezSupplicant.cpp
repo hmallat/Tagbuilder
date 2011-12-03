@@ -66,7 +66,7 @@ void BluezSupplicant::callFinished(void)
 	}
 }
 
-bool BluezSupplicant::isInitialized(void)
+bool BluezSupplicant::isInitialized(void) const
 {
 	return m_initialized;
 }
@@ -304,29 +304,23 @@ void BluezSupplicant::deviceUpdated(const QDBusObjectPath which)
 	Q_EMIT(bluezDeviceUpdated(which));
 }
 
-QBluetoothDeviceInfo BluezSupplicant::device(QDBusObjectPath which)
+const BluezDevice *BluezSupplicant::device(QDBusObjectPath which) const
 {
 	for (int i = 0; i < m_devices.length(); i++) {
 		if (m_devices[i]->path().path() == which.path()) {
-			QBluetoothAddress address(m_devices[i]->address());
-			return QBluetoothDeviceInfo(address,
-						    m_devices[i]->alias(),
-						    m_devices[i]->cod());
+			return m_devices[i];
 		}
 	}
 
-	return QBluetoothDeviceInfo();
+	return 0;
 }
 
-QList<QBluetoothDeviceInfo> BluezSupplicant::devices(void)
+QList<const BluezDevice *> BluezSupplicant::devices(void) const
 {
-	QList<QBluetoothDeviceInfo> list;
+	QList<const BluezDevice *> list;
 
 	for (int i = 0; i < m_devices.length(); i++) {
-		QBluetoothAddress address(m_devices[i]->address());
-		list << QBluetoothDeviceInfo(address,
-					     m_devices[i]->alias(),
-					     m_devices[i]->cod());
+		list << m_devices[i];
 	}
 
 	return list;

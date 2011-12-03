@@ -139,7 +139,7 @@ void BtPage::createContent(void)
 			this, SLOT(choosePhoneBT()));
 
 		MButton *pick_button = 
-			new MButton(tr("Choose a paired device"));
+			new MButton(tr("Choose a known device"));
 		sub_layout->addItem(pick_button);
 		connect(pick_button, SIGNAL(clicked()),
 			this, SLOT(chooseExistingBT()));

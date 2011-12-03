@@ -12,6 +12,7 @@
 #include "BtSelectionPageListModel.h"
 #include <QBluetoothDeviceInfo>
 #include <QDBusObjectPath>
+#include <QMap>
 #include <QList>
 
 QTM_USE_NAMESPACE;
@@ -51,7 +52,9 @@ private:
 
 	BluezSupplicant *m_bluez;
 
-	QList<QBluetoothDeviceInfo> m_devices;
+	QList<QDBusObjectPath> m_device_ids;
+
+	QMap<QDBusObjectPath, QBluetoothDeviceInfo> m_devices;
 
 };
 
