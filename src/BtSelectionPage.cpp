@@ -36,7 +36,8 @@ BtSelectionPage::~BtSelectionPage(void)
 
 void BtSelectionPage::createContent(void)
 {
-	createCommonContent(tr("<big>Select the device to use</big>"));
+	createCommonContent(tr("<big>Select the device to use</big>"),
+			    false);
 
 	BtSelectionPageListCellCreator *creator = 
 		new BtSelectionPageListCellCreator;

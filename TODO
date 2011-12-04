@@ -3,8 +3,12 @@
 * writing of tags to work
 * create/edit pages for all types
 * help/about 
-* BT content item should be disabled (blinks when touched)
-* Don't allow storing of BT record if invalid device info
+* BT/Contacts content item should be disabled (blinks when touched)
+* Don't allow storing of BT/Contacts record if invalid device/contact info
 * check BT on/off/flight mode scenarios
-* progress indicator for BT scanning
+* progress indicator for BT scanning/contact fetching
 * exploratory testing
+* avatars for contacts/icons for BT devices
+* indications of error situations
+* Alpha-separators on contact list; fast scrolling?
+* If contact tag name is not edited, prefill with contact name when selected

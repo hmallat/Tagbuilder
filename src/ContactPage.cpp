@@ -87,12 +87,12 @@ void ContactPage::createContent(void)
 	layout->addItem(selected);
 	layout->setAlignment(selected, Qt::AlignLeft);
 
-	m_contact = new MContentItem();
+	m_contact = new MContentItem(MContentItem::IconAndSingleTextLabel);
 	m_contact->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	if (m_tag != -1) {
 		/* TODO */
 	} else {
-		/* TODO */
+		setContact(QContact());
 	}
 	layout->addItem(m_contact);
 	layout->setAlignment(m_contact, Qt::AlignCenter);
@@ -198,6 +198,10 @@ void ContactPage::singleContactFetched(void)
 void ContactPage::setContact(const QContact contact)
 {
 	mDebug(__func__) << contact.displayLabel();
+	m_contact->setImageID("icon-m-content-avatar-placeholder"); /* TODO */
+	m_contact->setTitle(contact.isEmpty() 
+			    ? "No one selected"
+			    : contact.displayLabel());
 }
 
 

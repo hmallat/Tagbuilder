@@ -9,14 +9,16 @@
 #ifndef _CONTACT_SELECTION_PAGE_LIST_MODEL_H_
 #define _CONTACT_SELECTION_PAGE_LIST_MODEL_H_
 
-#include <QAbstractListModel>
+#include <MAbstractItemModel>
 #include <QContactManager>
 #include <QContact>
-#include <QList>
+#include <QContactFetchRequest>
+#include <QMap>
+#include <MLocaleBuckets>
 
 QTM_USE_NAMESPACE;
 
-class ContactSelectionPageListModel : public QAbstractListModel
+class ContactSelectionPageListModel : public MAbstractItemModel
 {
 
 	Q_OBJECT;
@@ -26,21 +28,33 @@ public:
 	ContactSelectionPageListModel(QContactManager *manager,
 				      QObject *parent = 0);
 
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	virtual int groupCount(void) const;
 
-	QVariant data(const QModelIndex &index, int role) const;
+	virtual int rowCountInGroup(int group) const;
 
-	const QString name(const QModelIndex &index) const;
+	virtual QString groupTitle(int group) const;
 
-	const QString icon(const QModelIndex &index) const;
+	virtual QVariant itemData(int row, 
+				  int group, 
+				  int role = Qt::DisplayRole) const;
 
 	QContact contact(const QModelIndex &index) const;
+
+protected Q_SLOTS:
+
+	void resultsAvailable(void);
+
+	void stateChanged(QContactAbstractRequest::State);
 
 protected:
 
 	QContactManager *m_manager;
 
-	QList<QContact> m_contacts;
+	QContactFetchRequest *m_fetch;
+
+	QMap<QString, QContact> m_contacts;
+
+	MLocaleBuckets m_buckets;
 
 };
 

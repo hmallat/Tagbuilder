@@ -30,7 +30,8 @@ ContactSelectionPage::~ContactSelectionPage(void)
 
 void ContactSelectionPage::createContent(void)
 {
-	createCommonContent(tr("<big>Select the contact to use</big>"));
+  createCommonContent(tr("<big>Select the contact to use</big>"),
+		      true);
 
 	ContactSelectionPageListCellCreator *creator = 
 		new ContactSelectionPageListCellCreator;

@@ -17,5 +17,5 @@ void ContactSelectionPageListCellCreator::updateCell(const QModelIndex &index,
 	QVariant data = index.data(Qt::DisplayRole);
 	QStringList parameters = data.value<QStringList>();
 	contentItem->setTitle(parameters[0]);
-	/* TODO: set icon too? Set content item style? */
+	contentItem->setImageID(parameters[1]); 
 }

@@ -31,7 +31,7 @@ void SelectionPage::createContent(void)
 {
 }
 
-void SelectionPage::createCommonContent(QString title)
+void SelectionPage::createCommonContent(QString title, bool groupedList)
 {
 	MAction *cancelAction = new MAction(tr("Cancel"), this);
 	cancelAction->setLocation(MAction::ToolBarLocation);
@@ -49,6 +49,9 @@ void SelectionPage::createCommonContent(QString title)
 				 layout, Qt::TopLeftCorner);
 
 	m_list = new MList();
+	if (groupedList) {
+		m_list->setShowGroups(true);
+	}
 
 	MPannableViewport *view = new MPannableViewport();
 	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);

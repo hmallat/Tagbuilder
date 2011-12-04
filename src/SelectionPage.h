@@ -28,7 +28,7 @@ public:
 
 protected:
 
-	void createCommonContent(QString title);
+	void createCommonContent(QString title, bool groupedList);
 
 	MList *m_list;
 
