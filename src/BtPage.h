@@ -68,4 +68,4 @@ private:
 
 };
 
-#endif /* _Bt_PAGE_H_ */
+#endif /* _BT_PAGE_H_ */

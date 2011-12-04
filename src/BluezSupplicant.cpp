@@ -334,8 +334,8 @@ BluezSupplicant::devices(void) const
 
 bool BluezSupplicant::beginScan(void)
 {
-	if (isInitialized() == false) {
-		mDebug("Not yet initialized. ");
+	if (isInitialized() == false || m_adapter == 0) {
+		mDebug("Not yet initialized/no adapter. ");
 		return false;
 	}
 
@@ -368,8 +368,8 @@ bool BluezSupplicant::beginScan(void)
 
 void BluezSupplicant::endScan(void)
 {
-	if (isInitialized() == false) {
-		mDebug("Not yet initialized. ");
+	if (isInitialized() == false || m_adapter == 0) {
+		mDebug("Not yet initialized/no adapter. ");
 		return;
 	}
 

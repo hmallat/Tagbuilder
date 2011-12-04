@@ -1,7 +1,10 @@
+* refactor common items in edit pages (store/cancel action etc.)
+* refactor common items in select pages
 * writing of tags to work
 * create/edit pages for all types
 * help/about 
 * BT content item should be disabled (blinks when touched)
+* Don't allow storing of BT record if invalid device info
 * check BT on/off/flight mode scenarios
 * progress indicator for BT scanning
 * exploratory testing

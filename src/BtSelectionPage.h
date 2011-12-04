@@ -9,7 +9,8 @@
 #ifndef _BT_SELECTION_PAGE_H_
 #define _BT_SELECTION_PAGE_H_
 
-#include <MApplicationPage>
+#include "SelectionPage.h"
+
 #include <QBluetoothDeviceInfo>
 
 QTM_USE_NAMESPACE;
@@ -18,7 +19,7 @@ class BluezSupplicant;
 class BtSelectionPageListModel;
 class QModelIndex;
 
-class BtSelectionPage : public MApplicationPage
+class BtSelectionPage : public SelectionPage
 {
 	Q_OBJECT;
 

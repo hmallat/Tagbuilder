@@ -22,14 +22,12 @@
 BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
 				 enum BtSelectionPage::Type type,
 				 QGraphicsItem *parent)
-	: MApplicationPage(parent),
+	: SelectionPage(parent),
 	  m_model(0)
 {
 	m_model = (type == SelectFromExisting)
 		? static_cast<BtSelectionPageListModel *>(new BtSelectionPageExistingListModel(bluez, this))
 		: static_cast<BtSelectionPageListModel *>(new BtSelectionPageScanListModel(bluez, this));
-	setComponentsDisplayMode(MApplicationPage::EscapeButton,
-				 MApplicationPageModel::Hide);
 }
 
 BtSelectionPage::~BtSelectionPage(void)
@@ -38,39 +36,13 @@ BtSelectionPage::~BtSelectionPage(void)
 
 void BtSelectionPage::createContent(void)
 {
-	MAction *cancelAction = new MAction(tr("Cancel"), this);
-	cancelAction->setLocation(MAction::ToolBarLocation);
-	connect(cancelAction, SIGNAL(triggered()),
-		this, SLOT(dismiss()));
-	addAction(cancelAction);
+	createCommonContent(tr("<big>Select the device to use</big>"));
 
-	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
-	centralWidget()->setLayout(layout);
-
-	MLabel *label = new MLabel(tr("<big>Select the device "
-				      "to use</big>"));
-	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	label->setAlignment(Qt::AlignLeft);
-	layout->addCornerAnchors(label, Qt::TopLeftCorner,
-				 layout, Qt::TopLeftCorner);
-
-	MList *list = new MList();
 	BtSelectionPageListCellCreator *creator = 
 		new BtSelectionPageListCellCreator;
-	list->setCellCreator(creator);
-	list->setItemModel(m_model);
-
-	MPannableViewport *view = new MPannableViewport();
-	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	view->setPanDirection(Qt::Vertical);
-	view->setMinimumSize(100, 100);
-	view->setWidget(list);
-	layout->addCornerAnchors(view, Qt::TopLeftCorner,
-				 label, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(view, Qt::BottomRightCorner,
-				 layout, Qt::BottomRightCorner);
-
-	connect(list, SIGNAL(itemClicked(const QModelIndex &)),
+	m_list->setCellCreator(creator);
+	m_list->setItemModel(m_model);
+	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(deviceSelected(const QModelIndex &)));
 }
 
@@ -79,6 +51,4 @@ void BtSelectionPage::deviceSelected(const QModelIndex &which)
 	dismiss();
 	Q_EMIT(selected(m_model->device(which)));
 }
-
-
 

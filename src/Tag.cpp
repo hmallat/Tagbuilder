@@ -8,6 +8,7 @@
 
 #include "Tag.h"
 #include "BtNdefRecord.h"
+#include "VCardNdefRecord.h"
 
 #include <QNdefNfcTextRecord>
 #include <QNdefNfcUriRecord>
@@ -73,6 +74,8 @@ const QString &Tag::type(void) const
 		return URL_TAG;
 	} else if (record.isRecordType<BtNdefRecord>()) {
 		return BLUETOOTH_TAG;
+	} else if (record.isRecordType<VCardNdefRecord>()) {
+		return CONTACT_TAG;
 	} else {
 		return UNKNOWN_TAG;
 	}

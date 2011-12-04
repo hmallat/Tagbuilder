@@ -1,7 +1,7 @@
 TEMPLATE	 = app
 CONFIG		+= meegotouch mobility debug
 #CONFIG		+= console
-MOBILITY	+= connectivity systeminfo
+MOBILITY	+= connectivity contacts systeminfo
 QT		+= core
 QT		+= dbus
 
@@ -25,9 +25,14 @@ HEADERS		+= \
 		src/BtSelectionPageExistingListModel.h \
 		src/BtSelectionPageScanListModel.h \
 		src/BtSelectionPageListModel.h \
+		src/ContactPage.h \
+		src/ContactSelectionPage.h \
+		src/ContactSelectionPageListCellCreator.h \
+		src/ContactSelectionPageListModel.h \
 		src/CreatePage.h \
 		src/LabeledTextEdit.h \
 		src/MainPage.h \
+		src/SelectionPage.h \
 		src/Tag.h \
 		src/TagListCellCreator.h \
 		src/TagListModel.h \
@@ -36,7 +41,8 @@ HEADERS		+= \
 		src/TagStorage.h \
 		src/TextPage.h \
 		src/TextRecordEdit.h \
-		src/UrlPage.h
+		src/UrlPage.h \
+		src/VCardNdefRecord.h
 
 SOURCES		+= \
 		src/tag-creator.cpp \
@@ -49,9 +55,14 @@ SOURCES		+= \
 		src/BtSelectionPageExistingListModel.cpp \
 		src/BtSelectionPageScanListModel.cpp \
 		src/BtSelectionPageListModel.cpp \
+		src/ContactPage.cpp \
+		src/ContactSelectionPage.cpp \
+		src/ContactSelectionPageListCellCreator.cpp \
+		src/ContactSelectionPageListModel.cpp \
 		src/CreatePage.cpp \
 		src/LabeledTextEdit.cpp \
 		src/MainPage.cpp \
+		src/SelectionPage.cpp \
 		src/Tag.cpp \
 		src/TagListCellCreator.cpp \
 		src/TagListModel.cpp \
@@ -60,7 +71,8 @@ SOURCES		+= \
 		src/TagStorage.cpp \
 		src/TextPage.cpp \
 		src/TextRecordEdit.cpp \
-		src/UrlPage.cpp
+		src/UrlPage.cpp \
+		src/VCardNdefRecord.cpp
 
 TRANSLATIONS	= \
 		tag-creator_en.ts \
