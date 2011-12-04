@@ -275,6 +275,7 @@ void ContactPage::importContact(void)
 	return;
 
 fail:
+	setContact(QContact());
 	MMessageBox *box = new MMessageBox(tr("Cannot read the tag. "));
 	box->appear();
 }

@@ -12,12 +12,7 @@
 #include "BtSelectionPageScanListModel.h"
 #include "BluezSupplicant.h"
 
-#include <QGraphicsAnchorLayout>
-#include <MAction>
-#include <MLabel>
 #include <MList>
-#include <MContentItem>
-#include <MPannableViewport>
 
 BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
 				 enum BtSelectionPage::Type type,

@@ -10,12 +10,7 @@
 #include "ContactSelectionPageListCellCreator.h"
 #include "ContactSelectionPageListModel.h"
 
-#include <QGraphicsAnchorLayout>
-#include <MAction>
-#include <MLabel>
 #include <MList>
-#include <MContentItem>
-#include <MPannableViewport>
 
 ContactSelectionPage::ContactSelectionPage(QContactManager *manager,
 					   QGraphicsItem *parent)
@@ -30,8 +25,8 @@ ContactSelectionPage::~ContactSelectionPage(void)
 
 void ContactSelectionPage::createContent(void)
 {
-  createCommonContent(tr("<big>Select the contact to use</big>"),
-		      true);
+	createCommonContent(tr("<big>Select the contact to use</big>"),
+			    true);
 
 	ContactSelectionPageListCellCreator *creator = 
 		new ContactSelectionPageListCellCreator;

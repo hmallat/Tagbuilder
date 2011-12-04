@@ -8,6 +8,7 @@
 
 #include "BluezSupplicant.h"
 #include "BtPage.h"
+#include "CalendarPage.h"
 #include "ContactPage.h"
 #include "CreatePage.h"
 #include "MainPage.h"
@@ -158,6 +159,8 @@ void MainPage::createSelectedTag(QString which)
 
 	if (which == Tag::BLUETOOTH_TAG) {
 		page = new BtPage(m_bluez);
+	} else if (which == Tag::CALENDAR_TAG) {
+		page = new CalendarPage();
 	} else if (which == Tag::CONTACT_TAG) {
 		page = new ContactPage();
 	} else if (which == Tag::TEXT_TAG) {
@@ -181,6 +184,8 @@ void MainPage::editTag(void)
 		const Tag *tag = TagStorage::tag(m_longTapIndex.row());
 		if (tag->type() == Tag::BLUETOOTH_TAG) {
 			page = new BtPage(m_bluez, m_longTapIndex.row());
+		} else if (tag->type() == Tag::CALENDAR_TAG) {
+			page = new CalendarPage(m_longTapIndex.row());
 		} else if (tag->type() == Tag::CONTACT_TAG) {
 			page = new ContactPage(m_longTapIndex.row());
 		} else if (tag->type() == Tag::TEXT_TAG) {

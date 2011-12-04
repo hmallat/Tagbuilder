@@ -1,7 +1,7 @@
 TEMPLATE	 = app
 CONFIG		+= meegotouch mobility debug
 #CONFIG		+= console
-MOBILITY	+= connectivity contacts systeminfo versit
+MOBILITY	+= connectivity contacts organizer systeminfo versit
 QT		+= core
 QT		+= dbus
 
@@ -25,6 +25,10 @@ HEADERS		+= \
 		src/BtSelectionPageExistingListModel.h \
 		src/BtSelectionPageScanListModel.h \
 		src/BtSelectionPageListModel.h \
+		src/CalendarPage.h \
+		src/CalendarSelectionPage.h \
+		src/CalendarSelectionPageListCellCreator.h \
+		src/CalendarSelectionPageListModel.h \
 		src/ContactPage.h \
 		src/ContactSelectionPage.h \
 		src/ContactSelectionPageListCellCreator.h \
@@ -55,6 +59,10 @@ SOURCES		+= \
 		src/BtSelectionPageExistingListModel.cpp \
 		src/BtSelectionPageScanListModel.cpp \
 		src/BtSelectionPageListModel.cpp \
+		src/CalendarPage.cpp \
+		src/CalendarSelectionPage.cpp \
+		src/CalendarSelectionPageListCellCreator.cpp \
+		src/CalendarSelectionPageListModel.cpp \
 		src/ContactPage.cpp \
 		src/ContactSelectionPage.cpp \
 		src/ContactSelectionPageListCellCreator.cpp \

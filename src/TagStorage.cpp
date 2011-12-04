@@ -7,6 +7,7 @@
  */
 
 #include "BtNdefRecord.h"
+#include "VCalNdefRecord.h"
 #include "VCardNdefRecord.h"
 #include "TagStorage.h"
 #include "Tag.h"
