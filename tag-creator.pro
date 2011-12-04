@@ -1,7 +1,7 @@
 TEMPLATE	 = app
 CONFIG		+= meegotouch mobility debug
 #CONFIG		+= console
-MOBILITY	+= connectivity contacts systeminfo
+MOBILITY	+= connectivity contacts systeminfo versit
 QT		+= core
 QT		+= dbus
 

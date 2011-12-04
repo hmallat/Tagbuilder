@@ -10,6 +10,7 @@
 #define _CONTACT_PAGE_H_
 
 #include <MApplicationPage>
+#include <QContact>
 #include <QContactManager>
 #include <QContactFetchRequest>
 
@@ -65,6 +66,8 @@ private:
 	QContactManager m_contactManager;
 
 	QContactFetchRequest *m_fetch;
+
+	QContact m_info;
 
 };
 

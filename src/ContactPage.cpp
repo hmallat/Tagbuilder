@@ -21,6 +21,8 @@
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>
+#include <QVersitContactExporter>
+#include <QVersitWriter>
 
 #include <MDebug>
 
@@ -31,7 +33,8 @@ ContactPage::ContactPage(int tag, QGraphicsItem *parent)
 	  m_contact(0),
 	  m_cancelAction(0),
 	  m_storeAction(0),
-	  m_fetch(0)
+	  m_fetch(0),
+	  m_info()
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
@@ -138,11 +141,6 @@ void ContactPage::nameChanged(void)
 	}
 }
 
-void ContactPage::storeTag(void)
-{
-	/* TODO */
-}
-
 void ContactPage::useMyInformation(void)
 {
 	/* This doesn't seem to work too well */
@@ -198,10 +196,51 @@ void ContactPage::singleContactFetched(void)
 void ContactPage::setContact(const QContact contact)
 {
 	mDebug(__func__) << contact.displayLabel();
+	m_info = contact;
 	m_contact->setImageID("icon-m-content-avatar-placeholder"); /* TODO */
-	m_contact->setTitle(contact.isEmpty() 
+	m_contact->setTitle(m_info.isEmpty() 
 			    ? "No one selected"
-			    : contact.displayLabel());
+			    : m_info.displayLabel());
 }
 
+void ContactPage::storeTag(void)
+{
+	bool success;
+	QNdefMessage message;
+	VCardNdefRecord vc;
+	QByteArray data;
+	QVersitWriter writer(&data);
+	QVersitContactExporter exporter;
 
+	if (exporter.exportContacts(QList<QContact>() << m_info,
+				    QVersitDocument::VCard30Type) == false) {
+		goto fail;
+	}
+
+	if (writer.startWriting(exporter.documents()) == false ||
+	    writer.waitForFinished() == false) {
+		goto fail;
+	}
+
+	vc.setPayload(data);
+	message << vc;
+
+	if (m_tag == -1) {
+		success = TagStorage::append(m_name->text(), message);
+	} else {
+		success = TagStorage::update(m_tag,
+					     m_name->text(),
+					     message);
+	}
+
+	if (success == false) {
+		goto fail;
+	}
+
+	dismiss();
+	return;
+
+fail:
+	MMessageBox *box = new MMessageBox(tr("Cannot store the tag. "));
+	box->appear();
+}
