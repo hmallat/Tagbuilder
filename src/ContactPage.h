@@ -53,6 +53,8 @@ private:
 
 	Q_DISABLE_COPY(ContactPage);
 
+	void importContact(void);
+
 	int m_tag;
 
 	LabeledTextEdit *m_name;

@@ -13,6 +13,8 @@
 #include <QNdefNfcTextRecord>
 #include <QNdefNfcUriRecord>
 
+#include <MDebug>
+
 /* TODO: maximum name length supported by tag storage is 65535,
    should limit somewhere what names are given to tags */
 
@@ -32,6 +34,14 @@ Tag::Tag(const QString &name,
 	  m_message(message),
 	  m_creationTime(QDateTime::currentDateTime())
 {
+	if (m_message.isEmpty()) {
+		mDebug(__func__) << "Empty NDEF for tag " << name;
+	} else {
+		mDebug(__func__) << "NDEF for tag " << name 
+				 << " record zero has " 
+				 << m_message[0].payload().length()
+				 << " bytes. ";
+	}
 }
 
 Tag::Tag(const QString &name, 
@@ -40,9 +50,27 @@ Tag::Tag(const QString &name,
 	 QObject *parent)
 	: QObject(parent),
 	  m_name(name),
-	  m_message(QNdefMessage::fromByteArray(message)),
+	  m_message(),
 	  m_creationTime(QDateTime::fromMSecsSinceEpoch(1000*(qint64)seconds))
 {
+	mDebug(__func__) << "Parsing from byte array of " << message.length() << " bytes. ";
+	m_message = QNdefMessage::fromByteArray(message);
+	if (m_message.isEmpty()) {
+		mDebug(__func__) << "Empty NDEF for tag " << name;
+	} else {
+		mDebug(__func__) << "NDEF for tag " << name
+				 << " has " << m_message.length()
+				 << " records. ";
+		mDebug(__func__) << "NDEF for tag " << name 
+				 << " record zero has " 
+				 << m_message[0].payload().length()
+				 << " bytes, has TNF "
+				 << m_message[0].typeNameFormat()
+				 << " and has type "
+				 << QString::fromAscii(m_message[0].type().data(),
+						       m_message[0].type().length()) 
+				 << ". ";
+	}
 }
 
 Tag::~Tag(void)

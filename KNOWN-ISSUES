@@ -2,3 +2,5 @@
   paired via NFC touch will be zero, because for those devices the
   bluetooth daemon did not perform a scan. 
 
+* Custom NDEF records don't work with SDK but work on the device
+

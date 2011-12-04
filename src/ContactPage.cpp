@@ -22,6 +22,8 @@
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>
 #include <QVersitContactExporter>
+#include <QVersitContactImporter>
+#include <QVersitReader>
 #include <QVersitWriter>
 
 #include <MDebug>
@@ -93,7 +95,7 @@ void ContactPage::createContent(void)
 	m_contact = new MContentItem(MContentItem::IconAndSingleTextLabel);
 	m_contact->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	if (m_tag != -1) {
-		/* TODO */
+		importContact();
 	} else {
 		setContact(QContact());
 	}
@@ -242,5 +244,37 @@ void ContactPage::storeTag(void)
 
 fail:
 	MMessageBox *box = new MMessageBox(tr("Cannot store the tag. "));
+	box->appear();
+}
+
+void ContactPage::importContact(void)
+{
+	QNdefRecord r = TagStorage::tag(m_tag)->message().at(0);
+	VCardNdefRecord vc(TagStorage::tag(m_tag)->message().at(0));
+	QVersitReader reader(vc.payload());
+	QVersitContactImporter importer;
+
+	if (reader.startReading() == false ||
+	    reader.waitForFinished() == false) {
+		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
+		goto fail;
+	}
+
+	if (reader.results().length() == 0) {
+		mDebug(__func__) << "No results. ";
+		goto fail;
+	}
+
+	if (importer.importDocuments(reader.results()) == false ||
+	    importer.contacts().length() == 0) {
+		mDebug(__func__) << "Importer fail. ";
+		goto fail;
+	}
+
+	setContact(importer.contacts()[0]);
+	return;
+
+fail:
+	MMessageBox *box = new MMessageBox(tr("Cannot read the tag. "));
 	box->appear();
 }

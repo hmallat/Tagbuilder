@@ -21,7 +21,7 @@ public:
 	Q_DECLARE_NDEF_RECORD(VCardNdefRecord,
 			      QNdefRecord::Mime,
 			      "text/x-vcard",
-			      QByteArray());
+			      QByteArray("BEGIN:VCARD\r\nEND:VCARD\r\n", 24));
 
 };
 

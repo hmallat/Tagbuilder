@@ -6,6 +6,8 @@
  *
  */
 
+#include "BtNdefRecord.h"
+#include "VCardNdefRecord.h"
 #include "TagStorage.h"
 #include "Tag.h"
 
@@ -14,6 +16,8 @@
 #include <QDir>
 #include <QFile>
 #include <QList>
+
+#include <MDebug>
 
 /* TODO: totally inefficient storage implementation to be fixed... */
 
@@ -131,6 +135,7 @@ static bool _readStorage(QList<Tag *> &contents)
 	unsigned int pos = 0;
 	
 	if (pos + 1 > len || ptr[pos] != CURRENT_VERSION) {
+		mDebug(__func__) << "Unknown version, failing. ";
 		goto fail;
 	}
 	pos++;
@@ -146,6 +151,7 @@ static bool _readStorage(QList<Tag *> &contents)
 		/* network byte order ftw */
 
 		if (pos + 2 > len) {
+			mDebug(__func__) << "Runt (name length), failing. ";
 			goto fail;
 		}
 		namelen = 
@@ -153,12 +159,14 @@ static bool _readStorage(QList<Tag *> &contents)
 			(((quint16)ptr[pos + 1] << 0) & 0x00ff);
 		pos += 2;
 		if (pos + namelen > len) {
+			mDebug(__func__) << "Runt (name), failing. ";
 			goto fail;
 		}
 		name = QString::fromUtf8(&(ptr[pos]), namelen);
 		pos += namelen;
 
 		if (pos + 4 > len) {
+			mDebug(__func__) << "Runt (msg length), failing. ";
 			goto fail;
 		}
 		messlen = 
@@ -168,12 +176,14 @@ static bool _readStorage(QList<Tag *> &contents)
 			(((quint32)ptr[pos + 3] <<  0) & 0x000000ff);
 		pos += 4;
 		if (pos + messlen > len) {
+			mDebug(__func__) << "Runt (msg), failing. ";
 			goto fail;
 		}
 		mess = QByteArray(&(ptr[pos]), messlen);
 		pos += messlen;
 
 		if (pos + 4 > len) {
+			mDebug(__func__) << "Runt (timestamp), failing. ";
 			goto fail;
 		}
 		seconds =
