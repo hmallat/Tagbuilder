@@ -9,17 +9,16 @@
 #ifndef _BT_PAGE_H
 #define _BT_PAGE_H_
 
-#include <MApplicationPage>
+#include "CreateEditPage.h"
+
 #include <QBluetoothDeviceInfo>
 
-class LabeledTextEdit;
 class MContentItem;
-class MButton;
 class BluezSupplicant;
 
 QTM_USE_NAMESPACE;
 
-class BtPage : public MApplicationPage
+class BtPage : public CreateEditPage
 {
 
 	Q_OBJECT;
@@ -32,13 +31,17 @@ public:
 
 	~BtPage(void);
 
-	virtual void createContent(void);
+protected:
+
+	virtual void createPageSpecificContent(void);
+
+	virtual void setupNewData(void);
+
+	virtual bool setupData(const QNdefMessage message);
+
+	virtual QNdefMessage prepareDataForStorage(void);
 
 private Q_SLOTS:
-
-	void nameChanged(void);
-
-	void storeTag(void);
 
 	void choosePhoneBT(void);
 
@@ -52,15 +55,7 @@ private:
 
 	Q_DISABLE_COPY(BtPage);
 
-	int m_tag;
-
-	LabeledTextEdit *m_name;
-
 	MContentItem *m_device;
-
-	MAction *m_cancelAction;
-
-	MAction *m_storeAction;
 
 	QBluetoothDeviceInfo m_info;
 
