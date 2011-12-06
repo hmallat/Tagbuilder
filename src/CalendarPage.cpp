@@ -8,6 +8,7 @@
 
 #include "CalendarPage.h"
 #include "CalendarSelectionPage.h"
+#include "CalendarSelectionPageListModel.h"
 #include "VCalNdefRecord.h"
 #include "LabeledTextEdit.h"
 #include "TagStorage.h"
@@ -21,6 +22,8 @@
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>
+#include <QVersitOrganizerExporter>
+#include <QVersitOrganizerImporter>
 #include <QVersitReader>
 #include <QVersitWriter>
 
@@ -103,11 +106,17 @@ void CalendarPage::createContent(void)
 		QGraphicsLinearLayout *sub_layout = 
 			new QGraphicsLinearLayout(Qt::Vertical);
 
-		MButton *pick_button = 
-			new MButton(tr("Choose from calendar"));
-		sub_layout->addItem(pick_button);
-		connect(pick_button, SIGNAL(clicked()),
-			this, SLOT(chooseFromCalendar()));
+		MButton *event_button = 
+			new MButton(tr("Choose an event"));
+		sub_layout->addItem(event_button);
+		connect(event_button, SIGNAL(clicked()),
+			this, SLOT(chooseEvent()));
+	
+		MButton *todo_button = 
+			new MButton(tr("Choose a to-do item"));
+		sub_layout->addItem(todo_button);
+		connect(todo_button, SIGNAL(clicked()),
+			this, SLOT(chooseTodo()));
 	
 		layout->addItem(sub_layout);
 		layout->setAlignment(sub_layout, Qt::AlignCenter);
@@ -126,13 +135,26 @@ void CalendarPage::nameChanged(void)
 	}
 }
 
-void CalendarPage::chooseFromCalendar(void)
+void CalendarPage::chooseEvent(void)
 {
+	CalendarSelectionPageListModel::ListType type = 
+		CalendarSelectionPageListModel::ListEvents;
 	CalendarSelectionPage *page = 
-		new CalendarSelectionPage(&m_calendarManager);
+		new CalendarSelectionPage(type, &m_calendarManager);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 	connect(page, SIGNAL(selected(const QOrganizerItem)),
-		this, SLOT(setContact(const QOrganizerItem)));
+		this, SLOT(setCalendarItem(const QOrganizerItem)));
+}
+
+void CalendarPage::chooseTodo(void)
+{
+	CalendarSelectionPageListModel::ListType type = 
+		CalendarSelectionPageListModel::ListTodos;
+	CalendarSelectionPage *page = 
+		new CalendarSelectionPage(type, &m_calendarManager);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const QOrganizerItem)),
+		this, SLOT(setCalendarItem(const QOrganizerItem)));
 }
 
 void CalendarPage::setCalendarItem(const QOrganizerItem item)
@@ -149,10 +171,75 @@ void CalendarPage::setCalendarItem(const QOrganizerItem item)
 
 void CalendarPage::storeTag(void)
 {
-	/* TODO */
+	bool success;
+	QNdefMessage message;
+	VCalNdefRecord vc;
+	QByteArray data;
+	QVersitWriter writer(&data);
+	QVersitOrganizerExporter exporter;
+
+	if (exporter.exportItems(QList<QOrganizerItem>() << m_info,
+				 QVersitDocument::ICalendar20Type) == false) {
+		goto fail;
+	}
+
+	if (writer.startWriting(exporter.document()) == false ||
+	    writer.waitForFinished() == false) {
+		goto fail;
+	}
+
+	vc.setPayload(data);
+	message << vc;
+
+	if (m_tag == -1) {
+		success = TagStorage::append(m_name->text(), message);
+	} else {
+		success = TagStorage::update(m_tag,
+					     m_name->text(),
+					     message);
+	}
+
+	if (success == false) {
+		goto fail;
+	}
+
+	dismiss();
+	return;
+
+fail:
+	MMessageBox *box = new MMessageBox(tr("Cannot store the tag. "));
+	box->appear();
 }
 
 void CalendarPage::importCalendarItem(void)
 {
-	/* TODO */
+	QNdefRecord r = TagStorage::tag(m_tag)->message().at(0);
+	VCalNdefRecord vc(TagStorage::tag(m_tag)->message().at(0));
+	QVersitReader reader(vc.payload());
+	QVersitOrganizerImporter importer;
+
+	if (reader.startReading() == false ||
+	    reader.waitForFinished() == false) {
+		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
+		goto fail;
+	}
+
+	if (reader.results().length() == 0) {
+		mDebug(__func__) << "No results. ";
+		goto fail;
+	}
+
+	if (importer.importDocument(reader.results()[0]) == false ||
+	    importer.items().length() == 0) {
+		mDebug(__func__) << "Importer fail. ";
+		goto fail;
+	}
+
+	setCalendarItem(importer.items()[0]);
+	return;
+
+fail:
+	setCalendarItem(QOrganizerItem());
+	MMessageBox *box = new MMessageBox(tr("Cannot read the tag. "));
+	box->appear();
 }

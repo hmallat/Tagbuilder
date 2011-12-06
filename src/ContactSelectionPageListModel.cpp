@@ -61,7 +61,6 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 
 	QList<QContact> results = m_fetch->contacts();
 
-
 	QStringList bucketEntries;
 	QMap<QString, QContact> insertions;
 

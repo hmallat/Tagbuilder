@@ -12,10 +12,11 @@
 
 #include <MList>
 
-CalendarSelectionPage::CalendarSelectionPage(QOrganizerManager *manager,
+CalendarSelectionPage::CalendarSelectionPage(CalendarSelectionPageListModel::ListType type,
+					     QOrganizerManager *manager,
 					     QGraphicsItem *parent)
 	: SelectionPage(parent),
-	  m_model(new CalendarSelectionPageListModel(manager, this))
+	  m_model(new CalendarSelectionPageListModel(type, manager, this))
 {
 }
 

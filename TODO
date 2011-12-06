@@ -12,4 +12,7 @@
 * indications of error situations
 * Alpha-separators on contact list; fast scrolling?
 * If contact tag name is not edited, prefill with contact name when selected
-* contact detail selection
+* contact detail selection (e.g. should not save the address without perm)
+* calendar detail selection?
+* calendar testing with different entries
+* byte counts

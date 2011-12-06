@@ -25,7 +25,13 @@ class CalendarSelectionPageListModel : public MAbstractItemModel
 
 public:
 
-	CalendarSelectionPageListModel(QOrganizerManager *manager,
+	enum ListType {
+		ListEvents,
+		ListTodos
+	};
+
+	CalendarSelectionPageListModel(enum ListType type,
+				       QOrganizerManager *manager,
 				       QObject *parent = 0);
 
 	virtual int groupCount(void) const;
@@ -48,11 +54,13 @@ protected Q_SLOTS:
 
 protected:
 
+	enum ListType type;
+
 	QOrganizerManager *m_manager;
 
 	QOrganizerItemFetchRequest *m_fetch;
 
-	QList< QPair< QDateTime, QList< QOrganizerItem > > > m_items;
+	QList< QPair< QDate, QList< QOrganizerItem > > > m_items;
 
 };
 

@@ -40,7 +40,9 @@ private Q_SLOTS:
 
 	void storeTag(void);
 
-	void chooseFromCalendar(void);
+	void chooseEvent(void);
+
+	void chooseTodo(void);
 
 	void setCalendarItem(const QOrganizerItem item);
 

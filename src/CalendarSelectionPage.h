@@ -10,13 +10,12 @@
 #define _CALENDAR_SELECTION_PAGE_H_
 
 #include "SelectionPage.h"
+#include "CalendarSelectionPageListModel.h"
 
 #include <QOrganizerManager>
 #include <QOrganizerItem>
 
 QTM_USE_NAMESPACE;
-
-class CalendarSelectionPageListModel;
 
 class CalendarSelectionPage : public SelectionPage
 {
@@ -24,7 +23,8 @@ class CalendarSelectionPage : public SelectionPage
 
 public:
 
-	CalendarSelectionPage(QOrganizerManager *manager,
+	CalendarSelectionPage(enum CalendarSelectionPageListModel::ListType type,
+			      QOrganizerManager *manager,
 			      QGraphicsItem *parent = 0);
 
 	~CalendarSelectionPage(void);
