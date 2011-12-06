@@ -13,7 +13,6 @@
 #include <MTextEdit>
 
 class QGraphicsLinearLayout;
-class MLabel;
 
 class LabeledTextEdit : public QObject, public QGraphicsLayout
 {
@@ -56,8 +55,6 @@ private:
 	Q_DISABLE_COPY(LabeledTextEdit);
 
 	QGraphicsLinearLayout *m_layout;
-
-	MLabel *m_label;
 
 	MTextEdit *m_text;
 	

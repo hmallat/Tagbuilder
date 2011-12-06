@@ -12,7 +12,7 @@
 #include <MLabel>
 
 LabeledTextEdit::LabeledTextEdit(MTextEditModel::LineMode mode,
-				 const QString &label,
+				 const QString &labeltext,
 				 const QString &prompt,
 				 const QString &initialContents,
 				 QGraphicsLayoutItem *parent)
@@ -20,11 +20,13 @@ LabeledTextEdit::LabeledTextEdit(MTextEditModel::LineMode mode,
 {
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
-	m_label = new MLabel();
-	m_label->setText(label);
-	m_label->setAlignment(Qt::AlignLeft);
-	m_layout->addItem(m_label);
-	m_layout->setAlignment(m_label, Qt::AlignLeft);
+	if (labeltext != "") {
+		MLabel *label = new MLabel();
+		label->setText(labeltext);
+		label->setAlignment(Qt::AlignLeft);
+		m_layout->addItem(label);
+		m_layout->setAlignment(label, Qt::AlignLeft);
+	}
 
 	m_text = new MTextEdit(mode);
 	m_text->setPrompt(prompt);

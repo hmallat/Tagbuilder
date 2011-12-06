@@ -11,8 +11,13 @@
 
 #include "CreateEditPage.h"
 
+#include <QSystemInfo>
+
 class TextRecordEdit;
 class LabeledTextEdit;
+class MButton;
+
+QTM_USE_NAMESPACE;
 
 class UrlPage : public CreateEditPage
 {
@@ -39,11 +44,19 @@ private Q_SLOTS:
 
 	void urlChanged(void);
 
+	void titleIncludedChanged(bool);
+
+	void titleChanged(void);
+
 private:
 
 	Q_DISABLE_COPY(UrlPage);
 
+	QSystemInfo *m_sysinfo;
+
 	LabeledTextEdit *m_url;
+
+	MButton *m_titleButton;
 
 	TextRecordEdit *m_title;
 
