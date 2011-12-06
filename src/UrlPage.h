@@ -9,13 +9,11 @@
 #ifndef _URL_PAGE_H
 #define _URL_PAGE_H_
 
-#include <MApplicationPage>
-#include <QList>
+#include "CreateEditPage.h"
 
 class TextRecordEdit;
-class LabeledTextEdit;
 
-class UrlPage : public MApplicationPage
+class UrlPage : public CreateEditPage
 {
 
 	Q_OBJECT;
@@ -26,29 +24,27 @@ public:
 
 	~UrlPage(void);
 
-	virtual void createContent(void);
+protected:
+
+	virtual void createPageSpecificContent(void);
+
+	virtual void setupNewData(void);
+
+	virtual bool setupData(const QNdefMessage message);
+
+	virtual QNdefMessage prepareDataForStorage(void);
 
 private Q_SLOTS:
 
-	void nameChanged(void);
-
-	void storeTag(void);
+	void urlChanged(void);
 
 private:
 
 	Q_DISABLE_COPY(UrlPage);
 
-	int m_tag;
-
-	LabeledTextEdit *m_name;
-
 	LabeledTextEdit *m_url;
 
-	QList<TextRecordEdit *> m_titleEdits;
-
-	MAction *m_cancelAction;
-
-	MAction *m_storeAction;
+	TextRecordEdit *m_title;
 
 };
 
