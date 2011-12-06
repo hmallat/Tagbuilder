@@ -9,19 +9,16 @@
 #ifndef _CONTACT_PAGE_H
 #define _CONTACT_PAGE_H_
 
-#include <MApplicationPage>
+#include "CreateEditPage.h"
+
 #include <QContact>
 #include <QContactManager>
-#include <QContactFetchRequest>
 
-class LabeledTextEdit;
 class MContentItem;
-class MButton;
-class MAction;
 
 QTM_USE_NAMESPACE;
 
-class ContactPage : public MApplicationPage
+class ContactPage : public CreateEditPage
 {
 
 	Q_OBJECT;
@@ -33,19 +30,19 @@ public:
 
 	~ContactPage(void);
 
-	virtual void createContent(void);
+protected:
+
+	virtual void createPageSpecificContent(void);
+
+	virtual void setupNewData(void);
+
+	virtual bool setupData(const QNdefMessage message);
+
+	virtual QNdefMessage prepareDataForStorage(void);
 
 private Q_SLOTS:
 
-	void nameChanged(void);
-
-	void storeTag(void);
-
-	void useMyInformation(void);
-
 	void chooseFromAddressbook(void);
-
-	void singleContactFetched(void);
 
 	void setContact(const QContact contact);
 
@@ -53,21 +50,9 @@ private:
 
 	Q_DISABLE_COPY(ContactPage);
 
-	void importContact(void);
-
-	int m_tag;
-
-	LabeledTextEdit *m_name;
-
 	MContentItem *m_contact;
 
-	MAction *m_cancelAction;
-
-	MAction *m_storeAction;
-
 	QContactManager m_contactManager;
-
-	QContactFetchRequest *m_fetch;
 
 	QContact m_info;
 

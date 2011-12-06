@@ -34,6 +34,7 @@ HEADERS		+= \
 		src/ContactSelectionPageListCellCreator.h \
 		src/ContactSelectionPageListModel.h \
 		src/CreatePage.h \
+		src/CreateEditPage.h \
 		src/LabeledTextEdit.h \
 		src/MainPage.h \
 		src/SelectionPage.h \
@@ -68,6 +69,7 @@ SOURCES		+= \
 		src/ContactSelectionPageListCellCreator.cpp \
 		src/ContactSelectionPageListModel.cpp \
 		src/CreatePage.cpp \
+		src/CreateEditPage.cpp \
 		src/LabeledTextEdit.cpp \
 		src/MainPage.cpp \
 		src/SelectionPage.cpp \

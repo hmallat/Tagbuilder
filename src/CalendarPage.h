@@ -9,18 +9,16 @@
 #ifndef _CALENDAR_PAGE_H
 #define _CALENDAR_PAGE_H_
 
-#include <MApplicationPage>
+#include "CreateEditPage.h"
+
 #include <QOrganizerItem>
 #include <QOrganizerManager>
 
-class LabeledTextEdit;
 class MContentItem;
-class MButton;
-class MAction;
 
 QTM_USE_NAMESPACE;
 
-class CalendarPage : public MApplicationPage
+class CalendarPage : public CreateEditPage
 {
 
 	Q_OBJECT;
@@ -32,13 +30,17 @@ public:
 
 	~CalendarPage(void);
 
-	virtual void createContent(void);
+protected:
+
+	virtual void createPageSpecificContent(void);
+
+	virtual void setupNewData(void);
+
+	virtual bool setupData(const QNdefMessage message);
+
+	virtual QNdefMessage prepareDataForStorage(void);
 
 private Q_SLOTS:
-
-	void nameChanged(void);
-
-	void storeTag(void);
 
 	void chooseEvent(void);
 
@@ -50,17 +52,7 @@ private:
 
 	Q_DISABLE_COPY(CalendarPage);
 
-	void importCalendarItem(void);
-
-	int m_tag;
-
-	LabeledTextEdit *m_name;
-
 	MContentItem *m_calendar;
-
-	MAction *m_cancelAction;
-
-	MAction *m_storeAction;
 
 	QOrganizerManager m_calendarManager;
 
