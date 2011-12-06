@@ -25,7 +25,9 @@ class TextRecordEdit : public QObject, public QGraphicsLayout
 
 public:
 
-	TextRecordEdit(const QStringList availableLanguages,
+	TextRecordEdit(const QString title,
+		       const QString titlePrompt,
+		       const QStringList availableLanguages,
 		       const QString initialLanguage,
 		       const QString initialContents = "",
 		       QGraphicsLayoutItem *parent = 0);
@@ -47,13 +49,13 @@ public:
 
 	const QString contents(void) const;
 
+	void setLanguage(const QString language);
+
 	void setContents(const QString contents);
 
-	int size(void) const;
+Q_SIGNALS:
 
-private Q_SLOTS:
-
-	void textChanged(void);
+	void contentsChanged(void);
 
 	void languageChanged(void);
 
@@ -65,13 +67,7 @@ private:
 
 	LabeledTextEdit *m_text;
 	
-	MLabel *m_sizeLabel;
-
 	MComboBox *m_langCombo;
-
-	int m_size;
-
-	void updateSize(void);
 
 };
 

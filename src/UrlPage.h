@@ -12,6 +12,7 @@
 #include "CreateEditPage.h"
 
 class TextRecordEdit;
+class LabeledTextEdit;
 
 class UrlPage : public CreateEditPage
 {
