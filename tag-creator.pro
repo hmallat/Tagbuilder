@@ -38,6 +38,7 @@ HEADERS		+= \
 		src/LabeledTextEdit.h \
 		src/MainPage.h \
 		src/SelectionPage.h \
+		src/SmartPosterRecord.h \
 		src/Tag.h \
 		src/TagListCellCreator.h \
 		src/TagListModel.h \
@@ -73,6 +74,7 @@ SOURCES		+= \
 		src/LabeledTextEdit.cpp \
 		src/MainPage.cpp \
 		src/SelectionPage.cpp \
+		src/SmartPosterRecord.cpp \
 		src/Tag.cpp \
 		src/TagListCellCreator.cpp \
 		src/TagListModel.cpp \
