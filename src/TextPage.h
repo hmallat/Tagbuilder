@@ -42,9 +42,13 @@ private Q_SLOTS:
 
 	void textChanged(void);
 
+	void langChanged(void);
+
 private:
 
 	Q_DISABLE_COPY(TextPage);
+
+	void updateSize(void);
 
 	TextRecordEdit *m_edit;
 

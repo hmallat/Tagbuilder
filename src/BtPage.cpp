@@ -37,7 +37,6 @@ BtPage::BtPage(BluezSupplicant *bluez, int tag, QGraphicsItem *parent)
 	  m_device(0),
 	  m_info(),
 	  m_bluez(bluez)
-				  
 {
 }
 
@@ -168,4 +167,23 @@ void BtPage::setDevice(const QBluetoothDeviceInfo info)
 			      ? m_info.address().toString()
 			      : "00:00:00:00:00:00");
 	setContentValidity(m_info.isValid());
+	updateSize();
+}
+
+void BtPage::updateSize(void)
+{
+	QString name = m_info.name();
+
+	quint32 payloadLength = 
+		13 + /* length, bdaddr, cod */
+		(name != "" ? (2 + name.toUtf8().length()) : 0);
+
+	quint32 ndefLength = 
+		1 + /* NDEF header */
+		1 + /* type length */
+		(payloadLength < 256 ? 1 : 4) + /* payload length */
+		32 + /* type (application/vnd.bluetooth.ep.oob) */
+		payloadLength; /* payload */
+
+	setContentSize(ndefLength);
 }

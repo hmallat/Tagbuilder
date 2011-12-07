@@ -51,7 +51,7 @@ protected Q_SLOTS:
 
 	void setContentValidity(bool);
 
-	void setContentSize(void);
+	void setContentSize(quint32 bytes);
 
 private Q_SLOTS:
 

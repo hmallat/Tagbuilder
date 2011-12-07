@@ -55,6 +55,8 @@ private:
 
 	Q_DISABLE_COPY(BtPage);
 
+	void updateSize(void);
+
 	MContentItem *m_device;
 
 	QBluetoothDeviceInfo m_info;

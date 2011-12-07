@@ -72,7 +72,12 @@ void CreateEditPage::createContent(void)
 
 	createPageSpecificContent();
 
-	/* TODO: stuff that size label somewhere */
+	/* TODO: stuff that size label to the bottom */
+	m_size = new MLabel();
+	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+	m_size->setAlignment(Qt::AlignRight);
+	m_layout->addItem(m_size);
+	m_layout->setAlignment(m_size, Qt::AlignRight | Qt::AlignBottom);
 
 	centralWidget()->setLayout(m_layout);
 
@@ -116,9 +121,9 @@ void CreateEditPage::setContentValidity(bool valid)
 	updateUI();
 }
 
-void CreateEditPage::setContentSize(void)
+void CreateEditPage::setContentSize(quint32 bytes)
 {
-	/* TODO */
+	m_size->setText(tr("%1 bytes").arg(bytes));
 }
 
 void CreateEditPage::load(void)

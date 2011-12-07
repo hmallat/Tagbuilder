@@ -17,6 +17,8 @@
 #include <QNdefNfcTextRecord>
 #include <QNdefMessage>
 
+#include <MDebug>
+
 QTM_USE_NAMESPACE;
 
 /* TODO: show a locale specific human readable language name 
@@ -44,10 +46,14 @@ void TextPage::createPageSpecificContent(void)
 
 	connect(m_edit, SIGNAL(contentsChanged()),
 		this, SLOT(textChanged(void)));
+
+	connect(m_edit, SIGNAL(languageChanged()),
+		this, SLOT(langChanged(void)));
 }
 
 void TextPage::setupNewData(void)
 {
+	updateSize();
 }
 
 bool TextPage::setupData(QNdefMessage message)
@@ -55,6 +61,7 @@ bool TextPage::setupData(QNdefMessage message)
 	QNdefNfcTextRecord T(message[0]);
 	m_edit->setLanguage(T.locale());
 	m_edit->setContents(T.text());
+	updateSize();
 	return true;
 }
 
@@ -72,4 +79,34 @@ QNdefMessage TextPage::prepareDataForStorage(void)
 void TextPage::textChanged(void)
 {
 	setContentValidity(m_edit->contents() != "" ? true : false);
+	updateSize();
 }
+
+void TextPage::langChanged(void)
+{
+	updateSize();
+}
+
+void TextPage::updateSize(void)
+{
+	/* Quite a bunch of calculation just to get one byte count */
+
+	QString lang = m_edit->language();
+	QString cont = m_edit->contents();
+
+	quint32 payloadLength = 
+		1 + /* status byte */
+		lang.toAscii().length() + /* language code is in ASCII */
+		cont.toUtf8().length(); /* text itself is in UTF-8 */
+
+	quint32 ndefLength = 
+		1 + /* NDEF header */
+		1 + /* type length */
+		(payloadLength < 256 ? 1 : 4) + /* payload length */
+		1 + /* type (T) */
+		payloadLength; /* payload */
+
+	setContentSize(ndefLength);
+}
+
+
