@@ -10,6 +10,7 @@
 #include "CalendarSelectionPage.h"
 #include "CalendarSelectionPageListModel.h"
 #include "VCalNdefRecord.h"
+#include "Util.h"
 
 #include <MLabel>
 #include <MButton>
@@ -163,4 +164,15 @@ void CalendarPage::setCalendarItem(const QOrganizerItem item)
 				? ""
 				: "Insert time here");
 	setContentValidity(m_info.isEmpty() ? false : true);
+	updateSize();
+}
+
+void CalendarPage::updateSize(void)
+{
+	/* No easy way to calculate the size of the exported VCAL file,
+	   so make a message out of it... although that can get slow
+	   when typing in the title! */
+	QNdefMessage message = prepareDataForStorage();
+	quint32 ndefLength = Util::messageLength(message);
+	setContentSize(ndefLength);
 }

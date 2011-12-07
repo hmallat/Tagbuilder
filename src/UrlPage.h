@@ -48,9 +48,13 @@ private Q_SLOTS:
 
 	void titleChanged(void);
 
+	void titleLanguageChanged(void);
+
 private:
 
 	Q_DISABLE_COPY(UrlPage);
+
+	void updateSize(void);
 
 	QSystemInfo *m_sysinfo;
 

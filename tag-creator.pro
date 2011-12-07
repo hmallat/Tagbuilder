@@ -48,6 +48,7 @@ HEADERS		+= \
 		src/TextPage.h \
 		src/TextRecordEdit.h \
 		src/UrlPage.h \
+		src/Util.h \
 		src/VCardNdefRecord.h
 
 SOURCES		+= \
@@ -84,6 +85,7 @@ SOURCES		+= \
 		src/TextPage.cpp \
 		src/TextRecordEdit.cpp \
 		src/UrlPage.cpp \
+		src/Util.cpp \
 		src/VCardNdefRecord.cpp
 
 TRANSLATIONS	= \

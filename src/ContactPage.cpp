@@ -9,6 +9,7 @@
 #include "ContactPage.h"
 #include "ContactSelectionPage.h"
 #include "VCardNdefRecord.h"
+#include "Util.h"
 
 #include <MLabel>
 #include <MButton>
@@ -141,5 +142,15 @@ void ContactPage::setContact(const QContact contact)
 			    ? "No one selected"
 			    : m_info.displayLabel());
 	setContentValidity(m_info.isEmpty() ? false : true);
+	updateSize();
+}
+
+void ContactPage::updateSize(void)
+{
+	/* No easy way to calculate the size of the exported VCARD file,
+	   so make a message out of it... */
+	QNdefMessage message = prepareDataForStorage();
+	quint32 ndefLength = Util::messageLength(message);
+	setContentSize(ndefLength);
 }
 

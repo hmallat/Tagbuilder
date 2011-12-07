@@ -52,6 +52,8 @@ private:
 
 	Q_DISABLE_COPY(CalendarPage);
 
+	void updateSize(void);
+
 	MContentItem *m_calendar;
 
 	QOrganizerManager m_calendarManager;

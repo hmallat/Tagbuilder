@@ -10,6 +10,7 @@
 #include "TextRecordEdit.h"
 #include "LabeledTextEdit.h"
 #include "SmartPosterRecord.h"
+#include "Util.h"
 
 #include <QUrl>
 #include <QGraphicsLinearLayout>
@@ -88,6 +89,8 @@ void UrlPage::createPageSpecificContent(void)
 		sub->setAlignment(m_title, Qt::AlignHCenter);
 		connect(m_title, SIGNAL(contentsChanged()),
 			this, SLOT(titleChanged(void)));
+		connect(m_title, SIGNAL(languageChanged()),
+			this, SLOT(titleLanguageChanged(void)));
 		
 		layout()->addItem(container);
 	}
@@ -96,22 +99,27 @@ void UrlPage::createPageSpecificContent(void)
 
 void UrlPage::setupNewData(void)
 {
+	updateSize();
 }
 
 bool UrlPage::setupData(const QNdefMessage message)
 {
+	bool r = false;
+
 	QNdefRecord record = message[0];
+
 	if (record.isRecordType<QNdefNfcUriRecord>()) {
 		QNdefNfcUriRecord U(record);
 		m_url->setText(U.uri().toString());
 		m_titleButton->setChecked(false);
-		return true;
+		r = true;
+
 	} else {
 		SmartPosterRecord Sp(record);
 
 		QNdefNfcUriRecord U;
 		if (Sp.uri(U) == false) {
-			return false;
+			goto exit;
 		}
 		m_url->setText(U.uri().toString());
 
@@ -124,8 +132,12 @@ bool UrlPage::setupData(const QNdefMessage message)
 			m_titleButton->setChecked(true);
 		}
 
-		return true;
+		r = true;
 	}
+
+exit:
+	updateSize();
+	return r;
 }
 
 QNdefMessage UrlPage::prepareDataForStorage(void)
@@ -139,14 +151,9 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 	} else {
 		SmartPosterRecord Sp;
 
-		mDebug(__func__) << "Creating a smart poster. ";
-
 		QNdefNfcUriRecord U;
-		mDebug(__func__) << "Creating U. ";
 		U.setUri(m_url->text());
-		mDebug(__func__) << "Setting U. ";
 		Sp.setUri(U);
-		mDebug(__func__) << "Set U. ";
 
 		QList<QNdefNfcTextRecord> titles;
 		QNdefNfcTextRecord title;
@@ -154,10 +161,8 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 		title.setLocale(m_title->language());
 		titles << title;
 		Sp.setTitles(titles);
-		mDebug(__func__) << "Set titles. ";
 
 		message << Sp;
-		mDebug(__func__) << "Made message. ";
 
 	}
 	return message;
@@ -165,18 +170,33 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 
 void UrlPage::titleIncludedChanged(bool checked)
 {
-	/* TODO */
 	(void) checked;
+	updateSize();
 }
 
 void UrlPage::titleChanged(void)
 {
-	/* TODO */
+	updateSize();
+}
+
+void UrlPage::titleLanguageChanged(void)
+{
+	updateSize();
 }
 
 void UrlPage::urlChanged(void)
 {
 	/* TODO: how about checking also that the URL is a valid one */
 	setContentValidity(m_url->text() != "" ? true : false);
+	updateSize();
 }
 
+void UrlPage::updateSize(void)
+{
+	/* A bunch of calculations could be done without creating the
+	   NDEF record, but that'd include checking the URL prefixes
+	   and all. Easier just to make a scratch message. */ 
+	QNdefMessage message = prepareDataForStorage();
+	quint32 ndefLength = Util::messageLength(message);
+	setContentSize(ndefLength);
+}

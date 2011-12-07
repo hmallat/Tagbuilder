@@ -16,4 +16,6 @@
 * calendar detail selection?
 * calendar testing with different entries
 * byte counts
-* signing
+* signing?
+* optimize Sp implementation, creating it all the time when editing Sp
+  title to update the NDEF length may get annoying.

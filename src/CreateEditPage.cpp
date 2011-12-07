@@ -74,7 +74,7 @@ void CreateEditPage::createContent(void)
 
 	/* TODO: stuff that size label to the bottom */
 	m_size = new MLabel();
-	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	m_size->setAlignment(Qt::AlignRight);
 	m_layout->addItem(m_size);
 	m_layout->setAlignment(m_size, Qt::AlignRight | Qt::AlignBottom);

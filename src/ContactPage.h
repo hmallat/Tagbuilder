@@ -50,6 +50,8 @@ private:
 
 	Q_DISABLE_COPY(ContactPage);
 
+	void updateSize(void);
+
 	MContentItem *m_contact;
 
 	QContactManager m_contactManager;

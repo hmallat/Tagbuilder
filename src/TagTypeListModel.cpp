@@ -11,6 +11,9 @@
 
 #include <QStringList>
 
+/* Not yet supported */
+/* #define WLAN */
+
 TagTypeListModel::TagTypeListModel(QObject *parent)
 	: QAbstractListModel(parent)
 {
@@ -19,7 +22,11 @@ TagTypeListModel::TagTypeListModel(QObject *parent)
 int TagTypeListModel::rowCount(const QModelIndex &parent) const
 {
 	(void) parent;
+#ifdef WLAN
 	return 6;
+#else
+	return 5;
+#endif
 }
 
 QVariant TagTypeListModel::data(const QModelIndex &index, int role) const
@@ -43,7 +50,9 @@ const QString TagTypeListModel::name(const QModelIndex &index) const
 	case 2: return Tag::CALENDAR_TAG;
 	case 3: return Tag::CONTACT_TAG;
 	case 4: return Tag::TEXT_TAG;
+#ifdef WLAN
 	case 5: return Tag::WLAN_TAG;
+#endif
 	default: return "";
 	};
 
