@@ -9,6 +9,7 @@
 #include "UrlPage.h"
 #include "TextRecordEdit.h"
 #include "LabeledTextEdit.h"
+#include "SmartPosterRecord.h"
 
 #include <QUrl>
 #include <QGraphicsLinearLayout>
@@ -17,6 +18,8 @@
 #include <MContainer>
 #include <MLabel>
 #include <MButton>
+
+#include <MDebug>
 
 UrlPage::UrlPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
@@ -97,17 +100,66 @@ void UrlPage::setupNewData(void)
 
 bool UrlPage::setupData(const QNdefMessage message)
 {
-	QNdefNfcUriRecord U(message[0]);
-	m_url->setText(U.uri().toString());
-	return true;
+	QNdefRecord record = message[0];
+	if (record.isRecordType<QNdefNfcUriRecord>()) {
+		QNdefNfcUriRecord U(record);
+		m_url->setText(U.uri().toString());
+		m_titleButton->setChecked(false);
+		return true;
+	} else {
+		SmartPosterRecord Sp(record);
+
+		QNdefNfcUriRecord U;
+		if (Sp.uri(U) == false) {
+			return false;
+		}
+		m_url->setText(U.uri().toString());
+
+		QList<QNdefNfcTextRecord> T = Sp.titles();
+		if (T.length() != 0) {
+			m_title->setContents(T[0].text());
+			m_title->setLanguage(T[0].locale());
+			m_titleButton->setChecked(true);
+		} else {
+			m_titleButton->setChecked(true);
+		}
+
+		return true;
+	}
 }
 
 QNdefMessage UrlPage::prepareDataForStorage(void)
 {
 	QNdefMessage message;
-	QNdefNfcUriRecord U;
-	U.setUri(m_url->text());
-	message << U;
+
+	if (m_titleButton->isChecked() == false) {
+		QNdefNfcUriRecord U;
+		U.setUri(m_url->text());
+		message << U;
+	} else {
+		SmartPosterRecord Sp;
+
+		mDebug(__func__) << "Creating a smart poster. ";
+
+		QNdefNfcUriRecord U;
+		mDebug(__func__) << "Creating U. ";
+		U.setUri(m_url->text());
+		mDebug(__func__) << "Setting U. ";
+		Sp.setUri(U);
+		mDebug(__func__) << "Set U. ";
+
+		QList<QNdefNfcTextRecord> titles;
+		QNdefNfcTextRecord title;
+		title.setText(m_title->contents());
+		title.setLocale(m_title->language());
+		titles << title;
+		Sp.setTitles(titles);
+		mDebug(__func__) << "Set titles. ";
+
+		message << Sp;
+		mDebug(__func__) << "Made message. ";
+
+	}
 	return message;
 }
 

@@ -108,6 +108,11 @@ const QString TextRecordEdit::language(void) const
 
 void TextRecordEdit::setLanguage(const QString language)
 {
+	if (language == "") {
+		m_langCombo->setCurrentIndex(0);
+		return;
+	}
+
 	if (m_langCombo != 0) {
 		for (int i = 0; i < m_langCombo->count(); i++) {
 			if (language == m_langCombo->itemText(i)) {
@@ -116,7 +121,8 @@ void TextRecordEdit::setLanguage(const QString language)
 			}
 		}
 		if (m_langCombo->currentIndex() == -1) {
-			m_langCombo->setCurrentIndex(0);
+			m_langCombo->addItem(language);
+			m_langCombo->setCurrentIndex(m_langCombo->count() - 1);
 		}
 	}
 }

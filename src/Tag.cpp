@@ -10,6 +10,7 @@
 #include "BtNdefRecord.h"
 #include "VCalNdefRecord.h"
 #include "VCardNdefRecord.h"
+#include "SmartPosterRecord.h"
 
 #include <QNdefNfcTextRecord>
 #include <QNdefNfcUriRecord>
@@ -95,11 +96,16 @@ const QDateTime &Tag::creationTime(void) const
 
 const QString &Tag::type(void) const
 {
+	if (m_message.length() != 1) {
+		return UNKNOWN_TAG;
+	}
+
 	QNdefRecord record = m_message.at(0);
 	
 	if (record.isRecordType<QNdefNfcTextRecord>()) {
 		return TEXT_TAG;
-	} else if (record.isRecordType<QNdefNfcUriRecord>()) {
+	} else if (record.isRecordType<QNdefNfcUriRecord>() ||
+		   record.isRecordType<SmartPosterRecord>()) {
 		return URL_TAG;
 	} else if (record.isRecordType<BtNdefRecord>()) {
 		return BLUETOOTH_TAG;

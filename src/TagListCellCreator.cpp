@@ -26,4 +26,12 @@ void TagListCellCreator::updateCell(const QModelIndex &index,
 	const Tag *tag = data.value<const Tag *>();
 	contentItem->setTitle(tag->name());
 	contentItem->setImageID(Tag::icon(tag->type()));
+
+	const QNdefMessage message = tag->message();
+	quint32 total = 0;
+	for (int i = 0; i < message.length(); i++) {
+		const QNdefRecord record = message[i];
+		total += record.payload().length();
+	}
+	contentItem->setSubtitle(QObject::tr("%1 bytes").arg(total));
 }

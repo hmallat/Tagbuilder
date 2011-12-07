@@ -131,7 +131,10 @@ void MainPage::refreshList(void)
 
 	if (TagStorage::count() == 0) {
 		MLabel *nothing = new MLabel(tr("<h1>You don't have any "
-						"stored tags currently"
+						"stored tags currently. "
+						"Create some or read "
+						"existing ones by touching "
+						"them. "
 						"</h1>"));
 		nothing->setAlignment(Qt::AlignCenter);
 		nothing->setWordWrap(true);
