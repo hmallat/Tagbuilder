@@ -54,6 +54,10 @@ protected Q_SLOTS:
 
 protected:
 
+	static QDateTime itemStart(const QOrganizerItem &item);
+
+	static QDateTime itemEnd(const QOrganizerItem &item);
+
 	enum ListType type;
 
 	QOrganizerManager *m_manager;

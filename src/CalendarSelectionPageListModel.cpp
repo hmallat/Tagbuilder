@@ -66,6 +66,38 @@ CalendarSelectionPageListModel(CalendarSelectionPageListModel::ListType type,
 	}
 }
 
+QDateTime 
+CalendarSelectionPageListModel::itemStart(const QOrganizerItem &i)
+{
+	if (i.type() == QOrganizerItemType::TypeEvent) {
+		return static_cast<QOrganizerEvent>(i).startDateTime();
+	} else if (i.type() == QOrganizerItemType::TypeEventOccurrence) {
+		return static_cast<QOrganizerEventOccurrence>(i).startDateTime();
+	} else if (i.type() == QOrganizerItemType::TypeTodo) {
+		return static_cast<QOrganizerTodo>(i).startDateTime();
+	} else if (i.type() == QOrganizerItemType::TypeTodoOccurrence) {
+		return static_cast<QOrganizerTodoOccurrence>(i).startDateTime();
+	} else {
+		return QDateTime();
+	}
+}
+
+QDateTime 
+CalendarSelectionPageListModel::itemEnd(const QOrganizerItem &i)
+{
+	if (i.type() == QOrganizerItemType::TypeEvent) {
+		return static_cast<QOrganizerEvent>(i).endDateTime();
+	} else if (i.type() == QOrganizerItemType::TypeEventOccurrence) {
+		return static_cast<QOrganizerEventOccurrence>(i).endDateTime();
+	} else if (i.type() == QOrganizerItemType::TypeTodo) {
+		return QDateTime();
+	} else if (i.type() == QOrganizerItemType::TypeTodoOccurrence) {
+		return QDateTime();
+	} else {
+		return QDateTime();
+	}
+}
+
 void CalendarSelectionPageListModel::resultsAvailable(void)
 {
 	if (m_fetch->error() != QOrganizerManager::NoError) {
@@ -79,19 +111,7 @@ void CalendarSelectionPageListModel::resultsAvailable(void)
 
 	QList<QOrganizerItem> results = m_fetch->items();
 	for (int i = 0; i < results.length(); i++) {
-		QDate bucket;
-
-		if (results[i].type() == QOrganizerItemType::TypeEvent) {
-			bucket = static_cast<QOrganizerEvent>(results[i]).startDateTime().date();
-		} else if (results[i].type() == 
-			   QOrganizerItemType::TypeEventOccurrence) {
-			bucket = static_cast<QOrganizerEventOccurrence>(results[i]).startDateTime().date();
-		} else if (results[i].type() == QOrganizerItemType::TypeTodo) {
-			bucket = static_cast<QOrganizerTodo>(results[i]).startDateTime().date();
-		} else if (results[i].type() == 
-			   QOrganizerItemType::TypeTodoOccurrence) {
-			bucket = static_cast<QOrganizerTodoOccurrence>(results[i]).startDateTime().date();
-		} 
+		QDate bucket = itemStart(results[i]).date();
 
 		if (insertions.contains(bucket)) {
 			insertions[bucket] << results[i];
@@ -148,17 +168,39 @@ QString CalendarSelectionPageListModel::groupTitle(int group) const
 }
 
 QVariant CalendarSelectionPageListModel::itemData(int row, 
-						 int group, 
-						 int role) const
+						  int group, 
+						  int role) const
 {
 	(void)role;
 
 	QStringList parameters;
 	QOrganizerItem item = m_items[group].second[row];
-		parameters 
-			<< item.displayLabel()
-			<< "mumble mumble mumble"
-			<< "icon-m-content-calendar";
+
+	parameters << item.displayLabel();
+
+	/* TODO: handle those which don't have a valid timestamp */
+	QDateTime s = itemStart(item);
+	QDateTime e = itemEnd(item);
+	QString stamp;
+
+	if (e == QDateTime()) { 
+		/* No end time, only start time */
+		stamp = s.time().toString(Qt::SystemLocaleShortDate);
+	} else if (s.date() == e.date()) { 
+		/* begins, ends on the same day -> only print time */
+		stamp = 
+			s.time().toString(Qt::SystemLocaleShortDate) +
+			" - " +
+			e.time().toString(Qt::SystemLocaleShortDate);
+	} else {
+		stamp = 
+			s.toString(Qt::SystemLocaleShortDate) +
+			" - " +
+			e.toString(Qt::SystemLocaleShortDate);
+	}
+	parameters << stamp;
+
+	parameters << "icon-m-content-calendar";
 
 	return qVariantFromValue(parameters);
 }
