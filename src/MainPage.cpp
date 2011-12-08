@@ -19,6 +19,7 @@
 #include "TagTypeListModel.h"
 #include "TagListCellCreator.h"
 #include "UrlPage.h"
+#include "TagReader.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -37,6 +38,17 @@ MainPage::MainPage(QGraphicsItem *parent)
 	  m_longTapIndex(QModelIndex())
 {
 	m_bluez = new BluezSupplicant(this);
+	m_reader = new TagReader(this);
+
+	connect(this, SIGNAL(appeared()), 
+		this, SLOT(pageAppeared()));
+
+	connect(this, SIGNAL(disappearing()), 
+		this, SLOT(pageDisappearing()));
+
+	connect(m_reader, SIGNAL(messageRead(const QNdefMessage)),
+		this, SLOT(messageRead(const QNdefMessage)));
+
 }
 
 MainPage::~MainPage(void)
@@ -132,7 +144,7 @@ void MainPage::refreshList(void)
 	if (TagStorage::count() == 0) {
 		MLabel *nothing = new MLabel(tr("<h1>You don't have any "
 						"stored tags currently. "
-						"Create some or read "
+						"Create some or harvest "
 						"existing ones by touching "
 						"them. "
 						"</h1>"));
@@ -237,3 +249,21 @@ void MainPage::tagLongSelected(const QModelIndex &which,
 		sceneManager()->appearSceneWindow(m_objectMenu);
 	}
 }
+
+void MainPage::pageAppeared(void)
+{
+	m_reader->start();
+}
+
+void MainPage::pageDisappearing(void)
+{
+	m_reader->stop();
+}
+
+void MainPage::messageRead(const QNdefMessage contents)
+{
+	(void)contents;
+	mDebug(__func__) << "TODO: add tag...";
+}
+
+

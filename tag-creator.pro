@@ -42,6 +42,7 @@ HEADERS		+= \
 		src/Tag.h \
 		src/TagListCellCreator.h \
 		src/TagListModel.h \
+		src/TagReader.h \
 		src/TagTypeListCellCreator.h \
 		src/TagTypeListModel.h \
 		src/TagStorage.h \
@@ -79,6 +80,7 @@ SOURCES		+= \
 		src/Tag.cpp \
 		src/TagListCellCreator.cpp \
 		src/TagListModel.cpp \
+		src/TagReader.cpp \
 		src/TagTypeListCellCreator.cpp \
 		src/TagTypeListModel.cpp \
 		src/TagStorage.cpp \
@@ -96,10 +98,15 @@ target.path	= $$PREFIX/bin
 
 gfx.path	= $$PREFIX/share/images
 gfx.files	= \
+		data/tag-creator.jpeg
 
 trans.path	= $$PREFIX/share/l10n/tag-writing-plugin
 trans.files	= \
 		tag-creator_en.qm \
 		tag-creator_fi.qm
 
-INSTALLS	+= target gfx trans
+desktop.path	= /usr/share/applications
+desktop.files	= \
+		data/tag-creator.desktop
+
+INSTALLS	+= target gfx trans desktop

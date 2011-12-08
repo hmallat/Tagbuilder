@@ -11,10 +11,14 @@
 
 #include <MApplicationPage>
 #include <QModelIndex>
+#include <QNdefMessage>
 
 class QGraphicsAnchorLayout;
 class MObjectMenu;
 class BluezSupplicant;
+class TagReader;
+
+QTM_USE_NAMESPACE;
 
 class MainPage : public MApplicationPage
 {
@@ -47,6 +51,12 @@ private Q_SLOTS:
 	void tagLongSelected(const QModelIndex &,
 			     const QPointF &);
 
+	void pageAppeared(void);
+
+	void pageDisappearing(void);
+
+	void messageRead(const QNdefMessage contents);
+
 private:
 
 	Q_DISABLE_COPY(MainPage);
@@ -60,6 +70,8 @@ private:
 	QModelIndex m_longTapIndex;
 
 	BluezSupplicant *m_bluez;
+
+	TagReader *m_reader;
 
 };
 
