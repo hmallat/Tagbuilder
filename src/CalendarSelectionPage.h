@@ -39,6 +39,8 @@ private Q_SLOTS:
 	
 	void calendarItemSelected(const QModelIndex &which);
 
+	void itemsReady(void);
+
 private:
 
 	Q_DISABLE_COPY(CalendarSelectionPage);

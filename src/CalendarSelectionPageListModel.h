@@ -46,6 +46,14 @@ public:
 
 	QOrganizerItem calendarItem(const QModelIndex &index) const;
 
+	QModelIndex groupClosestToNow(void) const;
+
+	void fetch(void);
+
+Q_SIGNALS:
+
+	void ready(void);
+
 protected Q_SLOTS:
 
 	void resultsAvailable(void);
@@ -54,17 +62,15 @@ protected Q_SLOTS:
 
 protected:
 
-	static QDateTime itemStart(const QOrganizerItem &item);
-
-	static QDateTime itemEnd(const QOrganizerItem &item);
-
-	enum ListType type;
+	enum ListType m_type;
 
 	QOrganizerManager *m_manager;
 
 	QOrganizerItemFetchRequest *m_fetch;
 
 	QList< QPair< QDate, QList< QOrganizerItem > > > m_items;
+
+	QModelIndex m_closest;
 
 };
 
