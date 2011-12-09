@@ -14,6 +14,8 @@
 #include <MAction>
 #include <MLabel>
 #include <MMessageBox>
+#include <MPannableViewport>
+#include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
 
 #include <MDebug>
@@ -39,6 +41,8 @@ CreateEditPage::~CreateEditPage(void)
 
 void CreateEditPage::createContent(void)
 {
+	setPannable(false);
+
 	m_cancelAction = new MAction(tr("Cancel"), this);
 	m_cancelAction->setLocation(MAction::ToolBarLocation);
 	connect(m_cancelAction, SIGNAL(triggered()),
@@ -51,7 +55,22 @@ void CreateEditPage::createContent(void)
 		this, SLOT(storeAndExit()));
 	addAction(m_storeAction);
 
-	m_layout = new QGraphicsLinearLayout(Qt::Vertical);
+	QGraphicsAnchorLayout *anchor = new QGraphicsAnchorLayout();
+	anchor->setSizePolicy(QSizePolicy::Minimum, 
+			      QSizePolicy::Minimum);
+
+	m_size = new MLabel();
+	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	m_size->setAlignment(Qt::AlignRight);
+	anchor->addAnchor(m_size, Qt::AnchorBottom, anchor, Qt::AnchorBottom);
+	anchor->addAnchor(m_size, Qt::AnchorRight, anchor, Qt::AnchorRight);
+
+	MWidget *layoutContainer = new MWidget();
+	layoutContainer->setSizePolicy(QSizePolicy::Minimum, 
+				       QSizePolicy::Minimum);
+	m_layout = new QGraphicsLinearLayout(Qt::Vertical, layoutContainer);
+	m_layout->setSizePolicy(QSizePolicy::Minimum, 
+				QSizePolicy::Minimum);
 
 	MLabel *label = new MLabel(m_tag == -1 
 				   ? tr("<big>Create tag contents</big>")
@@ -72,14 +91,18 @@ void CreateEditPage::createContent(void)
 
 	createPageSpecificContent();
 
-	/* TODO: stuff that size label to the bottom */
-	m_size = new MLabel();
-	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	m_size->setAlignment(Qt::AlignRight);
-	m_layout->addItem(m_size);
-	m_layout->setAlignment(m_size, Qt::AlignRight | Qt::AlignBottom);
+	MPannableViewport *view = new MPannableViewport();
+	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	view->setPanDirection(Qt::Vertical);
+	view->setMinimumSize(100, 100);
+	view->setWidget(layoutContainer);
 
-	centralWidget()->setLayout(m_layout);
+	anchor->addAnchor(view, Qt::AnchorTop, anchor, Qt::AnchorTop);
+	anchor->addAnchor(view, Qt::AnchorBottom, m_size, Qt::AnchorTop);
+	anchor->addAnchor(view, Qt::AnchorLeft, anchor, Qt::AnchorLeft);
+	anchor->addAnchor(view, Qt::AnchorRight, anchor, Qt::AnchorRight);
+
+	centralWidget()->setLayout(anchor);
 
 	if (m_tag == -1) {
 		setContentValidity(false);

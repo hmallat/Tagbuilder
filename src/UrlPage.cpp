@@ -145,10 +145,13 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 	QNdefMessage message;
 
 	if (m_titleButton->isChecked() == false) {
+		mDebug(__func__) << "Creating U, no title set. ";
 		QNdefNfcUriRecord U;
 		U.setUri(m_url->text());
 		message << U;
 	} else {
+		mDebug(__func__) << "Creating Sp, title set. ";
+
 		SmartPosterRecord Sp;
 
 		QNdefNfcUriRecord U;
