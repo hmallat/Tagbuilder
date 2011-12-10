@@ -55,6 +55,8 @@ public:
 
 	const QDateTime &creationTime(void) const;
 
+	static const QString &type(const QNdefMessage &message);
+
 	static const QString &icon(const QString &type);
 
 private:

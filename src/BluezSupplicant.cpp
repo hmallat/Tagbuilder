@@ -29,9 +29,6 @@ extern "C"
  * any and all to keep the structures up to date. 
  */
 
-/* TODO: get enough device props to construct qt bt device infos */
-/* TODO: emit signals for device list changes after initialization */
-
 BluezSupplicant::BluezSupplicant(QObject *parent)
 	: QObject(parent),
 	  m_started(false),

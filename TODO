@@ -1,7 +1,4 @@
-* refactor common items in edit pages (store/cancel action etc.)
-* refactor common items in select pages
 * writing of tags to work
-* create/edit pages for all types
 * help/about 
 * BT/Contacts content item should be disabled (blinks when touched)
 * Don't allow storing of BT/Contacts record if invalid device/contact info

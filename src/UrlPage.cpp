@@ -126,6 +126,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 
 		QList<QNdefNfcTextRecord> T = Sp.titles();
 		if (T.length() != 0) {
+			mDebug(__func__) << "Setting locale to " << T[0].locale();
 			m_title->setContents(T[0].text());
 			m_title->setLanguage(T[0].locale());
 			m_titleButton->setChecked(true);

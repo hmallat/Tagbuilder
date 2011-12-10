@@ -29,6 +29,7 @@
 #include <MPannableViewport>
 #include <MObjectMenu>
 #include <MSceneManager>
+#include <MMessageBox>
 
 #include <MDebug>
 
@@ -84,11 +85,17 @@ void MainPage::createContent(void)
 	MAction *newAction = new MAction("icon-m-toolbar-add", 
 					 tr("Create a new tag"),
 					 this);
-	newAction->setLocation(MAction::ToolBarLocation | 
-			       MAction::ApplicationMenuLocation);
+	newAction->setLocation(MAction::ToolBarLocation);
  	connect(newAction, SIGNAL(triggered()),
  		this, SLOT(createTag()));
 	addAction(newAction);
+
+	MAction *killallAction = new MAction(tr("Remove all tags"),
+					     this);
+	killallAction->setLocation(MAction::ApplicationMenuLocation);
+ 	connect(killallAction, SIGNAL(triggered()),
+ 		this, SLOT(removeAllTags()));
+	addAction(killallAction);
 
 	MAction *aboutAction = new MAction(tr("About..."), this);
 	aboutAction->setLocation(MAction::ApplicationMenuLocation);
@@ -191,6 +198,13 @@ void MainPage::removeTag(void)
 	}
 }
 
+void MainPage::removeAllTags(void)
+{
+	while (TagStorage::storage()->count() != 0) {
+		TagStorage::storage()->remove(0);
+	}
+}
+
 void MainPage::showAbout(void)
 {
 }
@@ -226,8 +240,13 @@ void MainPage::pageDisappearing(void)
 
 void MainPage::messageRead(const QNdefMessage contents)
 {
-	(void)contents;
-	mDebug(__func__) << "TODO: add tag...";
+	bool success;
+
+	QString name = "Harvested tag";
+	success = TagStorage::storage()->append(name, contents);
+	if (success == false) {
+		MMessageBox *box = 
+			new MMessageBox(tr("Cannot store the tag. "));
+		box->appear();
+	}
 }
-
-

@@ -96,11 +96,16 @@ const QDateTime &Tag::creationTime(void) const
 
 const QString &Tag::type(void) const
 {
-	if (m_message.length() != 1) {
+	return type(m_message);
+}
+
+const QString &Tag::type(const QNdefMessage &message)
+{
+	if (message.length() != 1) {
 		return UNKNOWN_TAG;
 	}
 
-	QNdefRecord record = m_message.at(0);
+	QNdefRecord record = message.at(0);
 	
 	if (record.isRecordType<QNdefNfcTextRecord>()) {
 		return TEXT_TAG;
@@ -116,7 +121,6 @@ const QString &Tag::type(void) const
 	} else {
 		return UNKNOWN_TAG;
 	}
-
 }
 
 const QString &Tag::icon(const QString &type)
@@ -127,7 +131,7 @@ const QString &Tag::icon(const QString &type)
 	static const QString CONTACT_ICON = "icon-m-content-avatar-placeholder";
 	static const QString TEXT_ICON = "icon-m-content-text";
 	static const QString WLAN_ICON = "icon-m-content-wlan";
-	static const QString UNKNOWN_ICON = "";
+	static const QString UNKNOWN_ICON = "icon-m-content-file-unknown";
 
 	return 
 		type == BLUETOOTH_TAG ? BT_ICON :

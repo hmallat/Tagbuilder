@@ -42,6 +42,8 @@ private Q_SLOTS:
 
 	void removeTag(void);
 
+	void removeAllTags(void);
+
 	void showAbout(void);
 
 	void tagSelected(const QModelIndex &);
