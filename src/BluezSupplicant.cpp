@@ -73,6 +73,11 @@ bool BluezSupplicant::isInitialized(void) const
 	return m_initialized;
 }
 
+bool BluezSupplicant::isAvailable(void) const
+{
+	return (m_initialized == true && m_adapter != 0);
+}
+
 void BluezSupplicant::start(void)
 {
 	if (m_started == true) {

@@ -118,6 +118,12 @@ QNdefMessage BtPage::prepareDataForStorage(void)
 	return message;
 }
 
+void BtPage::noBluetoothAlert(void)
+{
+	MMessageBox *box = new MMessageBox(tr("Bluetooth is not available. "));
+	box->appear();
+}
+
 void BtPage::choosePhoneBT(void)
 {
 	QList<QBluetoothHostInfo> locals = QBluetoothLocalDevice::allDevices();
@@ -129,14 +135,16 @@ void BtPage::choosePhoneBT(void)
 		return;
 	}
 
-	MMessageBox *box = 
-		new MMessageBox(tr("Cannot get phone Bluetooth "
-				   "information. "));
-	box->appear();
+	noBluetoothAlert();
 }
 
 void BtPage::chooseExistingBT(void)
 {
+	if (m_bluez->isAvailable() == false) {
+		noBluetoothAlert();
+		return;
+	}
+
 	BtSelectionPage *page = 
 		new BtSelectionPage(m_bluez, 
 				    BtSelectionPage::SelectFromExisting);
@@ -147,6 +155,11 @@ void BtPage::chooseExistingBT(void)
 
 void BtPage::chooseScannedBT(void)
 {
+	if (m_bluez->isAvailable() == false) {
+		noBluetoothAlert();
+		return;
+	}
+
 	BtSelectionPage *page = 
 		new BtSelectionPage(m_bluez, 
 				    BtSelectionPage::SelectFromScanned);

@@ -41,6 +41,8 @@ public:
 
 	bool isInitialized(void) const;
 
+	bool isAvailable(void) const;
+
 	QBluetoothDeviceInfo device(QDBusObjectPath which) const;
 	
 	QList< QPair<QDBusObjectPath, QBluetoothDeviceInfo> > 

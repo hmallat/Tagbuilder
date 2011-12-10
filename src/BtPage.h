@@ -57,6 +57,8 @@ private:
 
 	void updateSize(void);
 
+	void noBluetoothAlert(void);
+
 	MContentItem *m_device;
 
 	QBluetoothDeviceInfo m_info;
