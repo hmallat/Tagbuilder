@@ -20,13 +20,17 @@ public:
 
 	Q_DECLARE_NDEF_RECORD(VCardNdefRecord,
 			      QNdefRecord::Mime,
-			      "text/directory",
+			      "text/vcard",
 			      QByteArray("BEGIN:VCARD\r\nEND:VCARD\r\n", 24));
+
+	static VCardNdefRecord fromSupportedMimeType(const QNdefRecord &other);
+
+	static bool hasSupportedMimeType(const QNdefRecord &other);
 
 };
 
 Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(VCardNdefRecord,
 				       QNdefRecord::Mime,
-				       "text/directory");
-				       
+				       "text/vcard");
+
 #endif /* _VCARD_NDEF_RECORD_H_ */

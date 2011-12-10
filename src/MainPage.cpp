@@ -20,6 +20,7 @@
 #include "UrlPage.h"
 #include "TagReader.h"
 #include "LabelOrList.h"
+#include "VCardNdefRecord.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -241,9 +242,20 @@ void MainPage::pageDisappearing(void)
 void MainPage::messageRead(const QNdefMessage contents)
 {
 	bool success;
+	QNdefMessage in;
+
+	/* Convert incoming data so we don't have to deal with this
+	   mess later on -- Qt API could have had some consideration
+	   for this */
+	if (VCardNdefRecord::hasSupportedMimeType(contents[0]) &&
+	    contents.length() == 1) {
+		in << VCardNdefRecord::fromSupportedMimeType(contents[0]);
+	} else {
+		in = contents;
+	}
 
 	QString name = "Harvested tag";
-	success = TagStorage::storage()->append(name, contents);
+	success = TagStorage::storage()->append(name, in);
 	if (success == false) {
 		MMessageBox *box = 
 			new MMessageBox(tr("Cannot store the tag. "));

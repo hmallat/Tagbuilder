@@ -10,6 +10,7 @@
 #include "ContactSelectionPage.h"
 #include "VCardNdefRecord.h"
 #include "Util.h"
+#include "Tag.h"
 
 #include <MLabel>
 #include <MButton>
@@ -73,6 +74,11 @@ bool ContactPage::setupData(const QNdefMessage message)
 	VCardNdefRecord vc(message[0]);
 	QVersitReader reader(vc.payload());
 	QVersitContactImporter importer;
+
+	mDebug(__func__) << message[0].typeNameFormat();
+	mDebug(__func__) << QString::fromAscii(message[0].type());
+	mDebug(__func__) << QString::fromAscii(message[0].payload());
+	mDebug(__func__) << Tag::type(message);
 
 	if (reader.startReading() == false ||
 	    reader.waitForFinished() == false) {
