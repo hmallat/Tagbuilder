@@ -36,12 +36,12 @@ HEADERS		+= \
 		src/CreatePage.h \
 		src/CreateEditPage.h \
 		src/LabeledTextEdit.h \
+		src/LabelOrList.h \
 		src/MainPage.h \
 		src/SelectionPage.h \
 		src/SmartPosterRecord.h \
 		src/Tag.h \
 		src/TagListCellCreator.h \
-		src/TagListModel.h \
 		src/TagReader.h \
 		src/TagTypeListCellCreator.h \
 		src/TagTypeListModel.h \
@@ -74,12 +74,12 @@ SOURCES		+= \
 		src/CreatePage.cpp \
 		src/CreateEditPage.cpp \
 		src/LabeledTextEdit.cpp \
+		src/LabelOrList.cpp \
 		src/MainPage.cpp \
 		src/SelectionPage.cpp \
 		src/SmartPosterRecord.cpp \
 		src/Tag.cpp \
 		src/TagListCellCreator.cpp \
-		src/TagListModel.cpp \
 		src/TagReader.cpp \
 		src/TagTypeListCellCreator.cpp \
 		src/TagTypeListModel.cpp \

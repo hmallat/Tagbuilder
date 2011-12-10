@@ -207,7 +207,7 @@ fail:
 	return false;
 }
 
-class TagStorageImpl
+class TagStorage::TagStorageImpl
 {
 
 public:
@@ -234,39 +234,39 @@ private:
 
 };
 
-TagStorageImpl::TagStorageImpl(QList<Tag *> readTags)
+TagStorage::TagStorageImpl::TagStorageImpl(QList<Tag *> readTags)
 	: tags(readTags)
 {
 }
 
-TagStorageImpl::TagStorageImpl(void)
+TagStorage::TagStorageImpl::TagStorageImpl(void)
 {
 }
 
-TagStorageImpl::~TagStorageImpl(void)
+TagStorage::TagStorageImpl::~TagStorageImpl(void)
 {
 	while (tags.isEmpty() == false) {
 		delete tags.takeFirst();
 	}
 }
 
-int TagStorageImpl::count(void)
+int TagStorage::TagStorageImpl::count(void)
 {
 	return tags.length();
 }
 
-const Tag* TagStorageImpl::at(int which)
+const Tag* TagStorage::TagStorageImpl::at(int which)
 {
 	return tags[which];
 }
 
-bool TagStorageImpl::append(Tag *tag)
+bool TagStorage::TagStorageImpl::append(Tag *tag)
 {
 	tags << tag;
 	return _writeStorage(tags);
 }
 
-bool TagStorageImpl::update(int which, Tag *tag)
+bool TagStorage::TagStorageImpl::update(int which, Tag *tag)
 {
 	Tag *old = tags[which];
 	tags[which] = tag;
@@ -274,7 +274,7 @@ bool TagStorageImpl::update(int which, Tag *tag)
 	return _writeStorage(tags);
 }
 
-bool TagStorageImpl::remove(int which)
+bool TagStorage::TagStorageImpl::remove(int which)
 {
 	Tag *old = tags[which];
 	tags.removeAt(which);
@@ -282,11 +282,11 @@ bool TagStorageImpl::remove(int which)
 	return _writeStorage(tags);
 }
 
-static TagStorageImpl *singleton = NULL;
+static TagStorage *singleton = 0;
 
-static TagStorageImpl *storage(void)
+TagStorage *TagStorage::storage(void)
 {
-	if (singleton != NULL) {
+	if (singleton != 0) {
 		return singleton;
 	}
 
@@ -294,29 +294,67 @@ static TagStorageImpl *storage(void)
 	if (_readStorage(contents) == false) {
 		/* TODO: should whinge about this in the UI if file
 		 * exists but cannot be read! */
-		singleton = new TagStorageImpl();
+		singleton = new TagStorage(new TagStorageImpl());
 	} else {
-		singleton = new TagStorageImpl(contents);
+		singleton = new TagStorage(new TagStorageImpl(contents));
 	}
 
 	return singleton;
 }
 
-int TagStorage::count(void)
+TagStorage::TagStorage(TagStorageImpl *impl, QObject *parent)
+	: QAbstractListModel(parent),
+	  m_impl(impl)
 {
-	return storage()->count();
 }
 
-const Tag *TagStorage::tag(int which)
+TagStorage::~TagStorage(void)
 {
-	return storage()->at(which);
+	delete m_impl;
+}
+
+int TagStorage::count(void) const
+{
+	return m_impl->count();
+}
+
+int TagStorage::rowCount(const QModelIndex &parent) const
+{
+	if (parent.isValid()) {
+		return 0;
+	}
+	return count();
+}
+
+const Tag *TagStorage::tag(int which) const
+{
+	return m_impl->at(which);
+}
+
+QVariant TagStorage::data(const QModelIndex &index, int role) const
+{
+	(void) role;
+	
+	if (index.isValid() == false || index.row() >= count()) {
+		return QVariant();
+	}
+
+	return qVariantFromValue(tag(index.row()));
 }
 
 bool TagStorage::append(const QString &name, 
 			const QNdefMessage &message)
 {
 	Tag *tag = new Tag(name, message);
-	return storage()->append(tag);
+	bool r;
+
+	Q_EMIT(layoutAboutToBeChanged());
+	beginInsertRows(QModelIndex(), count(), count());
+	r = m_impl->append(tag);
+	endInsertRows();
+	Q_EMIT(layoutChanged());
+
+	return r;
 }
 
 bool TagStorage::update(int which, 
@@ -324,12 +362,24 @@ bool TagStorage::update(int which,
 			const QNdefMessage &message)
 {
 	Tag *tag = new Tag(name, message);
-	return storage()->update(which, tag);
+	bool r;
+
+	r = m_impl->update(which, tag);
+	QModelIndex index = createIndex(which, 0);
+	Q_EMIT(dataChanged(index, index));
+
+	return r;
 }
 
 bool TagStorage::remove(int which)
 {
-	return storage()->remove(which);
+	bool r;
+
+	Q_EMIT(layoutAboutToBeChanged());
+	beginRemoveRows(QModelIndex(), which, which);
+	r = m_impl->remove(which);
+	endRemoveRows();
+	Q_EMIT(layoutChanged());
+
+	return r;
 }
-
-

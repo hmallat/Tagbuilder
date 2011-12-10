@@ -151,7 +151,7 @@ void CreateEditPage::setContentSize(quint32 bytes)
 
 void CreateEditPage::load(void)
 {
-	const Tag *tag = TagStorage::tag(m_tag);	
+	const Tag *tag = TagStorage::storage()->tag(m_tag);	
 
 	m_name->setText(tag->name());
 	setNameValidity(true);
@@ -180,12 +180,12 @@ void CreateEditPage::storeAndExit(void)
 	}
 
 	if (m_tag == -1) {
-		success = TagStorage::append(m_name->text(), 
-					     message);
+		success = TagStorage::storage()->append(m_name->text(), 
+							message);
 	} else {
-		success = TagStorage::update(m_tag,
-					     m_name->text(),
-					     message);
+		success = TagStorage::storage()->update(m_tag,
+							m_name->text(),
+							message);
 	}
 
 	if (success == false) {

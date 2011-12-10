@@ -13,9 +13,8 @@
 
 #include <QVariant>
 
-TagListCellCreator::TagListCellCreator(MainPage *page)
-	: MAbstractCellCreator<MContentItem>(),
-	  m_page(page)
+TagListCellCreator::TagListCellCreator(void)
+	: MAbstractCellCreator<MContentItem>()
 {
 }
 

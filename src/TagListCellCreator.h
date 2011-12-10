@@ -12,20 +12,14 @@
 #include <MAbstractCellCreator>
 #include <MContentItem>
 
-class MainPage;
-
 class TagListCellCreator : public MAbstractCellCreator<MContentItem>
 {
 
 public:
 
-	TagListCellCreator(MainPage *page);
+	TagListCellCreator(void);
 
 	void updateCell(const QModelIndex &index, MWidget *cell) const;
-
-private:
-
-	MainPage *m_page;
 
 };
 

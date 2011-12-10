@@ -44,8 +44,6 @@ private Q_SLOTS:
 
 	void showAbout(void);
 
-	void refreshList(void);
-
 	void tagSelected(const QModelIndex &);
 
 	void tagLongSelected(const QModelIndex &,
@@ -62,8 +60,6 @@ private:
 	Q_DISABLE_COPY(MainPage);
 
 	void createObjectMenuActions(void);
-
-	void createTagButtons(QGraphicsAnchorLayout *layout);
 
 	MObjectMenu *m_objectMenu;
 

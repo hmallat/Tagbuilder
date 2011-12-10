@@ -39,7 +39,8 @@ void UrlPage::createPageSpecificContent(void)
 {
 	m_url = new LabeledTextEdit(MTextEditModel::SingleLine,
 				    tr("Bookmark URL"),
-				    tr("Enter bookmark URL"));
+				    tr("Enter bookmark URL"),
+				    "http://");
 	m_url->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_url);
 	layout()->setAlignment(m_url, Qt::AlignCenter);

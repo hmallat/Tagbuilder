@@ -15,11 +15,11 @@
 #include "TextPage.h"
 #include "TagStorage.h"
 #include "Tag.h"
-#include "TagListModel.h"
 #include "TagTypeListModel.h"
 #include "TagListCellCreator.h"
 #include "UrlPage.h"
 #include "TagReader.h"
+#include "LabelOrList.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -31,6 +31,11 @@
 #include <MSceneManager>
 
 #include <MDebug>
+
+static MAbstractCellCreator<MContentItem> *_getTagListCellCreator(void)
+{
+	return new TagListCellCreator();
+}
 
 MainPage::MainPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
@@ -92,72 +97,34 @@ void MainPage::createContent(void)
 	addAction(aboutAction);
 
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
-	centralWidget()->setLayout(layout);
 
-	refreshList();
-}
-
-void MainPage::createTagButtons(QGraphicsAnchorLayout *layout)
-{
 	MLabel *label = new MLabel(tr("<big>Stored tags</big>"));
 	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	label->setAlignment(Qt::AlignLeft);
 	layout->addCornerAnchors(label, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
 
-	MList *list = new MList();
-	TagListCellCreator *creator = new TagListCellCreator(this);
-	list->setCellCreator(creator);
-	TagListModel *model = new TagListModel(list);
-	list->setItemModel(model);
-
-	MPannableViewport *view = new MPannableViewport();
-	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	view->setPanDirection(Qt::Vertical);
-	view->setMinimumSize(100, 100);
-	view->setWidget(list);
-	layout->addCornerAnchors(view, Qt::TopLeftCorner,
+	LabelOrList *list = new LabelOrList(TagStorage::storage(),
+					    _getTagListCellCreator,
+					    tr("<h1>You don't have any "
+					       "stored tags currently. "
+					       "Create some or harvest "
+					       "existing ones by touching "
+					       "them. "
+					       "</h1>"));
+	list->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	layout->addCornerAnchors(list, Qt::TopLeftCorner,
 				 label, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(view, Qt::BottomRightCorner,
+	layout->addCornerAnchors(list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
-
 	connect(list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(tagSelected(const QModelIndex &)));
 	connect(list, SIGNAL(itemLongTapped(const QModelIndex &,
 					    const QPointF &)),
 		this, SLOT(tagLongSelected(const QModelIndex &,
 					   const QPointF &)));
-}
 
-void MainPage::refreshList(void)
-{
-	QGraphicsAnchorLayout *layout = 
-		static_cast<QGraphicsAnchorLayout *>
-		(centralWidget()->layout());
-
-	while (layout->count() > 0) {
-		QGraphicsLayoutItem *item = layout->itemAt(0);
-		layout->removeAt(0);
-		delete item;
-	}
-
-	if (TagStorage::count() == 0) {
-		MLabel *nothing = new MLabel(tr("<h1>You don't have any "
-						"stored tags currently. "
-						"Create some or harvest "
-						"existing ones by touching "
-						"them. "
-						"</h1>"));
-		nothing->setAlignment(Qt::AlignCenter);
-		nothing->setWordWrap(true);
-		layout->addCornerAnchors(nothing, Qt::TopLeftCorner,
-					 layout, Qt::TopLeftCorner);
-		layout->addCornerAnchors(nothing, Qt::BottomRightCorner,
-					 layout, Qt::BottomRightCorner);
-		
-	} else {
-		createTagButtons(layout);
-	}
+	centralWidget()->setLayout(layout);
 }
 
 void MainPage::createTag(void)
@@ -186,17 +153,16 @@ void MainPage::createSelectedTag(QString which)
 
 	if (page != 0) {
 		page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
-		connect(page, SIGNAL(disappeared(void)),
-			this, SLOT(refreshList(void)));
 	}
 }
 
 void MainPage::editTag(void)
 {
 	if (m_longTapIndex.isValid() &&
-	    m_longTapIndex.row() < TagStorage::count()) {
+	    m_longTapIndex.row() < TagStorage::storage()->count()) {
 		MApplicationPage *page = 0;
-		const Tag *tag = TagStorage::tag(m_longTapIndex.row());
+		const Tag *tag = 
+			TagStorage::storage()->tag(m_longTapIndex.row());
 		if (tag->type() == Tag::BLUETOOTH_TAG) {
 			page = new BtPage(m_bluez, m_longTapIndex.row());
 		} else if (tag->type() == Tag::CALENDAR_TAG) {
@@ -211,8 +177,6 @@ void MainPage::editTag(void)
 		if (page != 0) {
 			page->appear(scene(), 
 				     MSceneWindow::DestroyWhenDismissed);
-			connect(page, SIGNAL(disappeared(void)),
-				this, SLOT(refreshList(void)));
 		}
 		m_longTapIndex = QModelIndex();
 	}
@@ -221,9 +185,8 @@ void MainPage::editTag(void)
 void MainPage::removeTag(void)
 {
 	if (m_longTapIndex.isValid() &&
-	    m_longTapIndex.row() < TagStorage::count()) {
-		TagStorage::remove(m_longTapIndex.row());
-		refreshList();
+	    m_longTapIndex.row() < TagStorage::storage()->count()) {
+		TagStorage::storage()->remove(m_longTapIndex.row());
 		m_longTapIndex = QModelIndex();
 	}
 }
@@ -236,13 +199,14 @@ void MainPage::tagSelected(const QModelIndex &which)
 {
 	(void) which;
 	/* TODO: write it */
+	mDebug(__func__) << "Hello!";
 }
 
 void MainPage::tagLongSelected(const QModelIndex &which,
 			       const QPointF &position)
 {
 	if (which.isValid() &&
-	    which.row() < TagStorage::count()) {
+	    which.row() < TagStorage::storage()->count()) {
 		m_longTapIndex = which;
 		m_objectMenu->setCursorPosition(position);
 		m_objectMenu->setTitle(which.data().toString());

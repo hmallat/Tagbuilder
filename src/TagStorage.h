@@ -9,6 +9,7 @@
 #ifndef _TAG_STORAGE_H_
 #define _TAG_STORAGE_H_
 
+#include <QAbstractListModel>
 #include <QNdefMessage>
 
 class Tag;
@@ -16,23 +17,41 @@ class QString;
 
 QTM_USE_NAMESPACE;
 
-class TagStorage
+class TagStorage : public QAbstractListModel
 {
+
+	class TagStorageImpl;
 
 public:
 
-	static int count(void);
+	static TagStorage *storage(void);
 
-	static const Tag *tag(int which);
+	int count(void) const;
 
-	static bool append(const QString &name,
-			   const QNdefMessage &message);
+	const Tag *tag(int which) const;
 
-	static bool update(int which, 
-			   const QString &name,
-			   const QNdefMessage &message);
+	bool append(const QString &name,
+		    const QNdefMessage &message);
 
-	static bool remove(int which);
+	bool update(int which, 
+		    const QString &name,
+		    const QNdefMessage &message);
+	
+	bool remove(int which);
+
+	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+
+	QVariant data(const QModelIndex &index, int role) const;
+
+private:
+
+	Q_DISABLE_COPY(TagStorage);
+
+	TagStorage(TagStorageImpl *impl, QObject *parent = 0);
+
+	~TagStorage(void);
+
+	TagStorageImpl *m_impl;
 
 };
 
