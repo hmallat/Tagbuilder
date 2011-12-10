@@ -13,30 +13,67 @@
 #include <MPannableViewport>
 #include <QGraphicsGridLayout>
 
-LabelOrList::LabelOrList(QAbstractListModel *listModel,
+#include <MDebug>
+
+LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 			 MAbstractCellCreator<MContentItem> *(*getCreator)(void),
-			 const QString &label,
+			 const QString &text,
+			 bool showGroups, 
 			 QGraphicsLayoutItem *parent)
 	: QGraphicsLayout(parent),
-	  m_model(listModel),
+	  m_grouped(showGroups),
+	  m_model(itemModel),
 	  m_getCreator(getCreator),
-	  m_label(label),
+	  m_text(text),
 	  m_layout(0),
-	  m_previousRowCount(-1)
+	  m_previousRowCount(-1),
+	  m_list(0),
+	  m_view(0),
+	  m_label(0)
 {
 
 	m_layout = new QGraphicsGridLayout(this);
-	m_layout->setSizePolicy(QSizePolicy::Minimum, 
-				QSizePolicy::Minimum);
 
 	connect(m_model, SIGNAL(layoutChanged(void)),
 		this, SLOT(setDisplay(void)));
+
+	m_list = new MList();
+	m_list->setShowGroups(m_grouped);
+	m_list->setItemModel(m_model);
+	m_list->setCellCreator(m_getCreator());
+	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
+		this, SIGNAL(itemClicked(const QModelIndex &)));
+	connect(m_list, SIGNAL(itemLongTapped(const QModelIndex &,
+					      const QPointF &)),
+		this, SIGNAL(itemLongTapped(const QModelIndex &,
+					    const QPointF &)));
+	
+	m_view = new MPannableViewport();
+	m_view->setSizePolicy(QSizePolicy::Minimum, 
+			      QSizePolicy::Minimum);
+	m_view->setPanDirection(Qt::Vertical);
+	m_view->setMinimumSize(100, 100);
+	m_view->setWidget(m_list);
+
+	m_label = new MLabel(m_text);
+	m_label->setAlignment(Qt::AlignCenter);
+	m_label->setWordWrap(true);
+	m_label->setSizePolicy(QSizePolicy::Ignored,
+			       QSizePolicy::Ignored);
 
 	setDisplay();
 }
 
 LabelOrList::~LabelOrList(void)
 {
+	for (int i = count() - 1; i >= 0; --i) {
+		QGraphicsLayoutItem *item = itemAt(i);
+		removeAt(i);
+		if (item) {
+			if (item->ownedByLayout())
+				delete item;
+		}
+	}
 }
 
 void LabelOrList::setGeometry(const QRectF &rect)
@@ -75,52 +112,34 @@ void LabelOrList::setDisplay(void)
 	int rowCount = m_model->rowCount();
 
 	if (rowCount != 0 && m_previousRowCount < 1) {
+		mDebug(__func__) << "::: showing list";
 
 		/* Need to show the list, not the label */
-
-		QGraphicsLayoutItem *old = m_layout->itemAt(0);
-		if (old != 0) {
+		if (m_layout->count() != 0) {
 			m_layout->removeAt(0);
-			delete old;
 		}
-
-		MList *list = new MList();
-		list->setItemModel(m_model);
-		list->setCellCreator(m_getCreator());
-		connect(list, SIGNAL(itemClicked(const QModelIndex &)),
-			this, SIGNAL(itemClicked(const QModelIndex &)));
-		connect(list, SIGNAL(itemLongTapped(const QModelIndex &,
-						    const QPointF &)),
-			this, SIGNAL(itemLongTapped(const QModelIndex &,
-						    const QPointF &)));
-	
-		MPannableViewport *view = new MPannableViewport();
-		view->setSizePolicy(QSizePolicy::Minimum, 
-				    QSizePolicy::Minimum);
-		view->setPanDirection(Qt::Vertical);
-		view->setMinimumSize(100, 100);
-		view->setWidget(list);
-
-		m_layout->addItem(view, 0, 0);
+		m_label->hide();
+		m_view->show();
+		m_layout->addItem(m_view, 0, 0);
 
 	} else if (rowCount == 0 && m_previousRowCount != 0) {
+		mDebug(__func__) << "::: showing label";
 
 		/* Need to show the label, not the list */
-
-		QGraphicsLayoutItem *old = m_layout->itemAt(0);
-		if (old != 0) {
+		if (m_layout->count() != 0) {
 			m_layout->removeAt(0);
-			delete old;
 		}
-
-		MLabel *label = new MLabel(m_label);
-		label->setAlignment(Qt::AlignCenter);
-		label->setWordWrap(true);
-		label->setSizePolicy(QSizePolicy::Ignored,
-				     QSizePolicy::Ignored);
-		m_layout->addItem(label, 0, 0);
-
+		m_view->hide();
+		m_label->show();
+		m_layout->addItem(m_label, 0, 0);
 	}
 
 	m_previousRowCount = rowCount;
+}
+
+void LabelOrList::scrollTo(const QModelIndex &index)
+{
+	m_list->scrollTo(index, 
+			 MList::PositionAtTopHint,
+			 MList::NonAnimated);
 }

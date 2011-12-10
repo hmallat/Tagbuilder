@@ -9,10 +9,14 @@
 #include "CalendarSelectionPage.h"
 #include "CalendarSelectionPageListCellCreator.h"
 #include "CalendarSelectionPageListModel.h"
-
-#include <MList>
+#include "LabelOrList.h"
 
 #include <MDebug>
+
+static MAbstractCellCreator<MContentItem> *_getCreator(void)
+{
+	return new CalendarSelectionPageListCellCreator;
+}
 
 CalendarSelectionPage::CalendarSelectionPage(CalendarSelectionPageListModel::ListType type,
 					     QOrganizerManager *manager,
@@ -28,13 +32,12 @@ CalendarSelectionPage::~CalendarSelectionPage(void)
 
 void CalendarSelectionPage::createContent(void)
 {
-	createCommonContent(tr("<big>Select the calendar entry to use</big>"),
+	createCommonContent(m_model,
+			    _getCreator,
+			    tr("<h1>No calendar entries to select</h1>"),
+			    tr("<big>Select the calendar entry to use</big>"),
 			    true);
 
-	CalendarSelectionPageListCellCreator *creator = 
-		new CalendarSelectionPageListCellCreator;
-	m_list->setCellCreator(creator);
-	m_list->setItemModel(m_model);
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(calendarItemSelected(const QModelIndex &)));
 
@@ -54,8 +57,6 @@ void CalendarSelectionPage::itemsReady(void)
 	if (group.isValid()) {
 		mDebug(__func__) 
 		<< "Scroll(" << group.column() << "," << group.row() << ")";
-		m_list->scrollTo(group, 
-				 MList::PositionAtTopHint,
-				 MList::NonAnimated);
+		m_list->scrollTo(group);
 	}
 }

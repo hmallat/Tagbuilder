@@ -7,13 +7,12 @@
  */
 
 #include "SelectionPage.h"
+#include "LabelOrList.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
 #include <MLabel>
-#include <MList>
 #include <MContentItem>
-#include <MPannableViewport>
 
 SelectionPage::SelectionPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
@@ -31,7 +30,11 @@ void SelectionPage::createContent(void)
 {
 }
 
-void SelectionPage::createCommonContent(QString title, bool groupedList)
+void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
+					MAbstractCellCreator<MContentItem> *(*getCreator)(void),
+					const QString label,
+					const QString title, 
+					bool groupedList)
 {
 	MAction *cancelAction = new MAction(tr("Cancel"), this);
 	cancelAction->setLocation(MAction::ToolBarLocation);
@@ -42,25 +45,20 @@ void SelectionPage::createCommonContent(QString title, bool groupedList)
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	centralWidget()->setLayout(layout);
 
-	MLabel *label = new MLabel(title);
-	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	label->setAlignment(Qt::AlignLeft);
-	layout->addCornerAnchors(label, Qt::TopLeftCorner,
+	MLabel *titleLabel = new MLabel(title);
+	titleLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	titleLabel->setAlignment(Qt::AlignLeft);
+	layout->addCornerAnchors(titleLabel, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
 
-	m_list = new MList();
-	if (groupedList) {
-		m_list->setShowGroups(true);
-	}
+	m_list = new LabelOrList(itemModel,
+				 getCreator,
+				 label,
+				 groupedList);
 
-	MPannableViewport *view = new MPannableViewport();
-	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	view->setPanDirection(Qt::Vertical);
-	view->setMinimumSize(100, 100);
-	view->setWidget(m_list);
-	layout->addCornerAnchors(view, Qt::TopLeftCorner,
-				 label, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(view, Qt::BottomRightCorner,
+	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
+				 titleLabel, Qt::BottomLeftCorner);
+	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 
 }

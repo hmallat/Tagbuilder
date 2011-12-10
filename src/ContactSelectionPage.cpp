@@ -9,8 +9,12 @@
 #include "ContactSelectionPage.h"
 #include "ContactSelectionPageListCellCreator.h"
 #include "ContactSelectionPageListModel.h"
+#include "LabelOrList.h"
 
-#include <MList>
+static MAbstractCellCreator<MContentItem> *_getCreator(void)
+{
+	return new ContactSelectionPageListCellCreator;
+}
 
 ContactSelectionPage::ContactSelectionPage(QContactManager *manager,
 					   QGraphicsItem *parent)
@@ -25,13 +29,12 @@ ContactSelectionPage::~ContactSelectionPage(void)
 
 void ContactSelectionPage::createContent(void)
 {
-	createCommonContent(tr("<big>Select the contact to use</big>"),
+	createCommonContent(m_model,
+			    _getCreator,
+			    tr("<h1>No contact to select</h1>"),
+			    tr("<big>Select the contact to use</big>"),
 			    true);
 
-	ContactSelectionPageListCellCreator *creator = 
-		new ContactSelectionPageListCellCreator;
-	m_list->setCellCreator(creator);
-	m_list->setItemModel(m_model);
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(contactSelected(const QModelIndex &)));
 }

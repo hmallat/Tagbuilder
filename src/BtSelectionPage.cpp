@@ -11,8 +11,12 @@
 #include "BtSelectionPageExistingListModel.h"
 #include "BtSelectionPageScanListModel.h"
 #include "BluezSupplicant.h"
+#include "LabelOrList.h"
 
-#include <MList>
+static MAbstractCellCreator<MContentItem> *_getCreator(void)
+{
+	return new BtSelectionPageListCellCreator;
+}
 
 BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
 				 enum BtSelectionPage::Type type,
@@ -31,13 +35,12 @@ BtSelectionPage::~BtSelectionPage(void)
 
 void BtSelectionPage::createContent(void)
 {
-	createCommonContent(tr("<big>Select the device to use</big>"),
+	createCommonContent(m_model,
+			    _getCreator,
+			    tr("<h1>No Bluetooth devices to select</h1>"),
+			    tr("<big>Select the device to use</big>"),
 			    false);
 
-	BtSelectionPageListCellCreator *creator = 
-		new BtSelectionPageListCellCreator;
-	m_list->setCellCreator(creator);
-	m_list->setItemModel(m_model);
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(deviceSelected(const QModelIndex &)));
 }

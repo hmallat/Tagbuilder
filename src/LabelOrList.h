@@ -13,13 +13,14 @@
 #define _LABEL_OR_LIST_H_
 
 #include <QGraphicsLayout>
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 #include <MAbstractCellCreator>
 
 class MContentItem;
 class MLabel;
 class MList;
 class MPannableViewport;
+class QModelIndex;
 class QGraphicsGridLayout;
 
 class LabelOrList : public QObject, public QGraphicsLayout
@@ -31,9 +32,10 @@ class LabelOrList : public QObject, public QGraphicsLayout
 
 public:
 
-	LabelOrList(QAbstractListModel *listModel,
+	LabelOrList(QAbstractItemModel *listModel,
 		    MAbstractCellCreator<MContentItem> *(*getCreator)(void),
 		    const QString &label = QString(),
+		    bool showGroups = false,
 		    QGraphicsLayoutItem *parent = 0);
 
 	virtual ~LabelOrList(void);
@@ -49,6 +51,8 @@ public:
 
 	virtual void removeAt(int index);
 
+	void scrollTo(const QModelIndex &index);
+
 Q_SIGNALS:
 
 	void itemClicked(const QModelIndex &);
@@ -63,15 +67,23 @@ private:
 
 	Q_DISABLE_COPY(LabelOrList);
 
-	QAbstractListModel *m_model;
+	bool m_grouped;
+
+	QAbstractItemModel *m_model;
 
 	MAbstractCellCreator<MContentItem> *(*m_getCreator)(void);
 
-	QString m_label;
+	QString m_text;
 
 	QGraphicsGridLayout *m_layout;
 
 	int m_previousRowCount;
+
+	MList *m_list;
+
+	MPannableViewport *m_view;
+
+	MLabel *m_label;
 
 };
 

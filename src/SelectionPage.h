@@ -12,7 +12,10 @@
 #include <MApplicationPage>
 
 class QModelIndex;
-class MList;
+class LabelOrList;
+class QAbstractItemModel;
+class MContentItem;
+template <class C> class MAbstractCellCreator;
 
 class SelectionPage : public MApplicationPage
 {
@@ -28,9 +31,13 @@ public:
 
 protected:
 
-	void createCommonContent(QString title, bool groupedList);
+	void createCommonContent(QAbstractItemModel *itemModel,
+				 MAbstractCellCreator<MContentItem> *(*getCreator)(void),
+				 const QString label,
+				 const QString title, 
+				 bool groupedList);
 
-	MList *m_list;
+	LabelOrList *m_list;
 
 private:
 
