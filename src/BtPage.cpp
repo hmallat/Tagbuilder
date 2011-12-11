@@ -12,6 +12,7 @@
 #include "BtNdefRecord.h"
 #include "BluezSupplicant.h"
 #include "BtSelectionPage.h"
+#include "Util.h"
 
 #include <MLabel>
 #include <MButton>
@@ -88,12 +89,14 @@ void BtPage::createPageSpecificContent(void)
 
 void BtPage::setupNewData(void) 
 {
+	m_message = QNdefMessage();
 	setDevice(QBluetoothDeviceInfo());
 }
 
 bool BtPage::setupData(const QNdefMessage message)
 {
-	BtNdefRecord bt(message[0]);
+	m_message = message;
+	BtNdefRecord bt(m_message[0]);
 	setDevice(QBluetoothDeviceInfo(bt.address(), 
 				       bt.name(), 
 				       bt.classOfDevice()));
@@ -102,20 +105,18 @@ bool BtPage::setupData(const QNdefMessage message)
 
 QNdefMessage BtPage::prepareDataForStorage(void)
 {
-	QNdefMessage message;
-
 	quint32 cod =
 		((m_info.serviceClasses() & 0x7ff) << 13) | 
 		((m_info.majorDeviceClass() & 0x1f) << 8) |
 		((m_info.minorDeviceClass() & 0x3f) << 2);
 
-	BtNdefRecord bt;
+	BtNdefRecord bt(m_message[0]);
 	bt.setAddress(m_info.address());
 	bt.setClassOfDevice(cod);
 	bt.setName(m_info.name());
-	message << bt;
+	m_message[0] = bt;
 
-	return message;
+	return m_message;
 }
 
 void BtPage::noBluetoothAlert(void)
@@ -185,18 +186,5 @@ void BtPage::setDevice(const QBluetoothDeviceInfo info)
 
 void BtPage::updateSize(void)
 {
-	QString name = m_info.name();
-
-	quint32 payloadLength = 
-		13 + /* length, bdaddr, cod */
-		(name != "" ? (2 + name.toUtf8().length()) : 0);
-
-	quint32 ndefLength = 
-		1 + /* NDEF header */
-		1 + /* type length */
-		(payloadLength < 256 ? 1 : 4) + /* payload length */
-		32 + /* type (application/vnd.bluetooth.ep.oob) */
-		payloadLength; /* payload */
-
-	setContentSize(ndefLength);
+	setContentSize(Util::messageLength(m_message));
 }

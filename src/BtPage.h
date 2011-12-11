@@ -12,6 +12,7 @@
 #include "CreateEditPage.h"
 
 #include <QBluetoothDeviceInfo>
+#include <QNdefMessage>
 
 class MContentItem;
 class BluezSupplicant;
@@ -64,6 +65,8 @@ private:
 	QBluetoothDeviceInfo m_info;
 
 	BluezSupplicant *m_bluez;
+
+	QNdefMessage m_message;
 
 };
 

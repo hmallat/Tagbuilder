@@ -17,6 +17,11 @@
 
 #include <MDebug>
 
+extern "C"
+{
+#include <ctype.h>
+}
+
 /* TODO: maximum name length supported by tag storage is 65535,
    should limit somewhere what names are given to tags */
 
@@ -142,3 +147,76 @@ const QString &Tag::icon(const QString &type)
 		type == WLAN_TAG ? WLAN_ICON : 
 		UNKNOWN_ICON;
 }
+
+#define CHUNK 16
+
+void Tag::dump(const QNdefRecord &record)
+{
+	static const char *h = "0123456789abcdef";
+
+	QNdefRecord::TypeNameFormat tnf = record.typeNameFormat();
+	QByteArray type = record.type();
+	QByteArray data = record.payload();
+
+	mDebug(__func__) << "TNF " << tnf << "(" <<
+		(tnf == QNdefRecord::Empty ? "empty" :
+		 tnf == QNdefRecord::NfcRtd ? "forum" : 
+		 tnf == QNdefRecord::Mime ? "mime" :
+		 tnf == QNdefRecord::Uri ? "uri" :
+		 tnf == QNdefRecord::ExternalRtd ? "external" :
+		 tnf == QNdefRecord::Unknown ? "unknown" : 
+		 "unspecified") << ")";
+
+	mDebug(__func__) << "Type '" << QString::fromAscii(type) << "'";
+
+	mDebug(__func__) << "Payload";
+	for (int pos = 0; pos < data.length(); pos += CHUNK) {
+		QString line;
+
+		line.append("[");
+		line.append(h[(pos >> 12) & 0xf]);
+		line.append(h[(pos >>  8) & 0xf]);
+		line.append(h[(pos >>  4) & 0xf]);
+		line.append(h[(pos >>  0) & 0xf]);
+		line.append("] ");
+
+		for (int cur = 0; cur < CHUNK; cur++) {
+			if (pos + cur < data.length()) {
+				line.append(h[(data[pos + cur] >> 4) & 0xf]);
+				line.append(h[(data[pos + cur] >> 0) & 0xf]);
+				line.append(' ');
+			} else {
+				line.append("   ");
+			}
+		}
+
+		for (int cur = 0; cur < CHUNK; cur++) {
+			if (pos + cur < data.length()) {
+				line.append((isprint(data[pos + cur])
+					     ? data[pos + cur]
+					     : '.'));
+			} else {
+				line.append(' ');
+			}
+		}
+
+		mDebug(__func__) << line;
+	}
+}
+
+void Tag::dump(const QNdefMessage &message)
+{
+	mDebug(__func__) << "--------------------------------";
+
+	mDebug(__func__) 
+		<< "NDEF message with " << message.length() << " records. ";
+
+	for (int i = 0; i < message.length(); i++) {
+		mDebug(__func__) << "Record " << i << ":";
+		dump(message[i]);
+	}
+
+	mDebug(__func__) << "--------------------------------";
+}
+
+

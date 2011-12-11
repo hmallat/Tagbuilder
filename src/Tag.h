@@ -59,6 +59,10 @@ public:
 
 	static const QString &icon(const QString &type);
 
+	static void dump(const QNdefRecord &record);
+
+	static void dump(const QNdefMessage &message);
+
 private:
 
 	static const QString UNKNOWN_TAG;

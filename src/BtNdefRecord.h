@@ -39,7 +39,19 @@ public:
 
 	void setClassOfDevice(quint32 cod);
 
+	bool isValid(void) const;
+
 private:
+
+	int eirOffset(quint8 which) const;
+
+	int eirLength(quint8 which) const;
+
+	const QByteArray eirData(quint8 which) const;
+
+	bool removeEir(quint8 which);
+
+	void appendEir(quint8 which, const QByteArray &eirData);
 
 };
 

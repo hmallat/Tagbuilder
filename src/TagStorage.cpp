@@ -262,6 +262,9 @@ const Tag* TagStorage::TagStorageImpl::at(int which)
 
 bool TagStorage::TagStorageImpl::append(Tag *tag)
 {
+	mDebug(__func__) << "Appending to tag storage: ";
+	mDebug(__func__) << "New message: ";
+	Tag::dump(tag->message());
 	tags << tag;
 	return _writeStorage(tags);
 }
@@ -269,6 +272,13 @@ bool TagStorage::TagStorageImpl::append(Tag *tag)
 bool TagStorage::TagStorageImpl::update(int which, Tag *tag)
 {
 	Tag *old = tags[which];
+
+	mDebug(__func__) << "Appending tag storage: ";
+	mDebug(__func__) << "Previous message: ";
+	Tag::dump(old->message());
+	mDebug(__func__) << "Updated message: ";
+	Tag::dump(tag->message());
+
 	tags[which] = tag;
 	delete old;
 	return _writeStorage(tags);
