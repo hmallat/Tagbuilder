@@ -296,3 +296,64 @@ void BtNdefRecord::setClassOfDevice(quint32 cod)
 		appendEir(EIR_COD, eir);
 	}
 }
+
+BtNdefRecord BtNdefRecord::fromSupportedMimeType(const QNdefRecord &other)
+{
+	/* Format is kind-of documented in Nokia 6131 NFC Wiki:
+	 *
+	 *  1 configuration byte
+	 *  6 BDADDR (in wrong format, mind you)
+	 *  3 CoD (in wrong format, mind you)
+	 * 16 authentication info (16 at most, can be less)
+	 *  1 short name length
+	 *  n short name 
+	 *
+	 * Name position depends on how long the authentication info is;
+	 * in the absence of public documents, only handle cases which 
+	 * can be deduced from available tags:
+	 *
+	 * - configuration byte 0x2n -> n bytes of authentication
+	 *   information
+	 * 
+	 */
+
+	const QByteArray nokiabt = other.payload();
+
+	quint64 bdaddr = 0;
+	for (int i = 0; i < 6; i++) {
+		bdaddr <<= 8;
+		bdaddr |= (quint64)nokiabt[1 + i];
+	}
+
+	quint32 cod = 0;
+	for (int i = 0; i < 3; i++) {
+		cod <<= 8;
+		cod |= nokiabt[7 + i];
+	}
+
+	BtNdefRecord bt;
+	bt.setAddress(QBluetoothAddress(bdaddr));
+	bt.setClassOfDevice(cod);
+
+	if ((nokiabt[0] & 0xf0) == 0x20) {
+		int authlen = (int)(nokiabt[0] & 0x0f);
+		int namepos = 10 + authlen;
+		if (namepos < nokiabt.length()) {
+			int namelen = nokiabt[namepos];
+			if (namepos + namelen <= nokiabt.length()) {
+				QByteArray name = nokiabt.mid(namepos + 1, 
+							      namelen);
+				bt.setName(QString::fromUtf8(name));
+			}
+		}
+	}
+	
+	return bt;
+}
+
+bool BtNdefRecord::hasSupportedMimeType(const QNdefRecord &other)
+{
+	return (other.typeNameFormat() == QNdefRecord::ExternalRtd &&
+		other.type() == "nokia.com:bt");
+}
+

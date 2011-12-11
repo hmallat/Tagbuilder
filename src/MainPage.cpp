@@ -20,6 +20,7 @@
 #include "UrlPage.h"
 #include "TagReader.h"
 #include "LabelOrList.h"
+#include "BtNdefRecord.h"
 #include "VCardNdefRecord.h"
 
 #include <QGraphicsAnchorLayout>
@@ -250,6 +251,9 @@ void MainPage::messageRead(const QNdefMessage contents)
 	if (VCardNdefRecord::hasSupportedMimeType(contents[0]) &&
 	    contents.length() == 1) {
 		in << VCardNdefRecord::fromSupportedMimeType(contents[0]);
+	} else if (BtNdefRecord::hasSupportedMimeType(contents[0]) &&
+		   contents.length() == 1) {
+		in << BtNdefRecord::fromSupportedMimeType(contents[0]);
 	} else {
 		in = contents;
 	}

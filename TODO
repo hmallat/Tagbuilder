@@ -1,3 +1,15 @@
+GENERAL:
+- dummy screen for unknown tags
+
+BLUETOOTH:
+- editing of BT device name, device class and bdaddr (e.g. from content
+  item popup page)
+- static handover support?
+- full BT2.0 support (need docs or more data)
+
+CONTACTS:
+
+MISC (rearrange these):
 * writing of tags to work
 * help/about 
 * BT/Contacts content item should be disabled (blinks when touched)

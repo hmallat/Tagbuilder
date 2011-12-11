@@ -41,6 +41,10 @@ public:
 
 	bool isValid(void) const;
 
+	static BtNdefRecord fromSupportedMimeType(const QNdefRecord &other);
+
+	static bool hasSupportedMimeType(const QNdefRecord &other);
+
 private:
 
 	int eirOffset(quint8 which) const;
