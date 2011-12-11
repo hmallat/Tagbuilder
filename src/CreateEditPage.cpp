@@ -66,10 +66,10 @@ void CreateEditPage::createContent(void)
 	anchor->addAnchor(m_size, Qt::AnchorRight, anchor, Qt::AnchorRight);
 
 	MWidget *layoutContainer = new MWidget();
-	layoutContainer->setSizePolicy(QSizePolicy::Minimum, 
+	layoutContainer->setSizePolicy(QSizePolicy::Preferred, 
 				       QSizePolicy::Minimum);
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, layoutContainer);
-	m_layout->setSizePolicy(QSizePolicy::Minimum, 
+	m_layout->setSizePolicy(QSizePolicy::Preferred, 
 				QSizePolicy::Minimum);
 
 	MLabel *label = new MLabel(m_tag == -1 
@@ -92,7 +92,7 @@ void CreateEditPage::createContent(void)
 	createPageSpecificContent();
 
 	MPannableViewport *view = new MPannableViewport();
-	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 	view->setPanDirection(Qt::Vertical);
 	view->setMinimumSize(100, 100);
 	view->setWidget(layoutContainer);

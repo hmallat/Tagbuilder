@@ -48,6 +48,7 @@ HEADERS		+= \
 		src/TagStorage.h \
 		src/TextPage.h \
 		src/TextRecordEdit.h \
+		src/UnknownPage.h \
 		src/UrlPage.h \
 		src/Util.h \
 		src/VCardNdefRecord.h
@@ -86,6 +87,7 @@ SOURCES		+= \
 		src/TagStorage.cpp \
 		src/TextPage.cpp \
 		src/TextRecordEdit.cpp \
+		src/UnknownPage.cpp \
 		src/UrlPage.cpp \
 		src/Util.cpp \
 		src/VCardNdefRecord.cpp

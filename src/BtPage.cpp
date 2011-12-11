@@ -110,11 +110,18 @@ QNdefMessage BtPage::prepareDataForStorage(void)
 		((m_info.majorDeviceClass() & 0x1f) << 8) |
 		((m_info.minorDeviceClass() & 0x3f) << 2);
 
-	BtNdefRecord bt(m_message[0]);
+	BtNdefRecord bt;
+	if (m_message.length() == 1) {
+		bt = m_message[0];
+	}
 	bt.setAddress(m_info.address());
 	bt.setClassOfDevice(cod);
 	bt.setName(m_info.name());
-	m_message[0] = bt;
+	if (m_message.length() == 1) {
+		m_message[0] = bt;
+	} else {
+		m_message << bt;
+	}
 
 	return m_message;
 }

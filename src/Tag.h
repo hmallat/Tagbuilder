@@ -36,6 +36,8 @@ public:
 
 	static const QString WLAN_TAG;
 
+	static const QString UNKNOWN_TAG;
+
 	Tag(const QString &name, 
 	    const QNdefMessage &message,
 	    QObject *parent = 0);
@@ -64,8 +66,6 @@ public:
 	static void dump(const QNdefMessage &message);
 
 private:
-
-	static const QString UNKNOWN_TAG;
 
 	Q_DISABLE_COPY(Tag);
 

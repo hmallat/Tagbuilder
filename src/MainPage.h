@@ -65,6 +65,8 @@ private:
 
 	MObjectMenu *m_objectMenu;
 
+	MObjectMenu *m_unknownObjectMenu;
+
 	QModelIndex m_longTapIndex;
 
 	BluezSupplicant *m_bluez;

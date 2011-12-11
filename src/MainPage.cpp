@@ -17,6 +17,7 @@
 #include "Tag.h"
 #include "TagTypeListModel.h"
 #include "TagListCellCreator.h"
+#include "UnknownPage.h"
 #include "UrlPage.h"
 #include "TagReader.h"
 #include "LabelOrList.h"
@@ -43,6 +44,7 @@ static MAbstractCellCreator<MContentItem> *_getTagListCellCreator(void)
 MainPage::MainPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_objectMenu(NULL),
+	  m_unknownObjectMenu(NULL),
 	  m_longTapIndex(QModelIndex())
 {
 	m_bluez = new BluezSupplicant(this);
@@ -74,6 +76,17 @@ void MainPage::createObjectMenuActions(void)
 	MAction *removeAction = new MAction(tr("Remove tag"), this);
 	m_objectMenu->addAction(removeAction);
   	connect(removeAction, SIGNAL(triggered()), this, SLOT(removeTag()));
+
+	m_unknownObjectMenu = new MObjectMenu(this);
+	
+	MAction *showAction = new MAction(tr("Show tag"), this);
+	m_unknownObjectMenu->addAction(showAction);
+  	connect(showAction, SIGNAL(triggered()), this, SLOT(editTag()));
+
+	MAction *removeUnknownAction = new MAction(tr("Remove tag"), this);
+	m_unknownObjectMenu->addAction(removeUnknownAction);
+  	connect(removeUnknownAction, SIGNAL(triggered()), 
+		this, SLOT(removeTag()));
 }
 
 void MainPage::createContent(void)
@@ -182,7 +195,10 @@ void MainPage::editTag(void)
 			page = new TextPage(m_longTapIndex.row());
 		} else if (tag->type() == Tag::URL_TAG) {
 			page = new UrlPage(m_longTapIndex.row());
+		} else {
+			page = new UnknownPage(m_longTapIndex.row());
 		}
+
 		if (page != 0) {
 			page->appear(scene(), 
 				     MSceneWindow::DestroyWhenDismissed);
@@ -224,9 +240,16 @@ void MainPage::tagLongSelected(const QModelIndex &which,
 	if (which.isValid() &&
 	    which.row() < TagStorage::storage()->count()) {
 		m_longTapIndex = which;
-		m_objectMenu->setCursorPosition(position);
-		m_objectMenu->setTitle(which.data().toString());
-		sceneManager()->appearSceneWindow(m_objectMenu);
+		const Tag *tag = TagStorage::storage()->tag(which.row());
+		if (tag->type() == Tag::UNKNOWN_TAG) {
+			m_unknownObjectMenu->setCursorPosition(position);
+			m_unknownObjectMenu->setTitle(which.data().toString());
+			sceneManager()->appearSceneWindow(m_unknownObjectMenu);
+		} else {
+			m_objectMenu->setCursorPosition(position);
+			m_objectMenu->setTitle(which.data().toString());
+			sceneManager()->appearSceneWindow(m_objectMenu);
+		}
 	}
 }
 
@@ -244,6 +267,8 @@ void MainPage::messageRead(const QNdefMessage contents)
 {
 	bool success;
 	QNdefMessage in;
+
+	/* TODO: UI notification if conversion drops data? */
 
 	/* Convert incoming data so we don't have to deal with this
 	   mess later on -- Qt API could have had some consideration
