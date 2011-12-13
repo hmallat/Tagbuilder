@@ -91,7 +91,16 @@ void BtDetailsPage::createContent(void)
 	m_addr = new LabeledTextEdit(MTextEditModel::SingleLine,
 				     tr("Device address"),
 				     tr("Enter device address"));
-	m_addr->textEdit()->setText(m_info.address().toString()); /***/
+
+	char addrstr[18] = { 0 };
+	quint64 bdaddr = m_info.address().toUInt64();
+	for (int i = 0; i < 6; i++) {
+		static const char *hex = "0123456789ABCDEF";
+		addrstr[3*i + 0] = hex[(bdaddr >> (44 - i*8)) & 0xf];
+		addrstr[3*i + 1] = hex[(bdaddr >> (40 - i*8)) & 0xf];
+		addrstr[3*i + 2] = (i < 5) ? ':' : '\0';
+	}
+	m_addr->textEdit()->setText(addrstr); 
 	m_addr->textEdit()->setValidator(addrValidator);
 	m_addr->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout->addItem(m_addr);
