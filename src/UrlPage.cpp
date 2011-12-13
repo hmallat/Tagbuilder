@@ -44,7 +44,7 @@ void UrlPage::createPageSpecificContent(void)
 	m_url->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_url);
 	layout()->setAlignment(m_url, Qt::AlignCenter);
-	connect(m_url, SIGNAL(textChanged()),
+	connect(m_url->textEdit(), SIGNAL(textChanged()),
 		this, SLOT(urlChanged(void)));
 
 	{
@@ -111,7 +111,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 
 	if (record.isRecordType<QNdefNfcUriRecord>()) {
 		QNdefNfcUriRecord U(record);
-		m_url->setText(U.uri().toString());
+		m_url->textEdit()->setText(U.uri().toString());
 		m_titleButton->setChecked(false);
 		r = true;
 
@@ -122,7 +122,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 		if (Sp.uri(U) == false) {
 			goto exit;
 		}
-		m_url->setText(U.uri().toString());
+		m_url->textEdit()->setText(U.uri().toString());
 
 		QList<QNdefNfcTextRecord> T = Sp.titles();
 		if (T.length() != 0) {
@@ -149,7 +149,7 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 	if (m_titleButton->isChecked() == false) {
 		mDebug(__func__) << "Creating U, no title set. ";
 		QNdefNfcUriRecord U;
-		U.setUri(m_url->text());
+		U.setUri(m_url->textEdit()->text());
 		message << U;
 	} else {
 		mDebug(__func__) << "Creating Sp, title set. ";
@@ -157,7 +157,7 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 		SmartPosterRecord Sp;
 
 		QNdefNfcUriRecord U;
-		U.setUri(m_url->text());
+		U.setUri(m_url->textEdit()->text());
 		Sp.setUri(U);
 
 		QList<QNdefNfcTextRecord> titles;
@@ -192,7 +192,7 @@ void UrlPage::titleLanguageChanged(void)
 void UrlPage::urlChanged(void)
 {
 	/* TODO: how about checking also that the URL is a valid one */
-	setContentValidity(m_url->text() != "" ? true : false);
+	setContentValidity(m_url->textEdit()->text() != "" ? true : false);
 	updateSize();
 }
 

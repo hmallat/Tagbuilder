@@ -86,7 +86,7 @@ void CreateEditPage::createContent(void)
 	m_name->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	m_layout->addItem(m_name);
 	m_layout->setAlignment(m_name, Qt::AlignLeft);
-	connect(m_name, SIGNAL(textChanged(void)),
+	connect(m_name->textEdit(), SIGNAL(textChanged(void)),
 		this, SLOT(nameChanged(void)));
 
 	createPageSpecificContent();
@@ -129,7 +129,7 @@ void CreateEditPage::updateUI(void)
 
 void CreateEditPage::nameChanged(void)
 {
-	setNameValidity(m_name->text() != "" ? true : false);
+	setNameValidity(m_name->textEdit()->text() != "" ? true : false);
 }
 
 void CreateEditPage::setNameValidity(bool valid)
@@ -153,7 +153,7 @@ void CreateEditPage::load(void)
 {
 	const Tag *tag = TagStorage::storage()->tag(m_tag);	
 
-	m_name->setText(tag->name());
+	m_name->textEdit()->setText(tag->name());
 	setNameValidity(true);
 
 	if (setupData(tag->message()) == false) {
@@ -180,11 +180,11 @@ void CreateEditPage::storeAndExit(void)
 	}
 
 	if (m_tag == -1) {
-		success = TagStorage::storage()->append(m_name->text(), 
+		success = TagStorage::storage()->append(m_name->textEdit()->text(), 
 							message);
 	} else {
 		success = TagStorage::storage()->update(m_tag,
-							m_name->text(),
+							m_name->textEdit()->text(),
 							message);
 	}
 

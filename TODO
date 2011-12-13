@@ -1,5 +1,7 @@
 GENERAL:
-- dummy screen for unknown tags
+
+- Make UI uniform -- but which is the best way? Now some pages have
+many fields while others have content item + actions.
 
 BLUETOOTH:
 - editing of BT device name, device class and bdaddr (e.g. from content

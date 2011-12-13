@@ -9,6 +9,7 @@
 /* TODO: check what happens if BT is off */
 
 #include "BtPage.h"
+#include "BtDetailsPage.h"
 #include "BtNdefRecord.h"
 #include "BluezSupplicant.h"
 #include "BtSelectionPage.h"
@@ -57,6 +58,8 @@ void BtPage::createPageSpecificContent(void)
 	m_device->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_device);
 	layout()->setAlignment(m_device, Qt::AlignCenter);
+	connect(m_device, SIGNAL(clicked()),
+		this, SLOT(editDevice()));
 
 	{
 		QGraphicsLinearLayout *sub_layout = 
@@ -195,3 +198,17 @@ void BtPage::updateSize(void)
 {
 	setContentSize(Util::messageLength(m_message));
 }
+
+void BtPage::editDevice(void)
+{
+	BtDetailsPage *page = new BtDetailsPage(m_info);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(finished(const QBluetoothDeviceInfo &)),
+		this, SLOT(editDeviceFinished(const QBluetoothDeviceInfo &)));
+}
+
+void BtPage::editDeviceFinished(const QBluetoothDeviceInfo &info)
+{
+	setDevice(info);
+}
+

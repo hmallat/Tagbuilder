@@ -30,7 +30,7 @@ TextRecordEdit::TextRecordEdit(const QString title,
 	m_layout->addItem(m_text);
 	m_layout->setAlignment(m_text, Qt::AlignHCenter);
 	m_layout->setStretchFactor(m_text, 999);
-	connect(m_text, SIGNAL(textChanged(void)),
+	connect(m_text->textEdit(), SIGNAL(textChanged(void)),
 		this, SIGNAL(contentsChanged(void)));
 
 	{
@@ -129,12 +129,12 @@ void TextRecordEdit::setLanguage(const QString language)
 
 const QString TextRecordEdit::contents(void) const
 {
-	return m_text != 0 ? m_text->text() : "";
+	return m_text != 0 ? m_text->textEdit()->text() : "";
 }
 
 void TextRecordEdit::setContents(const QString what)
 {
 	if (m_text != 0) {
-		m_text->setText(what);
+		m_text->textEdit()->setText(what);
 	}
 }

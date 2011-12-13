@@ -52,6 +52,10 @@ private Q_SLOTS:
 
 	void setDevice(const QBluetoothDeviceInfo info);
 
+	void editDevice(void);
+
+	void editDeviceFinished(const QBluetoothDeviceInfo &info);
+
 private:
 
 	Q_DISABLE_COPY(BtPage);

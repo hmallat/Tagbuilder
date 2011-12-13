@@ -42,13 +42,7 @@ public:
 
 	virtual void removeAt(int index);
 
-	const QString text(void) const;
-
-	void setText(const QString text);
-
-Q_SIGNALS:
-
-	void textChanged(void);
+	MTextEdit *textEdit(void);
 
 private:
 

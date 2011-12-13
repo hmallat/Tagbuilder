@@ -33,10 +33,6 @@ LabeledTextEdit::LabeledTextEdit(MTextEditModel::LineMode mode,
 	m_text->setText(initialContents);
 	m_layout->addItem(m_text);
 	m_layout->setAlignment(m_text, Qt::AlignLeft);
-
-	connect(m_text, SIGNAL(textChanged(void)),
-		this, SIGNAL(textChanged(void)));
-
 }
 
 LabeledTextEdit::~LabeledTextEdit(void)
@@ -88,14 +84,7 @@ void LabeledTextEdit::removeAt(int index)
 	invalidate();
 }
 
-const QString LabeledTextEdit::text(void) const
+MTextEdit *LabeledTextEdit::textEdit()
 {
-	return m_text != 0 ? m_text->text() : "";
-}
-
-void LabeledTextEdit::setText(const QString what)
-{
-	if (m_text != 0) {
-		m_text->setText(what);
-	}
+	return m_text;
 }
