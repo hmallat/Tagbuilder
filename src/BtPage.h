@@ -14,7 +14,8 @@
 #include <QBluetoothDeviceInfo>
 #include <QNdefMessage>
 
-class MContentItem;
+class MButton;
+class LabeledTextEdit;
 class BluezSupplicant;
 
 QTM_USE_NAMESPACE;
@@ -52,25 +53,45 @@ private Q_SLOTS:
 
 	void setDevice(const QBluetoothDeviceInfo info);
 
-	void editDevice(void);
+	void deviceNameChanged(void);
 
-	void editDeviceFinished(const QBluetoothDeviceInfo &info);
+	void deviceAddressChanged(void);
+
+	void deviceClassChanged(void);
 
 private:
 
 	Q_DISABLE_COPY(BtPage);
 
-	void updateSize(void);
+	void updateDevice(void);
 
 	void noBluetoothAlert(void);
 
-	MContentItem *m_device;
+	void setDeviceAddressValidity(bool valid);
 
-	QBluetoothDeviceInfo m_info;
+	void setDeviceClassValidity(bool valid);
 
 	BluezSupplicant *m_bluez;
 
+	QBluetoothDeviceInfo m_info;
+
 	QNdefMessage m_message;
+
+	QRegExp m_bdaddrRegexp;
+
+	QRegExp m_codRegexp;
+
+	LabeledTextEdit *m_name;
+
+	LabeledTextEdit *m_addr;
+
+	LabeledTextEdit *m_class;
+
+	bool m_deviceNameValidity;
+
+	bool m_deviceAddrValidity;
+
+	bool m_deviceClassValidity;
 
 };
 

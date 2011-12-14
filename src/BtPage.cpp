@@ -9,21 +9,25 @@
 /* TODO: check what happens if BT is off */
 
 #include "BtPage.h"
-#include "BtDetailsPage.h"
 #include "BtNdefRecord.h"
 #include "BluezSupplicant.h"
 #include "BtSelectionPage.h"
+#include "LabeledTextEdit.h"
 #include "Util.h"
 
 #include <MLabel>
 #include <MButton>
 #include <MMessageBox>
-#include <MContentItem>
 #include <QGraphicsLinearLayout>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
+#include <QRegExpValidator>
+#include <QRegExp>
 
 #include <MDebug>
+
+#define HEX "[0-9A-Fa-f]"
+#define COL ":"
 
 /* NB: looks like Qt hostinfo doesn't return the class of
    device. Could ask from BlueZ, but that would be just as unportable
@@ -34,12 +38,58 @@
    known devices. So implement that using BlueZ D-Bus interface. That
    cannot be hardcoded... */
 
+static quint32 _cod(const QBluetoothDeviceInfo &info)
+{
+	return
+		((info.serviceClasses() & 0x7ff) << 13) | 
+		((info.majorDeviceClass() & 0x1f) << 8) |
+		((info.minorDeviceClass() & 0x3f) << 2);
+}
+
+static QString _bdaddr2str(const QBluetoothAddress address)
+{
+	static const char *hex = "0123456789ABCDEF";
+	char addrstr[18] = { 0 };
+	quint64 bdaddr = address.toUInt64();
+	for (int i = 0; i < 6; i++) {
+		addrstr[3*i + 0] = hex[(bdaddr >> (44 - i*8)) & 0xf];
+		addrstr[3*i + 1] = hex[(bdaddr >> (40 - i*8)) & 0xf];
+		addrstr[3*i + 2] = (i < 5) ? ':' : '\0';
+	}
+	return QString(addrstr);
+}
+
+static QString _cod2str(quint32 cod)
+{
+	static const char *hex = "0123456789ABCDEF";
+	char codstr[7] = { 0 };
+	for (int i = 0; i < 3; i++) {
+		codstr[2*i + 0] = hex[(cod >> (20 - i*8)) & 0xf];
+		codstr[2*i + 1] = hex[(cod >> (16 - i*8)) & 0xf];
+	}
+	return QString(codstr);
+}
+
 BtPage::BtPage(BluezSupplicant *bluez, int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
-	  m_device(0),
+	  m_bluez(bluez),
 	  m_info(),
-	  m_bluez(bluez)
+	  m_name(0),
+	  m_addr(0),
+	  m_class(0),
+	  m_deviceNameValidity(true),
+	  m_deviceAddrValidity(true),
+	  m_deviceClassValidity(true)
 {
+	m_bdaddrRegexp = QRegExp(HEX HEX COL 
+				 HEX HEX COL 
+				 HEX HEX COL 
+				 HEX HEX COL 
+				 HEX HEX COL 
+				 HEX HEX);
+	m_codRegexp = QRegExp(HEX HEX 
+			      HEX HEX 
+			      HEX HEX);
 }
 
 BtPage::~BtPage(void)
@@ -48,18 +98,45 @@ BtPage::~BtPage(void)
 
 void BtPage::createPageSpecificContent(void)
 {
-	MLabel *selected = new MLabel(tr("Selected device"));
-	selected->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	selected->setAlignment(Qt::AlignLeft);
-	layout()->addItem(selected);
-	layout()->setAlignment(selected, Qt::AlignLeft);
+	m_name = new LabeledTextEdit(MTextEditModel::SingleLine,
+				     tr("Device name"),
+				     tr("Enter device name"));
+	m_name->textEdit()->setText(m_info.name());
+	m_name->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	layout()->addItem(m_name);
+	layout()->setAlignment(m_name, Qt::AlignLeft);
+	connect(m_name->textEdit(), SIGNAL(textChanged(void)),
+		this, SLOT(deviceNameChanged(void)));
 
-	m_device = new MContentItem();
-	m_device->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	layout()->addItem(m_device);
-	layout()->setAlignment(m_device, Qt::AlignCenter);
-	connect(m_device, SIGNAL(clicked()),
-		this, SLOT(editDevice()));
+	QRegExpValidator *addrValidator =
+		new QRegExpValidator(m_bdaddrRegexp, this);
+
+	m_addr = new LabeledTextEdit(MTextEditModel::SingleLine,
+				     tr("Device address"),
+				     tr("Enter device address"));
+
+	m_addr->textEdit()->setText(_bdaddr2str(m_info.address()));
+	m_addr->textEdit()->setValidator(addrValidator);
+	m_addr->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	layout()->addItem(m_addr);
+	layout()->setAlignment(m_addr, Qt::AlignLeft);
+	connect(m_addr->textEdit(), SIGNAL(textChanged(void)),
+		this, SLOT(deviceAddressChanged(void)));
+
+	QRegExpValidator *codValidator =
+		new QRegExpValidator(m_codRegexp, this);
+
+	m_class = new LabeledTextEdit(MTextEditModel::SingleLine,
+				      tr("Device class"),
+				      tr("Enter device class"));
+
+	m_class->textEdit()->setText(_cod2str(_cod(m_info)));
+	m_class->textEdit()->setValidator(codValidator);
+	m_class->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	layout()->addItem(m_class);
+	layout()->setAlignment(m_class, Qt::AlignLeft);
+	connect(m_class->textEdit(), SIGNAL(textChanged(void)),
+		this, SLOT(deviceClassChanged(void)));
 
 	{
 		QGraphicsLinearLayout *sub_layout = 
@@ -92,14 +169,15 @@ void BtPage::createPageSpecificContent(void)
 
 void BtPage::setupNewData(void) 
 {
-	m_message = QNdefMessage();
-	setDevice(QBluetoothDeviceInfo());
+	BtNdefRecord bt;
+	setDevice(QBluetoothDeviceInfo(bt.address(), 
+				       bt.name(), 
+				       bt.classOfDevice()));
 }
 
 bool BtPage::setupData(const QNdefMessage message)
 {
-	m_message = message;
-	BtNdefRecord bt(m_message[0]);
+	BtNdefRecord bt(message[0]);
 	setDevice(QBluetoothDeviceInfo(bt.address(), 
 				       bt.name(), 
 				       bt.classOfDevice()));
@@ -108,17 +186,12 @@ bool BtPage::setupData(const QNdefMessage message)
 
 QNdefMessage BtPage::prepareDataForStorage(void)
 {
-	quint32 cod =
-		((m_info.serviceClasses() & 0x7ff) << 13) | 
-		((m_info.majorDeviceClass() & 0x1f) << 8) |
-		((m_info.minorDeviceClass() & 0x3f) << 2);
-
 	BtNdefRecord bt;
 	if (m_message.length() == 1) {
 		bt = m_message[0];
 	}
 	bt.setAddress(m_info.address());
-	bt.setClassOfDevice(cod);
+	bt.setClassOfDevice(_cod(m_info));
 	bt.setName(m_info.name());
 	if (m_message.length() == 1) {
 		m_message[0] = bt;
@@ -181,34 +254,74 @@ void BtPage::chooseScannedBT(void)
 
 void BtPage::setDevice(const QBluetoothDeviceInfo info)
 {
-	m_info = info;
+	m_name->textEdit()->setText(info.isValid()
+				    ? info.name()
+				    : "");
+	
+	m_addr->textEdit()->setText(info.isValid()
+				    ? info.address().toString()
+				    : "00:00:00:00:00:00");
 
-	m_device->setImageID("icon-m-content-bluetooth"); /* TODO */
-	m_device->setTitle(m_info.isValid()
-			   ? m_info.name()
-			   : tr("No device selected"));
-	m_device->setSubtitle(m_info.isValid()
-			      ? m_info.address().toString()
-			      : "00:00:00:00:00:00");
-	setContentValidity(m_info.isValid());
-	updateSize();
+	m_class->textEdit()->setText(info.isValid()
+				     ? _cod2str(_cod(info))
+				     : _cod2str(0));
+
+	updateDevice();
 }
 
-void BtPage::updateSize(void)
+void BtPage::updateDevice(void)
 {
+	bool dummy;
+	QBluetoothAddress addr(m_addr->textEdit()->text());
+	QString name(m_name->textEdit()->text());
+	quint32 cod = m_class->textEdit()->text().toUInt(&dummy, 16);
+	
+	m_info = QBluetoothDeviceInfo(addr,
+				      name,
+				      cod);
+	prepareDataForStorage();
 	setContentSize(Util::messageLength(m_message));
 }
 
-void BtPage::editDevice(void)
+void BtPage::deviceNameChanged(void)
 {
-	BtDetailsPage *page = new BtDetailsPage(m_info);
-	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
-	connect(page, SIGNAL(finished(const QBluetoothDeviceInfo &)),
-		this, SLOT(editDeviceFinished(const QBluetoothDeviceInfo &)));
+	/* Anything goes, actually */
+	updateDevice();
 }
 
-void BtPage::editDeviceFinished(const QBluetoothDeviceInfo &info)
+void BtPage::deviceAddressChanged(void)
 {
-	setDevice(info);
+	if (m_addr->textEdit()->hasAcceptableInput() == true) {
+		setDeviceAddressValidity(true);
+		updateDevice();
+	} else {
+		setDeviceAddressValidity(false);
+	}
+}
+
+void BtPage::deviceClassChanged(void)
+{
+	if (m_class->textEdit()->hasAcceptableInput() == true) {
+		setDeviceClassValidity(true);
+		updateDevice();
+	} else {
+		setDeviceClassValidity(false);
+	}
+}
+
+void BtPage::setDeviceAddressValidity(bool valid)
+{
+	m_deviceAddrValidity = valid;
+	setContentValidity(m_deviceNameValidity == true &&
+			   m_deviceAddrValidity == true &&
+			   m_deviceClassValidity == true);
+}
+
+void BtPage::setDeviceClassValidity(bool valid)
+{
+	m_deviceClassValidity = valid;
+	setContentValidity(m_deviceNameValidity == true &&
+			   m_deviceAddrValidity == true &&
+			   m_deviceClassValidity == true);
 }
 

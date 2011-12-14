@@ -8,6 +8,8 @@ BLUETOOTH:
   item popup page)
 - static handover support?
 - full BT2.0 support (need docs or more data)
+- make sure BT record without a name takes only 48 bytes si ut can be 
+  written onto a Mifare UL
 
 CONTACTS:
 
