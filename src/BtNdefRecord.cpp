@@ -212,12 +212,16 @@ void BtNdefRecord::setName(const QString name)
 	}
 
 	if (nameOffset == EIR_NOT_FOUND) {
-		/* No previous name, so tack to the end */
-		appendEir(code, utf8);
+		/* No previous name, so tack to the end (if there is a name) */
+		if (name != "") {
+			appendEir(code, utf8);
+		}
 	} else {
-		/* Had previous name, replace that */
+		/* Had previous name, replace that (if there is a name) */
 		removeEir(oldCode);
-		appendEir(code, utf8);
+		if (name != "") {
+			appendEir(code, utf8);
+		}
 	}
 }
 
