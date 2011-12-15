@@ -258,9 +258,7 @@ void BtPage::setDevice(const QBluetoothDeviceInfo info)
 				    ? info.name()
 				    : "");
 	
-	m_addr->textEdit()->setText(info.isValid()
-				    ? info.address().toString()
-				    : "00:00:00:00:00:00");
+	m_addr->textEdit()->setText(_bdaddr2str(info.address()));
 
 	m_class->textEdit()->setText(info.isValid()
 				     ? _cod2str(_cod(info))
