@@ -16,6 +16,7 @@
 #include <QGraphicsLinearLayout>
 #include <QNdefNfcUriRecord>
 #include <QSystemInfo>
+#include <QSignalMapper>
 #include <MContainer>
 #include <MLabel>
 #include <MButton>
@@ -25,9 +26,12 @@
 UrlPage::UrlPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
 	  m_sysinfo(new QSystemInfo(this)),
+	  m_titleRemoveMapper(new QSignalMapper(this)),
+	  m_titleChangeMapper(new QSignalMapper(this)),
 	  m_url(0),
-	  m_titleButton(0),
-	  m_title(0)
+	  m_addTitle(0),
+	  m_titleLayout(0),
+	  m_titles()
 {
 }
 
@@ -48,52 +52,27 @@ void UrlPage::createPageSpecificContent(void)
 		this, SLOT(urlChanged(void)));
 
 	{
-		MContainer *container = new MContainer(tr("Bookmark title"));
-
-		QGraphicsLinearLayout *sub =
+		MContainer *container = new MContainer(tr("Titles"));
+		container->setSizePolicy(QSizePolicy::Minimum, 
+					 QSizePolicy::Minimum);
+		
+		m_titleLayout =
 			new QGraphicsLinearLayout(Qt::Vertical,
 						  container->centralWidget());
-		sub->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+		m_titleLayout->setSizePolicy(QSizePolicy::Minimum, 
+					     QSizePolicy::Minimum);
 
+		m_addTitle = new MButton();
+		m_addTitle->setText("Add a title");
+		m_addTitle->setSizePolicy(QSizePolicy::Minimum, 
+					  QSizePolicy::Fixed);
+		m_titleLayout->addItem(m_addTitle);
+		m_titleLayout->setAlignment(m_addTitle, Qt::AlignCenter);
+		connect(m_addTitle, SIGNAL(clicked()),
+			this, SLOT(addTitle()));
 
-		{
-			QGraphicsLinearLayout *pack =
-				new QGraphicsLinearLayout(Qt::Horizontal);
-			pack->setSizePolicy(QSizePolicy::Minimum, 
-					    QSizePolicy::Fixed);
-
-			MLabel *label = new MLabel(tr("Include title"));
-			label->setSizePolicy(QSizePolicy::Minimum, 
-					     QSizePolicy::Fixed);
-			pack->addItem(label);
-			pack->setAlignment(label, Qt::AlignCenter);
-			
-			m_titleButton = new MButton();
-			m_titleButton->setCheckable(true);
-			m_titleButton->setViewType(MButton::switchType);
-			m_titleButton->setSizePolicy(QSizePolicy::Minimum, 
-						     QSizePolicy::Fixed);
-			pack->addItem(m_titleButton);
-			pack->setAlignment(m_titleButton, Qt::AlignCenter);
-			pack->setStretchFactor(m_titleButton, 0);
-			connect(m_titleButton, SIGNAL(clicked(bool)),
-				this, SLOT(titleIncludedChanged(bool)));
-
-			sub->addItem(pack);
-		}
-
-		m_title = new TextRecordEdit("",
-					     tr("Enter title"),
-					     m_sysinfo->availableLanguages(),
-					     m_sysinfo->currentLanguage());
-		sub->addItem(m_title);
-		sub->setAlignment(m_title, Qt::AlignHCenter);
-		connect(m_title, SIGNAL(contentsChanged()),
-			this, SLOT(titleChanged(void)));
-		connect(m_title, SIGNAL(languageChanged()),
-			this, SLOT(titleLanguageChanged(void)));
-		
 		layout()->addItem(container);
+		layout()->setAlignment(container, Qt::AlignCenter);
 	}
 
 }
@@ -112,7 +91,6 @@ bool UrlPage::setupData(const QNdefMessage message)
 	if (record.isRecordType<QNdefNfcUriRecord>()) {
 		QNdefNfcUriRecord U(record);
 		m_url->textEdit()->setText(U.uri().toString());
-		m_titleButton->setChecked(false);
 		r = true;
 
 	} else {
@@ -125,6 +103,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 		m_url->textEdit()->setText(U.uri().toString());
 
 		QList<QNdefNfcTextRecord> T = Sp.titles();
+#if 0 /* TODO for reals */
 		if (T.length() != 0) {
 			mDebug(__func__) << "Setting locale to " << T[0].locale();
 			m_title->setContents(T[0].text());
@@ -133,6 +112,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 		} else {
 			m_titleButton->setChecked(true);
 		}
+#endif
 
 		r = true;
 	}
@@ -146,14 +126,14 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 {
 	QNdefMessage message;
 
-	if (m_titleButton->isChecked() == false) {
+	if (m_titles.length() == 0) {
 		mDebug(__func__) << "Creating U, no title set. ";
 		QNdefNfcUriRecord U;
 		U.setUri(m_url->textEdit()->text());
 		message << U;
 	} else {
 		mDebug(__func__) << "Creating Sp, title set. ";
-
+#if 0 /* TODO for reals */
 		SmartPosterRecord Sp;
 
 		QNdefNfcUriRecord U;
@@ -168,32 +148,10 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 		Sp.setTitles(titles);
 
 		message << Sp;
+#endif
 
 	}
 	return message;
-}
-
-void UrlPage::titleIncludedChanged(bool checked)
-{
-	(void) checked;
-	updateSize();
-}
-
-void UrlPage::titleChanged(void)
-{
-	updateSize();
-}
-
-void UrlPage::titleLanguageChanged(void)
-{
-	updateSize();
-}
-
-void UrlPage::urlChanged(void)
-{
-	/* TODO: how about checking also that the URL is a valid one */
-	setContentValidity(m_url->textEdit()->text() != "" ? true : false);
-	updateSize();
 }
 
 void UrlPage::updateSize(void)
@@ -204,4 +162,68 @@ void UrlPage::updateSize(void)
 	QNdefMessage message = prepareDataForStorage();
 	quint32 ndefLength = Util::messageLength(message);
 	setContentSize(ndefLength);
+}
+
+void UrlPage::urlChanged(void)
+{
+	/* TODO: how about checking also that the URL is a valid one */
+	setContentValidity(m_url->textEdit()->text() != "" ? true : false);
+	updateSize();
+}
+
+void UrlPage::titleChanged(QObject *which)
+{
+	/* TODO for reals */
+	(void) which;
+	updateSize();
+}
+
+void UrlPage::addTitle(void)
+{
+	/* Add the new title edit just before the add button */
+
+	int pos = m_titleLayout->count() - 1;
+
+	QGraphicsLinearLayout *pack =
+		new QGraphicsLinearLayout(Qt::Horizontal);
+
+	TextRecordEdit *title = 
+		new TextRecordEdit("",
+				   tr("Enter title"),
+				   m_sysinfo->availableLanguages(),
+				   m_sysinfo->currentLanguage(),
+				   "",
+				   false);
+	title->setSizePolicy(QSizePolicy::Minimum, 
+			     QSizePolicy::Fixed);
+	pack->addItem(title);
+	pack->setAlignment(title, Qt::AlignLeft | Qt::AlignVCenter);
+	pack->setStretchFactor(title, 999);
+	connect(title, SIGNAL(contentsChanged()),
+		m_titleChangeMapper, SLOT(map()));
+	connect(title, SIGNAL(languageChanged()),
+		m_titleChangeMapper, SLOT(map()));
+	m_titleChangeMapper->setMapping(title, title);
+
+	MButton *xButton = new MButton("icon-s-cancel", "");
+	xButton->setViewType(MButton::iconType);
+	xButton->setSizePolicy(QSizePolicy::Fixed, 
+			       QSizePolicy::Fixed);
+	pack->addItem(xButton);
+	pack->setAlignment(xButton, Qt::AlignRight | Qt::AlignVCenter);
+	pack->setStretchFactor(xButton, 0);
+	connect(xButton, SIGNAL(clicked()),
+		m_titleRemoveMapper, SLOT(map()));
+	m_titleRemoveMapper->setMapping(xButton, title);
+
+	m_titleLayout->insertItem(pos, pack);
+	m_titleLayout->setAlignment(pack, Qt::AlignHCenter);
+
+	m_titles << title;
+}
+
+void UrlPage::removeTitle(QObject *which)
+{
+	/* TODO for reals */
+	(void) which;
 }

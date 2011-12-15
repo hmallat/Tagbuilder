@@ -18,12 +18,15 @@ TextRecordEdit::TextRecordEdit(const QString title,
 			       const QStringList availableLanguages,
 			       const QString initialLanguage,
 			       const QString initialContents,
+			       bool editMode,
 			       QGraphicsLayoutItem *parent)
 	: QGraphicsLayout(parent)
 {
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
-	m_text = new LabeledTextEdit(MTextEditModel::MultiLine,
+	m_text = new LabeledTextEdit(editMode == true
+				     ? MTextEditModel::MultiLine 
+				     : MTextEditModel::SingleLine,
 				     title,
 				     titlePrompt,
 				     initialContents);

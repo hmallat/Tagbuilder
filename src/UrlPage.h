@@ -13,9 +13,11 @@
 
 #include <QSystemInfo>
 
+class QSignalMapper;
 class TextRecordEdit;
 class LabeledTextEdit;
 class MButton;
+class MContainer;
 
 QTM_USE_NAMESPACE;
 
@@ -44,11 +46,11 @@ private Q_SLOTS:
 
 	void urlChanged(void);
 
-	void titleIncludedChanged(bool);
+	void titleChanged(QObject *which);
 
-	void titleChanged(void);
+	void addTitle(void);
 
-	void titleLanguageChanged(void);
+	void removeTitle(QObject *which);
 
 private:
 
@@ -58,11 +60,17 @@ private:
 
 	QSystemInfo *m_sysinfo;
 
+	QSignalMapper *m_titleRemoveMapper;
+
+	QSignalMapper *m_titleChangeMapper;
+
 	LabeledTextEdit *m_url;
 
-	MButton *m_titleButton;
+	MButton *m_addTitle;
 
-	TextRecordEdit *m_title;
+	QGraphicsLinearLayout *m_titleLayout;
+
+	QList<TextRecordEdit *> m_titles;
 
 };
 

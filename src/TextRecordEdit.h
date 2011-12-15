@@ -30,6 +30,7 @@ public:
 		       const QStringList availableLanguages,
 		       const QString initialLanguage,
 		       const QString initialContents = "",
+		       bool multiLine = true,
 		       QGraphicsLayoutItem *parent = 0);
 
 	virtual ~TextRecordEdit(void);
