@@ -23,7 +23,7 @@ public:
 
 	~BtSelectionPageScanListModel(void);
 
-private slots:
+private Q_SLOTS:
 
 	void initialized(void);
 

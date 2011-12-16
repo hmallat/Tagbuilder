@@ -20,7 +20,7 @@ BtSelectionPageScanListModel(BluezSupplicant *bluez, QObject *parent)
 {
 	if (m_bluez->isInitialized() == false) {
 		connect(m_bluez, SIGNAL(initialized(void)),
-			this, SLOT(bluezInitialized(void)));
+			this, SLOT(initialized(void)));
 	} else {
 		initialized();
 	}
@@ -52,6 +52,8 @@ void BtSelectionPageScanListModel::initialized(void)
 
 void BtSelectionPageScanListModel::deviceFound(QString which)
 {
+	mDebug(__func__) << "Scanned device " << which << " found. ";
+
 	for (int i = 0; i < m_device_ids.length(); i++) {
 		if (m_device_ids[i] == which) {
 			mDebug(__func__) 
@@ -77,6 +79,8 @@ void BtSelectionPageScanListModel::deviceFound(QString which)
 
 void BtSelectionPageScanListModel::deviceLost(QString which)
 {
+	mDebug(__func__) << "Scanned device " << which << " lost. ";
+
 	for (int i = 0; i < m_device_ids.length(); i++) {
 		if (m_device_ids[i] == which) {
 			beginRemoveRows(QModelIndex(), i, i);

@@ -36,6 +36,17 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 
 	connect(m_model, SIGNAL(layoutChanged(void)),
 		this, SLOT(setDisplay(void)));
+	connect(m_model, SIGNAL(dataChanged(const QModelIndex &,
+					    const QModelIndex &)),
+		this, SLOT(setDisplay(void)));
+	connect(m_model, SIGNAL(rowsInserted(const QModelIndex &,
+					     int,
+					     int)),
+		this, SLOT(setDisplay(void)));
+	connect(m_model, SIGNAL(rowsRemoved(const QModelIndex &,
+					    int,
+					    int)),
+		this, SLOT(setDisplay(void)));
 
 	m_list = new MList();
 	m_list->setShowGroups(m_grouped);
@@ -109,7 +120,11 @@ void LabelOrList::removeAt(int index)
 
 void LabelOrList::setDisplay(void)
 {
+	mDebug(__func__) << "ENTER, model changed";
+
 	int rowCount = m_model->rowCount();
+	mDebug(__func__) << "Model's got " << rowCount << " rows, was "
+			 << m_previousRowCount << " before. ";
 
 	if (rowCount != 0 && m_previousRowCount < 1) {
 		mDebug(__func__) << "::: showing list";

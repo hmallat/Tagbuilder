@@ -20,7 +20,7 @@ BtSelectionPageExistingListModel(BluezSupplicant *bluez, QObject *parent)
 {
 	if (m_bluez->isInitialized() == false) {
 		connect(m_bluez, SIGNAL(initialized(void)),
-			this, SLOT(bluezInitialized(void)));
+			this, SLOT(initialized(void)));
 	} else {
 		initialized();
 	}
