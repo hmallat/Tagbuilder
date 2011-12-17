@@ -20,6 +20,7 @@
 #include <MContainer>
 #include <MLabel>
 #include <MButton>
+#include <MButtonGroup>
 
 #include <MDebug>
 
@@ -79,6 +80,75 @@ void UrlPage::createPageSpecificContent(void)
 		layout()->setAlignment(container, Qt::AlignCenter);
 	}
 
+	{
+		MContainer *container = new MContainer(tr("Action"));
+		container->setSizePolicy(QSizePolicy::Minimum, 
+					 QSizePolicy::Minimum);
+		
+		QGraphicsLinearLayout *sub_layout =
+			new QGraphicsLinearLayout(Qt::Vertical,
+						  container->centralWidget());
+		sub_layout->setSizePolicy(QSizePolicy::Minimum, 
+				      QSizePolicy::Minimum);
+		sub_layout->setSpacing(0);
+
+		actButton[NoAction] = new MButton();
+		actButton[NoAction]->setText(tr("No action"));
+		actButton[NoAction]->setStyleName("CommonTopSplitButton");
+		actButton[NoAction]->setCheckable(true);
+		actButton[NoAction]->setViewType(MButton::groupType);
+		connect(actButton[NoAction], SIGNAL(clicked()),
+			this, SLOT(actChanged()));
+
+		actButton[DoAction] = new MButton();
+		actButton[DoAction]->setText(tr("Execute"));
+		actButton[DoAction]->setStyleName("CommonVerticalCenterSplitButton");
+		actButton[DoAction]->setCheckable(true);
+		actButton[DoAction]->setViewType(MButton::groupType);
+		connect(actButton[DoAction], SIGNAL(clicked()),
+			this, SLOT(actChanged()));
+
+		actButton[SaveAction] = new MButton();
+		actButton[SaveAction]->setText(tr("Save for later"));
+		actButton[SaveAction]->setStyleName("CommonVerticalCenterSplitButton");
+		actButton[SaveAction]->setCheckable(true);
+		actButton[SaveAction]->setViewType(MButton::groupType);
+		connect(actButton[SaveAction], SIGNAL(clicked()),
+			this, SLOT(actChanged()));
+
+		actButton[EditAction] = new MButton();
+		actButton[EditAction]->setText(tr("Open for editing"));
+		actButton[EditAction]->setStyleName("CommonBottomSplitButton");
+		actButton[EditAction]->setCheckable(true);
+		actButton[EditAction]->setViewType(MButton::groupType);
+		connect(actButton[EditAction], SIGNAL(clicked()),
+			this, SLOT(actChanged()));
+
+		sub_layout->addItem(actButton[NoAction]);
+		sub_layout->addItem(actButton[DoAction]);
+		sub_layout->addItem(actButton[SaveAction]);
+		sub_layout->addItem(actButton[EditAction]);
+
+		MButtonGroup* group = new MButtonGroup(this);
+		group->addButton(actButton[NoAction]);
+		group->addButton(actButton[DoAction]);
+		group->addButton(actButton[SaveAction]);
+		group->addButton(actButton[EditAction]);
+		actButton[NoAction]->setChecked(true);
+
+		layout()->addItem(container);
+		layout()->setAlignment(container, Qt::AlignCenter);
+	}
+
+}
+
+enum UrlPage::Action UrlPage::checkedAction(void)
+{
+	return 
+		(actButton[DoAction]->isChecked() == true) ? DoAction :
+		(actButton[SaveAction]->isChecked() == true) ? SaveAction :
+		(actButton[EditAction]->isChecked() == true) ? EditAction :
+		NoAction;
 }
 
 void UrlPage::setupNewData(void)
@@ -112,6 +182,21 @@ bool UrlPage::setupData(const QNdefMessage message)
 			m_titles[i]->setContents(T[i].text());
 			m_titles[i]->setLanguage(T[i].locale());
 		}
+
+		SmartPosterRecord::ActionRecord act;
+
+		if (Sp.act(act) == true) {
+			actButton[(act.action() == SmartPosterRecord::ActionRecord::ActionDo)
+				  ? DoAction :
+				  (act.action() == SmartPosterRecord::ActionRecord::ActionSave)
+				  ? SaveAction :
+				  (act.action() == SmartPosterRecord::ActionRecord::ActionEdit)
+				  ? EditAction :
+				  NoAction]->setChecked(true);
+		} else {
+			actButton[NoAction]->setChecked(true);
+		}
+
 		r = true;
 	}
 
@@ -123,14 +208,15 @@ exit:
 QNdefMessage UrlPage::prepareDataForStorage(void)
 {
 	QNdefMessage message;
+	enum Action action = checkedAction();
 
-	if (m_titles.length() == 0) {
-		mDebug(__func__) << "Creating U, no title set. ";
+	if (m_titles.length() == 0 && action == NoAction) {
+		mDebug(__func__) << "Creating U, no title or action set. ";
 		QNdefNfcUriRecord U;
 		U.setUri(m_url->contents());
 		message << U;
 	} else {
-		mDebug(__func__) << "Creating Sp, title set. ";
+		mDebug(__func__) << "Creating Sp, title or action set. ";
 		SmartPosterRecord Sp;
 
 		QNdefNfcUriRecord U;
@@ -145,6 +231,17 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 			titles << title;
 		}
 		Sp.setTitles(titles);
+
+		if (action != NoAction) {
+			SmartPosterRecord::ActionRecord act;
+			act.setAction
+				((action == DoAction) ? 
+				 SmartPosterRecord::ActionRecord::ActionDo :
+				 (action == SaveAction) ? 
+				 SmartPosterRecord::ActionRecord::ActionSave :
+				 SmartPosterRecord::ActionRecord::ActionEdit);
+			Sp.setAct(act);
+		}
 
 		message << Sp;
 
@@ -166,6 +263,11 @@ void UrlPage::urlChanged(void)
 {
 	/* TODO: how about checking also that the URL is a valid one */
 	setContentValidity(m_url->contents() != "" ? true : false);
+	updateSize();
+}
+
+void UrlPage::actChanged(void)
+{
 	updateSize();
 }
 

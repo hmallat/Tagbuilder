@@ -26,6 +26,13 @@ class UrlPage : public CreateEditPage
 
 	Q_OBJECT;
 
+	enum Action {
+		NoAction,
+		DoAction,
+		SaveAction,
+		EditAction
+	};
+
 public:
 
 	UrlPage(int tag = -1, QGraphicsItem *parent = 0);
@@ -52,11 +59,15 @@ private Q_SLOTS:
 
 	void removeTitle(QObject *which);
 
+	void actChanged(void);
+
 private:
 
 	Q_DISABLE_COPY(UrlPage);
 
 	void updateSize(void);
+
+	enum Action checkedAction(void);
 
 	QSystemInfo *m_sysinfo;
 
@@ -71,6 +82,8 @@ private:
 	QGraphicsLinearLayout *m_titleLayout;
 
 	QList<TextRecordEdit *> m_titles;
+
+	MButton *actButton[4];
 
 };
 

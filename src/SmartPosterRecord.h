@@ -74,9 +74,10 @@ class SmartPosterRecord::ActionRecord : public QNdefRecord
 public:
 	
 	enum Action {
-		ActionExecute = 0,
+		ActionDo = 0,
 		ActionSave = 1,
-		ActionEdit = 2
+		ActionEdit = 2,
+		ActionUndefined
 	};
 	
 	Q_DECLARE_NDEF_RECORD(ActionRecord,

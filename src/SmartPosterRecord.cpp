@@ -184,3 +184,26 @@ void SmartPosterRecord::setOtherRecords(QList<QNdefRecord> others)
 	setRecords(s);
 }
 
+enum SmartPosterRecord::ActionRecord::Action 
+SmartPosterRecord::ActionRecord::action(void) const
+{
+	quint8 b = payload()[0];
+	return 
+		(b == 0x00) ? ActionDo :
+		(b == 0x01) ? ActionSave :
+		(b == 0x02) ? ActionEdit :
+		ActionUndefined;
+}
+	
+void SmartPosterRecord::ActionRecord::setAction
+(enum SmartPosterRecord::ActionRecord::Action a)
+{
+	char c = 
+		(a == ActionDo)   ? 0x00 :
+		(a == ActionSave) ? 0x01 :
+		(a == ActionEdit) ? 0x02 :
+		0xff;
+	QByteArray p(&c, 1);
+	setPayload(p);
+}
+
