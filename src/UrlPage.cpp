@@ -15,7 +15,6 @@
 #include <QUrl>
 #include <QGraphicsLinearLayout>
 #include <QNdefNfcUriRecord>
-#include <QSystemInfo>
 #include <QSignalMapper>
 #include <MContainer>
 #include <MLabel>
@@ -26,7 +25,6 @@
 
 UrlPage::UrlPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
-	  m_sysinfo(new QSystemInfo(this)),
 	  m_titleRemoveMapper(new QSignalMapper(this)),
 	  m_titleChangeMapper(new QSignalMapper(this)),
 	  m_url(0),
@@ -180,7 +178,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 		for (int i = 0; i < T.length(); i++) {
 			addTitle();
 			m_titles[i]->setContents(T[i].text());
-			m_titles[i]->setLanguage(T[i].locale());
+			m_titles[i]->setLanguageCode(T[i].locale());
 		}
 
 		SmartPosterRecord::ActionRecord act;
@@ -227,7 +225,7 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 		for (int i = 0; i < m_titles.length(); i++) {
 			QNdefNfcTextRecord title;
 			title.setText(m_titles[i]->contents());
-			title.setLocale(m_titles[i]->language());
+			title.setLocale(m_titles[i]->languageCode());
 			titles << title;
 		}
 		Sp.setTitles(titles);
@@ -288,10 +286,8 @@ void UrlPage::addTitle(void)
 		new QGraphicsLinearLayout(Qt::Horizontal);
 
 	TextRecordEdit *title = 
-		new TextRecordEdit(LabeledTextEdit::SingleLineEditOnly,
-				   m_sysinfo->availableLanguages());
+		new TextRecordEdit(LabeledTextEdit::SingleLineEditOnly);
 	title->setPrompt(tr("Enter title"));
-	title->setLanguage(m_sysinfo->currentLanguage());
 	title->setSizePolicy(QSizePolicy::Minimum, 
 			     QSizePolicy::Fixed);
 	pack->addItem(title);
@@ -299,7 +295,7 @@ void UrlPage::addTitle(void)
 	pack->setStretchFactor(title, 999);
 	connect(title, SIGNAL(contentsChanged()),
 		m_titleChangeMapper, SLOT(map()));
-	connect(title, SIGNAL(languageChanged()),
+	connect(title, SIGNAL(languageCodeChanged()),
 		m_titleChangeMapper, SLOT(map()));
 	m_titleChangeMapper->setMapping(title, title);
 

@@ -11,6 +11,8 @@
 
 #include <MStylableWidget>
 
+#include <QMap>
+
 #include "LabeledTextEdit.h"
 
 class QGraphicsLinearLayout;
@@ -24,7 +26,6 @@ class TextRecordEdit : public MStylableWidget
 public:
 
 	TextRecordEdit(LabeledTextEdit::Style style,
-		       const QStringList availableLanguages,
 		       QGraphicsItem *parent = 0);
 
 	QString label(void) const;
@@ -33,7 +34,7 @@ public:
 
 	QString contents(void) const;
 
-	QString language(void) const;
+	QString languageCode(void) const;
 
 	void setLabel(const QString &);
 
@@ -41,13 +42,13 @@ public:
 
 	void setContents(const QString &);
 
-	void setLanguage(const QString &);
+	void setLanguageCode(const QString &);
 
 Q_SIGNALS:
 
 	void contentsChanged(void);
 
-	void languageChanged(void);
+	void languageCodeChanged(void);
 
 private:
 
@@ -63,13 +64,15 @@ private:
 
 	LabeledTextEdit::Style m_style;
 
-	QStringList m_languages;
-
 	QGraphicsLinearLayout *m_layout;
 
 	LabeledTextEdit *m_text;
 	
 	MComboBox *m_combo;
+
+	QMap<QString, QString> m_languageToCode;
+
+	QMap<QString, QString> m_codeToLanguage;
 
 };
 

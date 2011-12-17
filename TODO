@@ -1,13 +1,10 @@
 GENERAL:
 
+- Drop fields that are not supported from harvested records!
 - Make UI uniform -- but which is the best way? Now some pages have
 many fields while others have content item + actions.
-- Move language code stuff to Util -- and try to use natural names
-for languages instead of codes! 
 
 BLUETOOTH:
-- editing of BT device name, device class and bdaddr (e.g. from content
-  item popup page)
 - static handover support?
 - full BT2.0 support (need docs or more data)
 

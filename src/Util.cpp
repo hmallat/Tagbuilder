@@ -8,6 +8,22 @@
 
 #include "Util.h"
 
+#include <QSystemInfo>
+#include <QLocale>
+#include <MDebug>
+
+QTM_USE_NAMESPACE;
+
+static QSystemInfo *_singleton_sysinfo = NULL;
+
+static QSystemInfo *_systeminfo(void)
+{
+	if (_singleton_sysinfo == NULL) {
+		_singleton_sysinfo = new QSystemInfo();
+	}
+	return _singleton_sysinfo;
+}
+
 quint32 Util::messageLength(const QNdefMessage message)
 {
 	quint32 total = 0;
@@ -24,3 +40,20 @@ quint32 Util::messageLength(const QNdefMessage message)
 	return total;
 }
 
+QString Util::currentLanguageCode(void)
+{
+	return _systeminfo()->currentLanguage();
+}
+
+QStringList Util::availableLanguageCodes(void)
+{
+	return _systeminfo()->availableLanguages();
+}
+
+QString Util::languageCodeToString(const QString &code)
+{
+	QLocale locale(code);
+	QString lang = locale.languageToString(locale.language());
+	mDebug(__func__) << code << "->" << lang;
+	return lang;
+}

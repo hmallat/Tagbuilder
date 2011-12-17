@@ -11,8 +11,6 @@
 
 #include "CreateEditPage.h"
 
-#include <QSystemInfo>
-
 class QSignalMapper;
 class TextRecordEdit;
 class LabeledTextEdit;
@@ -68,8 +66,6 @@ private:
 	void updateSize(void);
 
 	enum Action checkedAction(void);
-
-	QSystemInfo *m_sysinfo;
 
 	QSignalMapper *m_titleRemoveMapper;
 

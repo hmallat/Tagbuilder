@@ -9,6 +9,7 @@
 #include "TextPage.h"
 #include "LabeledTextEdit.h"
 #include "TextRecordEdit.h"
+#include "Util.h"
 
 #include <QGraphicsLinearLayout>
 #include <MAction>
@@ -21,13 +22,9 @@
 
 QTM_USE_NAMESPACE;
 
-/* TODO: show a locale specific human readable language name 
-   instead of two-letter code (study QLocale) */
-
 TextPage::TextPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
-	  m_edit(NULL),
-	  m_sysinfo(new QSystemInfo(this))
+	  m_edit(NULL)
 {
 }
 
@@ -37,18 +34,16 @@ TextPage::~TextPage(void)
 
 void TextPage::createPageSpecificContent(void)
 {
-	m_edit = new TextRecordEdit(LabeledTextEdit::MultiLineEditAndLabel,
-				    m_sysinfo->availableLanguages());
+	m_edit = new TextRecordEdit(LabeledTextEdit::MultiLineEditAndLabel);
 	m_edit->setLabel(tr("Text"));
 	m_edit->setPrompt(tr("Enter text"));
-	m_edit->setLanguage(m_sysinfo->currentLanguage());
 	layout()->addItem(m_edit);
 	layout()->setAlignment(m_edit, Qt::AlignHCenter);
 
 	connect(m_edit, SIGNAL(contentsChanged()),
 		this, SLOT(textChanged(void)));
 
-	connect(m_edit, SIGNAL(languageChanged()),
+	connect(m_edit, SIGNAL(languageCodeChanged()),
 		this, SLOT(langChanged(void)));
 }
 
@@ -60,7 +55,7 @@ void TextPage::setupNewData(void)
 bool TextPage::setupData(QNdefMessage message)
 {
 	QNdefNfcTextRecord T(message[0]);
-	m_edit->setLanguage(T.locale());
+	m_edit->setLanguageCode(T.locale());
 	m_edit->setContents(T.text());
 	updateSize();
 	return true;
@@ -71,7 +66,7 @@ QNdefMessage TextPage::prepareDataForStorage(void)
 	QNdefMessage message;
 	QNdefNfcTextRecord T;
 	T.setEncoding(QNdefNfcTextRecord::Utf8);
-	T.setLocale(m_edit->language());
+	T.setLocale(m_edit->languageCode());
 	T.setText(m_edit->contents());
 	message << T;
 	return message;
@@ -92,7 +87,7 @@ void TextPage::updateSize(void)
 {
 	/* Quite a bunch of calculation just to get one byte count */
 
-	QString lang = m_edit->language();
+	QString lang = m_edit->languageCode();
 	QString cont = m_edit->contents();
 
 	quint32 payloadLength = 

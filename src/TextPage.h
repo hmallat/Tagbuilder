@@ -11,8 +11,6 @@
 
 #include "CreateEditPage.h"
 
-#include <QSystemInfo>
-
 class TextRecordEdit;
 class LabeledTextEdit;
 
@@ -51,8 +49,6 @@ private:
 	void updateSize(void);
 
 	TextRecordEdit *m_edit;
-
-	QSystemInfo *m_sysinfo;
 
 };
 

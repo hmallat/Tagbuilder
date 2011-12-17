@@ -20,6 +20,12 @@ public:
 
 	static quint32 messageLength(const QNdefMessage message);
 
+	static QString currentLanguageCode(void);
+
+	static QStringList availableLanguageCodes(void);
+
+	static QString languageCodeToString(const QString &code);
+
 };
 
 #endif /* UTIL_H */
