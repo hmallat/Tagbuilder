@@ -107,17 +107,11 @@ bool UrlPage::setupData(const QNdefMessage message)
 		m_url->setContents(U.uri().toString());
 
 		QList<QNdefNfcTextRecord> T = Sp.titles();
-#if 0 /* TODO for reals */
-		if (T.length() != 0) {
-			mDebug(__func__) << "Setting locale to " << T[0].locale();
-			m_title->setContents(T[0].text());
-			m_title->setLanguage(T[0].locale());
-			m_titleButton->setChecked(true);
-		} else {
-			m_titleButton->setChecked(true);
+		for (int i = 0; i < T.length(); i++) {
+			addTitle();
+			m_titles[i]->setContents(T[i].text());
+			m_titles[i]->setLanguage(T[i].locale());
 		}
-#endif
-
 		r = true;
 	}
 
@@ -137,22 +131,22 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 		message << U;
 	} else {
 		mDebug(__func__) << "Creating Sp, title set. ";
-#if 0 /* TODO for reals */
 		SmartPosterRecord Sp;
 
 		QNdefNfcUriRecord U;
-		U.setUri(m_url->textEdit()->text());
+		U.setUri(m_url->contents());
 		Sp.setUri(U);
 
 		QList<QNdefNfcTextRecord> titles;
-		QNdefNfcTextRecord title;
-		title.setText(m_title->contents());
-		title.setLocale(m_title->language());
-		titles << title;
+		for (int i = 0; i < m_titles.length(); i++) {
+			QNdefNfcTextRecord title;
+			title.setText(m_titles[i]->contents());
+			title.setLocale(m_titles[i]->language());
+			titles << title;
+		}
 		Sp.setTitles(titles);
 
 		message << Sp;
-#endif
 
 	}
 	return message;
