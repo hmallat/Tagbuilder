@@ -9,49 +9,65 @@
 #ifndef _LABELED_TEXT_EDIT_H_
 #define _LABELED_TEXT_EDIT_H_
 
-#include <QGraphicsLayout>
-#include <MTextEdit>
+#include <MStylableWidget>
 
+class MLabel;
+class MTextEdit;
 class QGraphicsLinearLayout;
 
-class LabeledTextEdit : public QObject, public QGraphicsLayout
+class LabeledTextEdit : public MStylableWidget
 {
 
 	Q_OBJECT;
-
-	Q_INTERFACES(QGraphicsLayout);
-
+	
 public:
 
-	LabeledTextEdit(MTextEditModel::LineMode mode = MTextEditModel::SingleLine,
-			const QString &label = QString(),
-			const QString &prompt = QString(),
-			const QString &initialContents = QString(),
-			QGraphicsLayoutItem *parent = 0);
+	enum Style {
+		SingleLineEditOnly,
+		SingleLineEditAndLabel,
+		MultiLineEditOnly,
+		MultiLineEditAndLabel,
+	};
 
-	virtual ~LabeledTextEdit(void);
+	LabeledTextEdit(Style style = MultiLineEditAndLabel, 
+			QGraphicsItem *parent = 0);
 
-	virtual void setGeometry(const QRectF &rect);
+	QString label(void) const;
 
-	virtual QSizeF sizeHint(Qt::SizeHint which, 
-				const QSizeF &constraint = QSizeF()) const;
+	QString prompt(void) const;
 
-	virtual int count(void) const;
+	QString contents(void) const;
 
-	virtual QGraphicsLayoutItem *itemAt(int i) const;
+	void setLabel(const QString &);
 
-	virtual void removeAt(int index);
+	void setPrompt(const QString &);
 
-	MTextEdit *textEdit(void);
+	void setContents(const QString &);
+
+Q_SIGNALS:
+
+	void contentsChanged(void);
 
 private:
 
 	Q_DISABLE_COPY(LabeledTextEdit);
 
+	void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+	QGraphicsLinearLayout *createLayout(void);
+
+	MLabel *labelWidget(void);
+
+	MTextEdit *textWidget(void);
+
+	enum Style m_style;
+
 	QGraphicsLinearLayout *m_layout;
 
+	MLabel *m_label;
+
 	MTextEdit *m_text;
-	
+
 };
 
 #endif /* _LABELED_TEXT_EDIT_H_ */

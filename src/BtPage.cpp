@@ -98,44 +98,48 @@ BtPage::~BtPage(void)
 
 void BtPage::createPageSpecificContent(void)
 {
-	m_name = new LabeledTextEdit(MTextEditModel::SingleLine,
-				     tr("Device name"),
-				     tr("Enter device name"));
-	m_name->textEdit()->setText(m_info.name());
+	m_name = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_name->setLabel(tr("Device name"));
+	m_name->setPrompt(tr("Enter device name"));
+	m_name->setContents(m_info.name());
 	m_name->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_name);
 	layout()->setAlignment(m_name, Qt::AlignLeft);
-	connect(m_name->textEdit(), SIGNAL(textChanged(void)),
+	connect(m_name, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceNameChanged(void)));
 
+#if 0
 	QRegExpValidator *addrValidator =
 		new QRegExpValidator(m_bdaddrRegexp, this);
-
-	m_addr = new LabeledTextEdit(MTextEditModel::SingleLine,
-				     tr("Device address"),
-				     tr("Enter device address"));
-
-	m_addr->textEdit()->setText(_bdaddr2str(m_info.address()));
+#endif
+	m_addr = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_addr->setLabel(tr("Device address"));
+	m_addr->setPrompt(tr("Enter device address"));
+	m_addr->setContents(_bdaddr2str(m_info.address()));
+#if 0
 	m_addr->textEdit()->setValidator(addrValidator);
+#endif
 	m_addr->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_addr);
 	layout()->setAlignment(m_addr, Qt::AlignLeft);
-	connect(m_addr->textEdit(), SIGNAL(textChanged(void)),
+	connect(m_addr, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceAddressChanged(void)));
 
+#if 0
 	QRegExpValidator *codValidator =
 		new QRegExpValidator(m_codRegexp, this);
-
-	m_class = new LabeledTextEdit(MTextEditModel::SingleLine,
-				      tr("Device class"),
-				      tr("Enter device class"));
-
-	m_class->textEdit()->setText(_cod2str(_cod(m_info)));
+#endif
+	m_class = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_class->setLabel(tr("Device class"));
+	m_class->setPrompt(tr("Enter device class"));
+	m_class->setContents(_cod2str(_cod(m_info)));
+#if 0
 	m_class->textEdit()->setValidator(codValidator);
+#endif
 	m_class->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_class);
 	layout()->setAlignment(m_class, Qt::AlignLeft);
-	connect(m_class->textEdit(), SIGNAL(textChanged(void)),
+	connect(m_class, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceClassChanged(void)));
 
 	{
@@ -254,15 +258,15 @@ void BtPage::chooseScannedBT(void)
 
 void BtPage::setDevice(const QBluetoothDeviceInfo info)
 {
-	m_name->textEdit()->setText(info.isValid()
-				    ? info.name()
-				    : "");
+	m_name->setContents(info.isValid()
+			    ? info.name()
+			    : "");
 	
-	m_addr->textEdit()->setText(_bdaddr2str(info.address()));
+	m_addr->setContents(_bdaddr2str(info.address()));
 
-	m_class->textEdit()->setText(info.isValid()
-				     ? _cod2str(_cod(info))
-				     : _cod2str(0));
+	m_class->setContents(info.isValid()
+			     ? _cod2str(_cod(info))
+			     : _cod2str(0));
 
 	updateDevice();
 }
@@ -270,9 +274,9 @@ void BtPage::setDevice(const QBluetoothDeviceInfo info)
 void BtPage::updateDevice(void)
 {
 	bool dummy;
-	QBluetoothAddress addr(m_addr->textEdit()->text());
-	QString name(m_name->textEdit()->text());
-	quint32 cod = m_class->textEdit()->text().toUInt(&dummy, 16);
+	QBluetoothAddress addr(m_addr->contents());
+	QString name(m_name->contents());
+	quint32 cod = m_class->contents().toUInt(&dummy, 16);
 	
 	m_info = QBluetoothDeviceInfo(addr,
 				      name,
@@ -289,22 +293,26 @@ void BtPage::deviceNameChanged(void)
 
 void BtPage::deviceAddressChanged(void)
 {
-	if (m_addr->textEdit()->hasAcceptableInput() == true) {
+#if 0
+	if (m_addr->contents()->hasAcceptableInput() == true) {
 		setDeviceAddressValidity(true);
 		updateDevice();
 	} else {
 		setDeviceAddressValidity(false);
 	}
+#endif
 }
 
 void BtPage::deviceClassChanged(void)
 {
+#if 0
 	if (m_class->textEdit()->hasAcceptableInput() == true) {
 		setDeviceClassValidity(true);
 		updateDevice();
 	} else {
 		setDeviceClassValidity(false);
 	}
+#endif
 }
 
 void BtPage::setDeviceAddressValidity(bool valid)

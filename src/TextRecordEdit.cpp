@@ -12,6 +12,7 @@
 #include <QGraphicsLinearLayout>
 #include <MLabel>
 #include <MComboBox>
+#include <MDebug>
 
 TextRecordEdit::TextRecordEdit(const QString title,
 			       const QString titlePrompt,
@@ -25,15 +26,15 @@ TextRecordEdit::TextRecordEdit(const QString title,
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
 	m_text = new LabeledTextEdit(editMode == true
-				     ? MTextEditModel::MultiLine 
-				     : MTextEditModel::SingleLine,
-				     title,
-				     titlePrompt,
-				     initialContents);
+				     ? LabeledTextEdit::MultiLineEditAndLabel
+				     : LabeledTextEdit::SingleLineEditAndLabel);
+	m_text->setLabel(title);
+	m_text->setPrompt(titlePrompt);
+	m_text->setContents(initialContents);
 	m_layout->addItem(m_text);
 	m_layout->setAlignment(m_text, Qt::AlignHCenter);
 	m_layout->setStretchFactor(m_text, 999);
-	connect(m_text->textEdit(), SIGNAL(textChanged(void)),
+	connect(m_text, SIGNAL(contentsChanged(void)),
 		this, SIGNAL(contentsChanged(void)));
 
 	{
@@ -57,12 +58,14 @@ TextRecordEdit::TextRecordEdit(const QString title,
 
 TextRecordEdit::~TextRecordEdit(void)
 {
+	mDebug(__func__) << "Deleting...";
 	for (int i = count() - 1; i >= 0; --i) {
+		mDebug(__func__) << "Removing at " << i;
 		QGraphicsLayoutItem *item = itemAt(i);
 		removeAt(i);
-		if (item) {
-			if (item->ownedByLayout())
-				delete item;
+		if (item != NULL && item->ownedByLayout() == true) {
+			mDebug(__func__) << "Subdeleting at " << i;
+			delete item;
 		}
 	}
 }
@@ -132,12 +135,12 @@ void TextRecordEdit::setLanguage(const QString language)
 
 const QString TextRecordEdit::contents(void) const
 {
-	return m_text != 0 ? m_text->textEdit()->text() : "";
+	return m_text != 0 ? m_text->contents() : "";
 }
 
 void TextRecordEdit::setContents(const QString what)
 {
 	if (m_text != 0) {
-		m_text->textEdit()->setText(what);
+		m_text->setContents(what);
 	}
 }

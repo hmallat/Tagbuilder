@@ -33,6 +33,10 @@ UrlPage::UrlPage(int tag, QGraphicsItem *parent)
 	  m_titleLayout(0),
 	  m_titles()
 {
+	connect(m_titleRemoveMapper, SIGNAL(mapped(QObject *)),
+		this, SLOT(removeTitle(QObject *)));
+	connect(m_titleChangeMapper, SIGNAL(mapped(QObject *)),
+		this, SLOT(titleChanged(QObject *)));
 }
 
 UrlPage::~UrlPage(void)
@@ -41,14 +45,14 @@ UrlPage::~UrlPage(void)
 
 void UrlPage::createPageSpecificContent(void)
 {
-	m_url = new LabeledTextEdit(MTextEditModel::SingleLine,
-				    tr("Bookmark URL"),
-				    tr("Enter bookmark URL"),
-				    "http://");
+	m_url = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_url->setLabel(tr("Bookmark URL"));
+	m_url->setPrompt(tr("Enter bookmark URL"));
+	m_url->setContents("http://");
 	m_url->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_url);
 	layout()->setAlignment(m_url, Qt::AlignCenter);
-	connect(m_url->textEdit(), SIGNAL(textChanged()),
+	connect(m_url, SIGNAL(contentsChanged()),
 		this, SLOT(urlChanged(void)));
 
 	{
@@ -90,7 +94,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 
 	if (record.isRecordType<QNdefNfcUriRecord>()) {
 		QNdefNfcUriRecord U(record);
-		m_url->textEdit()->setText(U.uri().toString());
+		m_url->setContents(U.uri().toString());
 		r = true;
 
 	} else {
@@ -100,7 +104,7 @@ bool UrlPage::setupData(const QNdefMessage message)
 		if (Sp.uri(U) == false) {
 			goto exit;
 		}
-		m_url->textEdit()->setText(U.uri().toString());
+		m_url->setContents(U.uri().toString());
 
 		QList<QNdefNfcTextRecord> T = Sp.titles();
 #if 0 /* TODO for reals */
@@ -129,7 +133,7 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 	if (m_titles.length() == 0) {
 		mDebug(__func__) << "Creating U, no title set. ";
 		QNdefNfcUriRecord U;
-		U.setUri(m_url->textEdit()->text());
+		U.setUri(m_url->contents());
 		message << U;
 	} else {
 		mDebug(__func__) << "Creating Sp, title set. ";
@@ -167,7 +171,7 @@ void UrlPage::updateSize(void)
 void UrlPage::urlChanged(void)
 {
 	/* TODO: how about checking also that the URL is a valid one */
-	setContentValidity(m_url->textEdit()->text() != "" ? true : false);
+	setContentValidity(m_url->contents() != "" ? true : false);
 	updateSize();
 }
 
@@ -224,6 +228,27 @@ void UrlPage::addTitle(void)
 
 void UrlPage::removeTitle(QObject *which)
 {
-	/* TODO for reals */
-	(void) which;
+	int pos;
+
+	for (pos = 0; pos < m_titles.length(); pos++) {
+		if (m_titles[pos] == static_cast<TextRecordEdit *>(which)) {
+			mDebug(__func__) << "Removing title from position " 
+					 << pos;
+			m_titles.removeAt(pos);
+
+			QGraphicsLinearLayout *pack = 
+				static_cast<QGraphicsLinearLayout *>
+				(m_titleLayout->itemAt(pos));
+			while (pack->count() != 0) {
+				mDebug(__func__) << "Remove packed item. ";
+				QGraphicsLayoutItem *item = pack->itemAt(0);
+				pack->removeAt(0);
+				delete item;
+			}
+			m_titleLayout->removeAt(pos);
+			delete pack;
+
+			break;
+		}
+	}
 }
