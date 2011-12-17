@@ -14,133 +14,112 @@
 #include <MComboBox>
 #include <MDebug>
 
-TextRecordEdit::TextRecordEdit(const QString title,
-			       const QString titlePrompt,
-			       const QStringList availableLanguages,
-			       const QString initialLanguage,
-			       const QString initialContents,
-			       bool editMode,
-			       QGraphicsLayoutItem *parent)
-	: QGraphicsLayout(parent)
+TextRecordEdit::TextRecordEdit(LabeledTextEdit::Style style,
+			       const QStringList languages,
+			       QGraphicsItem *parent)
+	: MStylableWidget(parent),
+	  m_style(style),
+	  m_languages(languages),
+	  m_layout(0),
+	  m_text(0),
+	  m_combo(0)
 {
-	m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
-
-	m_text = new LabeledTextEdit(editMode == true
-				     ? LabeledTextEdit::MultiLineEditAndLabel
-				     : LabeledTextEdit::SingleLineEditAndLabel);
-	m_text->setLabel(title);
-	m_text->setPrompt(titlePrompt);
-	m_text->setContents(initialContents);
-	m_layout->addItem(m_text);
-	m_layout->setAlignment(m_text, Qt::AlignHCenter);
-	m_layout->setStretchFactor(m_text, 999);
-	connect(m_text, SIGNAL(contentsChanged(void)),
-		this, SIGNAL(contentsChanged(void)));
-
-	{
-		QGraphicsLinearLayout *sub_layout = 
-			new QGraphicsLinearLayout(Qt::Horizontal);
-
-		m_langCombo = new MComboBox();
-		m_langCombo->setTitle(tr("Language"));
-		m_langCombo->addItems(availableLanguages);
-		sub_layout->addItem(m_langCombo);
-		sub_layout->setAlignment(m_langCombo, 
-					 Qt::AlignLeft | Qt::AlignVCenter);
-		connect(m_langCombo, SIGNAL(currentIndexChanged(int)),
-			this, SIGNAL(languageChanged(void)));
-		
-		m_layout->addItem(sub_layout);
-	}
-
-	setLanguage(initialLanguage);
 }
 
-TextRecordEdit::~TextRecordEdit(void)
+LabeledTextEdit *TextRecordEdit::textWidget(void)
 {
-	mDebug(__func__) << "Deleting...";
-	for (int i = count() - 1; i >= 0; --i) {
-		mDebug(__func__) << "Removing at " << i;
-		QGraphicsLayoutItem *item = itemAt(i);
-		removeAt(i);
-		if (item != NULL && item->ownedByLayout() == true) {
-			mDebug(__func__) << "Subdeleting at " << i;
-			delete item;
-		}
+	if (m_text == NULL) {
+		m_text = new LabeledTextEdit(m_style, this);
+		connect(m_text, SIGNAL(contentsChanged()),
+			this, SIGNAL(contentsChanged()));
 	}
+
+	return m_text;
 }
 
-void TextRecordEdit::setGeometry(const QRectF &rect)
+MComboBox *TextRecordEdit::comboWidget(void)
+{
+	if (m_combo == NULL) {
+		m_combo = new MComboBox();
+		m_combo->setTitle(tr("Language"));
+		m_combo->addItems(m_languages);
+	}
+
+	return m_combo;
+}
+
+QGraphicsLinearLayout *TextRecordEdit::createLayout(void)
 {
 	if (m_layout != 0) {
-		m_layout->setGeometry(rect);
+		delete m_layout;
+		m_layout = 0;
+	}
+	
+	m_layout = new QGraphicsLinearLayout(Qt::Vertical);
+	m_layout->addItem(textWidget());
+	m_layout->addItem(comboWidget());
+
+	return m_layout;
+}
+
+void TextRecordEdit::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+	MWidgetController::resizeEvent(event);
+	
+	if (m_layout == NULL) {
+		setLayout(createLayout());
 	}
 }
 
-QSizeF TextRecordEdit::sizeHint(Qt::SizeHint which, 
-				const QSizeF &constraint) const
+QString TextRecordEdit::label(void) const
 {
-	return m_layout != 0
-		? m_layout->sizeHint(which, constraint)
-		: QSizeF();
+	return (m_text != 0) ? m_text->label() : "";
 }
 
-int TextRecordEdit::count(void) const
+QString TextRecordEdit::prompt(void) const
 {
-	return m_layout != 0 ? 1 : 0;
+	return (m_text != 0) ? m_text->prompt() : "";
 }
 
-QGraphicsLayoutItem *TextRecordEdit::itemAt(int i) const 
+QString TextRecordEdit::contents(void) const
 {
-	return i == 0 ? m_layout : NULL;
+	return (m_text != 0) ? m_text->contents() : "";
 }
 
-void TextRecordEdit::removeAt(int i)
+QString TextRecordEdit::language(void) const
 {
-	(void) i;
+	return m_combo != 0 ? m_combo->currentText() : "";
+}
 
-	if (m_layout == 0) {
+void TextRecordEdit::setLabel(const QString &l)
+{
+	textWidget()->setLabel(l);
+}
+
+void TextRecordEdit::setPrompt(const QString &p)
+{
+	textWidget()->setPrompt(p);
+}
+
+void TextRecordEdit::setContents(const QString &c)
+{
+	textWidget()->setContents(c);
+}
+
+void TextRecordEdit::setLanguage(const QString &l)
+{
+	if (l == "") {
+		comboWidget()->setCurrentIndex(0);
 		return;
 	}
 
-	m_layout->setParentLayoutItem(0);
-	invalidate();
-}
-
-const QString TextRecordEdit::language(void) const
-{
-	return m_langCombo != 0 ? m_langCombo->currentText() : "";
-}
-
-void TextRecordEdit::setLanguage(const QString language)
-{
-	if (language == "") {
-		m_langCombo->setCurrentIndex(0);
-		return;
-	}
-
-	if (m_langCombo != 0) {
-		for (int i = 0; i < m_langCombo->count(); i++) {
-			if (language == m_langCombo->itemText(i)) {
-				m_langCombo->setCurrentIndex(i);
-				break;
-			}
-		}
-		if (m_langCombo->currentIndex() == -1) {
-			m_langCombo->addItem(language);
-			m_langCombo->setCurrentIndex(m_langCombo->count() - 1);
+	for (int i = 0; i < comboWidget()->count(); i++) {
+		if (l == comboWidget()->itemText(i)) {
+			comboWidget()->setCurrentIndex(i);
+			return;
 		}
 	}
-}
 
-const QString TextRecordEdit::contents(void) const
-{
-	return m_text != 0 ? m_text->contents() : "";
-}
-
-void TextRecordEdit::setContents(const QString what)
-{
-	if (m_text != 0) {
-		m_text->setContents(what);
-	}
+	comboWidget()->addItem(l);
+	comboWidget()->setCurrentIndex(comboWidget()->count() - 1);
 }

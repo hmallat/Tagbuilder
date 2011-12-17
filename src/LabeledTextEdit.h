@@ -14,6 +14,7 @@
 class MLabel;
 class MTextEdit;
 class QGraphicsLinearLayout;
+class QValidator;
 
 class LabeledTextEdit : public MStylableWidget
 {
@@ -43,6 +44,10 @@ public:
 	void setPrompt(const QString &);
 
 	void setContents(const QString &);
+
+	void setValidator(QValidator *v);
+
+	bool hasAcceptableInput(void);
 
 Q_SIGNALS:
 

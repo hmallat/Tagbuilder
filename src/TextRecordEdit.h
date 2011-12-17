@@ -9,50 +9,39 @@
 #ifndef _TEXT_RECORD_EDIT_H_
 #define _TEXT_RECORD_EDIT_H_
 
-#include <QGraphicsLayout>
+#include <MStylableWidget>
+
+#include "LabeledTextEdit.h"
 
 class QGraphicsLinearLayout;
-class LabeledTextEdit;
-class MLabel;
 class MComboBox;
 
-class TextRecordEdit : public QObject, public QGraphicsLayout
+class TextRecordEdit : public MStylableWidget
 {
 
 	Q_OBJECT;
 
-	Q_INTERFACES(QGraphicsLayout);
-
 public:
 
-	TextRecordEdit(const QString title,
-		       const QString titlePrompt,
+	TextRecordEdit(LabeledTextEdit::Style style,
 		       const QStringList availableLanguages,
-		       const QString initialLanguage,
-		       const QString initialContents = "",
-		       bool multiLine = true,
-		       QGraphicsLayoutItem *parent = 0);
+		       QGraphicsItem *parent = 0);
 
-	virtual ~TextRecordEdit(void);
+	QString label(void) const;
 
-	virtual void setGeometry(const QRectF &rect);
+	QString prompt(void) const;
 
-	virtual QSizeF sizeHint(Qt::SizeHint which, 
-				const QSizeF &constraint = QSizeF()) const;
+	QString contents(void) const;
 
-	virtual int count(void) const;
+	QString language(void) const;
 
-	virtual QGraphicsLayoutItem *itemAt(int i) const;
+	void setLabel(const QString &);
 
-	virtual void removeAt(int index);
+	void setPrompt(const QString &);
 
-	const QString language(void) const;
+	void setContents(const QString &);
 
-	const QString contents(void) const;
-
-	void setLanguage(const QString language);
-
-	void setContents(const QString contents);
+	void setLanguage(const QString &);
 
 Q_SIGNALS:
 
@@ -64,11 +53,23 @@ private:
 
 	Q_DISABLE_COPY(TextRecordEdit);
 
+	void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+	QGraphicsLinearLayout *createLayout(void);
+
+	LabeledTextEdit *textWidget(void);
+
+	MComboBox *comboWidget(void);
+
+	LabeledTextEdit::Style m_style;
+
+	QStringList m_languages;
+
 	QGraphicsLinearLayout *m_layout;
 
 	LabeledTextEdit *m_text;
 	
-	MComboBox *m_langCombo;
+	MComboBox *m_combo;
 
 };
 

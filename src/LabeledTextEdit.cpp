@@ -103,3 +103,13 @@ void LabeledTextEdit::setContents(const QString &c)
 {
 	textWidget()->setText(c);
 }
+
+void LabeledTextEdit::setValidator(QValidator *v)
+{
+	textWidget()->setValidator(v);
+}
+
+bool LabeledTextEdit::hasAcceptableInput(void)
+{
+	return textWidget()->hasAcceptableInput();
+}

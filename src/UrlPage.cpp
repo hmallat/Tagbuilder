@@ -192,12 +192,10 @@ void UrlPage::addTitle(void)
 		new QGraphicsLinearLayout(Qt::Horizontal);
 
 	TextRecordEdit *title = 
-		new TextRecordEdit("",
-				   tr("Enter title"),
-				   m_sysinfo->availableLanguages(),
-				   m_sysinfo->currentLanguage(),
-				   "",
-				   false);
+		new TextRecordEdit(LabeledTextEdit::SingleLineEditOnly,
+				   m_sysinfo->availableLanguages());
+	title->setPrompt(tr("Enter title"));
+	title->setLanguage(m_sysinfo->currentLanguage());
 	title->setSizePolicy(QSizePolicy::Minimum, 
 			     QSizePolicy::Fixed);
 	pack->addItem(title);

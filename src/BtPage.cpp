@@ -108,34 +108,26 @@ void BtPage::createPageSpecificContent(void)
 	connect(m_name, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceNameChanged(void)));
 
-#if 0
 	QRegExpValidator *addrValidator =
 		new QRegExpValidator(m_bdaddrRegexp, this);
-#endif
 	m_addr = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_addr->setLabel(tr("Device address"));
 	m_addr->setPrompt(tr("Enter device address"));
 	m_addr->setContents(_bdaddr2str(m_info.address()));
-#if 0
-	m_addr->textEdit()->setValidator(addrValidator);
-#endif
+	m_addr->setValidator(addrValidator);
 	m_addr->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_addr);
 	layout()->setAlignment(m_addr, Qt::AlignLeft);
 	connect(m_addr, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceAddressChanged(void)));
 
-#if 0
 	QRegExpValidator *codValidator =
 		new QRegExpValidator(m_codRegexp, this);
-#endif
 	m_class = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_class->setLabel(tr("Device class"));
 	m_class->setPrompt(tr("Enter device class"));
 	m_class->setContents(_cod2str(_cod(m_info)));
-#if 0
-	m_class->textEdit()->setValidator(codValidator);
-#endif
+	m_class->setValidator(codValidator);
 	m_class->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_class);
 	layout()->setAlignment(m_class, Qt::AlignLeft);
@@ -293,26 +285,22 @@ void BtPage::deviceNameChanged(void)
 
 void BtPage::deviceAddressChanged(void)
 {
-#if 0
-	if (m_addr->contents()->hasAcceptableInput() == true) {
+	if (m_addr->hasAcceptableInput() == true) {
 		setDeviceAddressValidity(true);
 		updateDevice();
 	} else {
 		setDeviceAddressValidity(false);
 	}
-#endif
 }
 
 void BtPage::deviceClassChanged(void)
 {
-#if 0
-	if (m_class->textEdit()->hasAcceptableInput() == true) {
+	if (m_class->hasAcceptableInput() == true) {
 		setDeviceClassValidity(true);
 		updateDevice();
 	} else {
 		setDeviceClassValidity(false);
 	}
-#endif
 }
 
 void BtPage::setDeviceAddressValidity(bool valid)

@@ -37,10 +37,11 @@ TextPage::~TextPage(void)
 
 void TextPage::createPageSpecificContent(void)
 {
-	m_edit = new TextRecordEdit(tr("Text"),
-				    tr("Enter text"),
-				    m_sysinfo->availableLanguages(),
-				    m_sysinfo->currentLanguage());
+	m_edit = new TextRecordEdit(LabeledTextEdit::MultiLineEditAndLabel,
+				    m_sysinfo->availableLanguages());
+	m_edit->setLabel(tr("Text"));
+	m_edit->setPrompt(tr("Enter text"));
+	m_edit->setLanguage(m_sysinfo->currentLanguage());
 	layout()->addItem(m_edit);
 	layout()->setAlignment(m_edit, Qt::AlignHCenter);
 
