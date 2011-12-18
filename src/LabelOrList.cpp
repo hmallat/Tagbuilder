@@ -19,6 +19,7 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 			 MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 			 const QString &text,
 			 bool showGroups, 
+			 bool multiSelect,
 			 QGraphicsLayoutItem *parent)
 	: QGraphicsLayout(parent),
 	  m_grouped(showGroups),
@@ -50,6 +51,9 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 
 	m_list = new MList();
 	m_list->setShowGroups(m_grouped);
+	m_list->setSelectionMode(multiSelect == true
+				 ? MList::MultiSelection
+				 : MList::NoSelection);
 	m_list->setItemModel(m_model);
 	m_list->setCellCreator(m_getCreator());
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),

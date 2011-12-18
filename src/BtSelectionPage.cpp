@@ -39,6 +39,7 @@ void BtSelectionPage::createContent(void)
 			    _getCreator,
 			    tr("<h1>No Bluetooth devices to select</h1>"),
 			    tr("<big>Select the device to use</big>"),
+			    false,
 			    false);
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),

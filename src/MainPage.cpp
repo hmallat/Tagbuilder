@@ -133,7 +133,9 @@ void MainPage::createContent(void)
 					       "Create some or harvest "
 					       "existing ones by touching "
 					       "them. "
-					       "</h1>"));
+					       "</h1>"),
+					    false,
+					    false);
 	list->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	layout->addCornerAnchors(list, Qt::TopLeftCorner,
 				 label, Qt::BottomLeftCorner);

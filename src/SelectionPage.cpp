@@ -34,7 +34,8 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 					MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 					const QString label,
 					const QString title, 
-					bool groupedList)
+					bool groupedList,
+					bool multiSelect)
 {
 	MAction *cancelAction = new MAction(tr("Cancel"), this);
 	cancelAction->setLocation(MAction::ToolBarLocation);
@@ -54,7 +55,8 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	m_list = new LabelOrList(itemModel,
 				 getCreator,
 				 label,
-				 groupedList);
+				 groupedList,
+				 multiSelect);
 
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
 				 titleLabel, Qt::BottomLeftCorner);

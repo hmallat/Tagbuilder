@@ -72,8 +72,9 @@ void ContactDetailPicker::createContent(void)
 	m_list = new LabelOrList(m_model,
 				 _getCreator,
 				 tr("<h1>No details to select</h1>"),
+				 true,
 				 true);
-
+	
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
 				 titleLabel, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,

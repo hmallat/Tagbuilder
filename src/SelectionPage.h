@@ -35,7 +35,8 @@ protected:
 				 MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 				 const QString label,
 				 const QString title, 
-				 bool groupedList);
+				 bool groupedList,
+				 bool multiSelect);
 
 	LabelOrList *m_list;
 

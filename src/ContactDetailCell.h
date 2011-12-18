@@ -37,9 +37,7 @@ private:
 
 	Q_DISABLE_COPY(ContactDetailCell);
 
-	QString inv(QString stylename);
-
-	MLayout *createLayout(void);
+	void createLayout(void);
 
 	MLabel *titleLabelWidget(void);
 

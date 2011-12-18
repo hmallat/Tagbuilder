@@ -36,7 +36,8 @@ void CalendarSelectionPage::createContent(void)
 			    _getCreator,
 			    tr("<h1>No calendar entries to select</h1>"),
 			    tr("<big>Select the calendar entry to use</big>"),
-			    true);
+			    true,
+			    false);
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(calendarItemSelected(const QModelIndex &)));

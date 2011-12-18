@@ -34,7 +34,8 @@ void ContactSelectionPage::createContent(void)
 			    _getCreator,
 			    tr("<h1>No contact to select</h1>"),
 			    tr("<big>Select the contact to use</big>"),
-			    true);
+			    true,
+			    false);
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(contactSelected(const QModelIndex &)));

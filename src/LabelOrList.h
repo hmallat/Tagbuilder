@@ -34,8 +34,9 @@ public:
 
 	LabelOrList(QAbstractItemModel *listModel,
 		    MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
-		    const QString &label = QString(),
-		    bool showGroups = false,
+		    const QString &label,
+		    bool showGroups,
+		    bool multiSelect,
 		    QGraphicsLayoutItem *parent = 0);
 
 	virtual ~LabelOrList(void);
