@@ -22,7 +22,10 @@ class ContactDetailPickerListModel : public MAbstractItemModel
 	Q_OBJECT;
 
 	enum DetailType {
-		PhoneNumber
+		Name,
+		PhoneNumber,
+		EmailAddress,
+		PhysicalAddress
 	};
 
 public:

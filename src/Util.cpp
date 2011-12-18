@@ -64,3 +64,9 @@ QString Util::phoneNumberSubtypeToString(const QString &type)
 	return "whatever";
 }
 
+QString Util::addressSubtypeToString(const QString &type)
+{
+	(void)type;
+	return "whatever";
+}
+
