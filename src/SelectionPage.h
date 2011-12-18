@@ -14,7 +14,7 @@
 class QModelIndex;
 class LabelOrList;
 class QAbstractItemModel;
-class MContentItem;
+class MWidget;
 template <class C> class MAbstractCellCreator;
 
 class SelectionPage : public MApplicationPage
@@ -25,14 +25,14 @@ public:
 
 	SelectionPage(QGraphicsItem *parent = 0);
 
-	~SelectionPage(void);
+	virtual ~SelectionPage(void);
 
         virtual void createContent(void);
 
 protected:
 
 	void createCommonContent(QAbstractItemModel *itemModel,
-				 MAbstractCellCreator<MContentItem> *(*getCreator)(void),
+				 MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 				 const QString label,
 				 const QString title, 
 				 bool groupedList);

@@ -9,16 +9,16 @@
 #ifndef _CONTACT_SELECTION_PAGE_LIST_CELL_CREATOR_H_
 #define _CONTACT_SELECTION_PAGE_LIST_CELL_CREATOR_H_
 
-#include <MAbstractCellCreator>
-#include <MContentItem>
+#include "ContentItemCellCreator.h"
 
-class ContactSelectionPageListCellCreator : 
-public MAbstractCellCreator<MContentItem>
+class MWidgetController;
+
+class ContactSelectionPageListCellCreator : public ContentItemCellCreator
 {
 
 public:
 
-	void updateCell(const QModelIndex &index, MWidget *cell) const;
+	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
 
 };
 

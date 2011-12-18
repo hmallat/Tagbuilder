@@ -13,11 +13,6 @@
 
 #include <QVariant>
 
-TagListCellCreator::TagListCellCreator(void)
-	: MAbstractCellCreator<MContentItem>()
-{
-}
-
 void TagListCellCreator::updateCell(const QModelIndex &index, 
 				    MWidget *cell) const
 {

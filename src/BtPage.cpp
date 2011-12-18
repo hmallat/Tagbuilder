@@ -201,7 +201,7 @@ QNdefMessage BtPage::prepareDataForStorage(void)
 void BtPage::noBluetoothAlert(void)
 {
 	MMessageBox *box = new MMessageBox(tr("Bluetooth is not available. "));
-	box->appear();
+	box->appear(MSceneWindow::DestroyWhenDismissed);
 }
 
 void BtPage::choosePhoneBT(void)

@@ -16,7 +16,7 @@
 #include <MDebug>
 
 LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
-			 MAbstractCellCreator<MContentItem> *(*getCreator)(void),
+			 MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 			 const QString &text,
 			 bool showGroups, 
 			 QGraphicsLayoutItem *parent)

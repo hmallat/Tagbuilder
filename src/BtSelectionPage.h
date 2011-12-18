@@ -34,7 +34,7 @@ public:
 			enum Type type, 
 			QGraphicsItem *parent = 0);
 
-	~BtSelectionPage(void);
+	virtual ~BtSelectionPage(void);
 
         virtual void createContent(void);
 

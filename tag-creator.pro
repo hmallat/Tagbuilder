@@ -29,10 +29,15 @@ HEADERS		+= \
 		src/CalendarSelectionPage.h \
 		src/CalendarSelectionPageListCellCreator.h \
 		src/CalendarSelectionPageListModel.h \
+		src/ContactDetailCell.h \
+		src/ContactDetailPicker.h \
+		src/ContactDetailPickerListCellCreator.h \
+		src/ContactDetailPickerListModel.h \
 		src/ContactPage.h \
 		src/ContactSelectionPage.h \
 		src/ContactSelectionPageListCellCreator.h \
 		src/ContactSelectionPageListModel.h \
+		src/ContentItemCellCreator.h \
 		src/CreatePage.h \
 		src/CreateEditPage.h \
 		src/LabeledTextEdit.h \
@@ -68,10 +73,15 @@ SOURCES		+= \
 		src/CalendarSelectionPage.cpp \
 		src/CalendarSelectionPageListCellCreator.cpp \
 		src/CalendarSelectionPageListModel.cpp \
+		src/ContactDetailCell.cpp \
+		src/ContactDetailPicker.cpp \
+		src/ContactDetailPickerListCellCreator.cpp \
+		src/ContactDetailPickerListModel.cpp \
 		src/ContactPage.cpp \
 		src/ContactSelectionPage.cpp \
 		src/ContactSelectionPageListCellCreator.cpp \
 		src/ContactSelectionPageListModel.cpp \
+		src/ContentItemCellCreator.cpp \
 		src/CreatePage.cpp \
 		src/CreateEditPage.cpp \
 		src/LabeledTextEdit.cpp \

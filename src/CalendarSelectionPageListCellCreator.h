@@ -9,16 +9,14 @@
 #ifndef _CALENDAR_SELECTION_PAGE_LIST_CELL_CREATOR_H_
 #define _CALENDAR_SELECTION_PAGE_LIST_CELL_CREATOR_H_
 
-#include <MAbstractCellCreator>
-#include <MContentItem>
+#include "ContentItemCellCreator.h"
 
-class CalendarSelectionPageListCellCreator : 
-public MAbstractCellCreator<MContentItem>
+class CalendarSelectionPageListCellCreator : public ContentItemCellCreator
 {
 
 public:
 
-	void updateCell(const QModelIndex &index, MWidget *cell) const;
+	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
 
 };
 

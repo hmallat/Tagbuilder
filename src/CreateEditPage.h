@@ -31,7 +31,7 @@ public:
 
 	CreateEditPage(int tag = -1, QGraphicsItem *parent = 0);
 
-	~CreateEditPage(void);
+	virtual ~CreateEditPage(void);
 
 	virtual void createContent(void);
 

@@ -9,9 +9,10 @@
 #include "ContactSelectionPage.h"
 #include "ContactSelectionPageListCellCreator.h"
 #include "ContactSelectionPageListModel.h"
+#include "ContactDetailPicker.h"
 #include "LabelOrList.h"
 
-static MAbstractCellCreator<MContentItem> *_getCreator(void)
+static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 {
 	return new ContactSelectionPageListCellCreator;
 }
@@ -41,6 +42,17 @@ void ContactSelectionPage::createContent(void)
 
 void ContactSelectionPage::contactSelected(const QModelIndex &which)
 {
+	QContact contact = m_model->contact(which);
+	ContactDetailPicker *picker = new ContactDetailPicker(contact);
+	connect(picker, SIGNAL(ready(const QContact)),
+		this, SLOT(contactPicked(const QContact)));
+	connect(picker, SIGNAL(dismiss()),
+		this, SLOT(dismiss()));
+	picker->appear(MSceneWindow::DestroyWhenDismissed);
+}
+
+void ContactSelectionPage::contactPicked(const QContact which)
+{
 	dismiss();
-	Q_EMIT(selected(m_model->contact(which)));
+	Q_EMIT(selected(which));
 }

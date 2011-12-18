@@ -36,7 +36,7 @@
 
 #include <MDebug>
 
-static MAbstractCellCreator<MContentItem> *_getTagListCellCreator(void)
+static MAbstractCellCreator<MWidgetController> *_getTagListCellCreator(void)
 {
 	return new TagListCellCreator();
 }
@@ -288,6 +288,6 @@ void MainPage::messageRead(const QNdefMessage contents)
 	if (success == false) {
 		MMessageBox *box = 
 			new MMessageBox(tr("Cannot store the tag. "));
-		box->appear();
+		box->appear(MSceneWindow::DestroyWhenDismissed);
 	}
 }

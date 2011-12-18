@@ -167,7 +167,7 @@ void CreateEditPage::load(void)
 fail:
 	setupNewData();
 	MMessageBox *box = new MMessageBox(tr("Cannot read the tag. "));
-	box->appear();	
+	box->appear(MSceneWindow::DestroyWhenDismissed);	
 }
 
 void CreateEditPage::storeAndExit(void)
@@ -197,5 +197,5 @@ void CreateEditPage::storeAndExit(void)
 
 fail:
 	MMessageBox *box = new MMessageBox(tr("Cannot store the tag. "));
-	box->appear();
+	box->appear(MSceneWindow::DestroyWhenDismissed);
 }

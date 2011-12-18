@@ -26,6 +26,8 @@ public:
 
 	static QString languageCodeToString(const QString &code);
 
+	static QString phoneNumberSubtypeToString(const QString &type);
+
 };
 
 #endif /* UTIL_H */

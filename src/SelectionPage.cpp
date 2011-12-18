@@ -31,7 +31,7 @@ void SelectionPage::createContent(void)
 }
 
 void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
-					MAbstractCellCreator<MContentItem> *(*getCreator)(void),
+					MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 					const QString label,
 					const QString title, 
 					bool groupedList)

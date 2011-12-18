@@ -35,7 +35,7 @@ public:
 
 	UrlPage(int tag = -1, QGraphicsItem *parent = 0);
 
-	~UrlPage(void);
+	virtual ~UrlPage(void);
 
 protected:
 

@@ -9,6 +9,7 @@
 #include "TagTypeListCellCreator.h"
 
 #include <QVariant>
+#include <MContentItem>
 
 void TagTypeListCellCreator::updateCell(const QModelIndex &index, 
 					MWidget *cell) const

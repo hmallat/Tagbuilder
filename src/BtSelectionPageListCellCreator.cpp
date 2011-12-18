@@ -9,6 +9,7 @@
 #include "BtSelectionPageListCellCreator.h"
 
 #include <QVariant>
+#include <MContentItem>
 
 void BtSelectionPageListCellCreator::updateCell(const QModelIndex &index, 
 						MWidget *cell) const

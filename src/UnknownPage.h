@@ -24,7 +24,7 @@ public:
 
 	UnknownPage(int tag = -1, QGraphicsItem *parent = 0);
 
-	~UnknownPage(void);
+	virtual ~UnknownPage(void);
 
 protected:
 

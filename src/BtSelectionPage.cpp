@@ -13,7 +13,7 @@
 #include "BluezSupplicant.h"
 #include "LabelOrList.h"
 
-static MAbstractCellCreator<MContentItem> *_getCreator(void)
+static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 {
 	return new BtSelectionPageListCellCreator;
 }

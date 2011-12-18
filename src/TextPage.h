@@ -24,7 +24,7 @@ public:
 
 	TextPage(int tag = -1, QGraphicsItem *parent = 0);
 
-	~TextPage(void);
+	virtual ~TextPage(void);
 
 protected:
 

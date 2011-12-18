@@ -9,16 +9,14 @@
 #ifndef _BT_SELECTION_PAGE_LIST_CELL_CREATOR_H_
 #define _BT_SELECTION_PAGE_LIST_CELL_CREATOR_H_
 
-#include <MAbstractCellCreator>
-#include <MContentItem>
+#include "ContentItemCellCreator.h"
 
-class BtSelectionPageListCellCreator : 
-public MAbstractCellCreator<MContentItem>
+class BtSelectionPageListCellCreator : public ContentItemCellCreator
 {
 
 public:
 
-	void updateCell(const QModelIndex &index, MWidget *cell) const;
+	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
 
 };
 

@@ -9,17 +9,14 @@
 #ifndef _TAG_LIST_CELL_CREATOR_H_
 #define _TAG_LIST_CELL_CREATOR_H_
 
-#include <MAbstractCellCreator>
-#include <MContentItem>
+#include "ContentItemCellCreator.h"
 
-class TagListCellCreator : public MAbstractCellCreator<MContentItem>
+class TagListCellCreator : public ContentItemCellCreator
 {
 
 public:
 
-	TagListCellCreator(void);
-
-	void updateCell(const QModelIndex &index, MWidget *cell) const;
+	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
 
 };
 

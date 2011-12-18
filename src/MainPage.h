@@ -28,7 +28,7 @@ public:
 
 	MainPage(QGraphicsItem *parent = 0);
 
-	~MainPage(void);
+	virtual ~MainPage(void);
 
         virtual void createContent(void);
 

@@ -9,6 +9,7 @@
 #include "CalendarSelectionPageListCellCreator.h"
 
 #include <QVariant>
+#include <MContentItem>
 
 void CalendarSelectionPageListCellCreator::updateCell(const QModelIndex &index, 
 						      MWidget *cell) const

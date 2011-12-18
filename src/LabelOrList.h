@@ -16,7 +16,7 @@
 #include <QAbstractItemModel>
 #include <MAbstractCellCreator>
 
-class MContentItem;
+class MWidgetController;
 class MLabel;
 class MList;
 class MPannableViewport;
@@ -33,7 +33,7 @@ class LabelOrList : public QObject, public QGraphicsLayout
 public:
 
 	LabelOrList(QAbstractItemModel *listModel,
-		    MAbstractCellCreator<MContentItem> *(*getCreator)(void),
+		    MAbstractCellCreator<MWidgetController> *(*getCreator)(void),
 		    const QString &label = QString(),
 		    bool showGroups = false,
 		    QGraphicsLayoutItem *parent = 0);
@@ -71,7 +71,7 @@ private:
 
 	QAbstractItemModel *m_model;
 
-	MAbstractCellCreator<MContentItem> *(*m_getCreator)(void);
+	MAbstractCellCreator<MWidgetController> *(*m_getCreator)(void);
 
 	QString m_text;
 

@@ -9,6 +9,7 @@
 #include "ContactSelectionPageListCellCreator.h"
 
 #include <QVariant>
+#include <MContentItem>
 
 void ContactSelectionPageListCellCreator::updateCell(const QModelIndex &index, 
 						     MWidget *cell) const

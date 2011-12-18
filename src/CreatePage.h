@@ -22,7 +22,7 @@ public:
 
 	CreatePage(QGraphicsItem *parent = 0);
 
-	~CreatePage(void);
+	virtual ~CreatePage(void);
 
         virtual void createContent(void);
 

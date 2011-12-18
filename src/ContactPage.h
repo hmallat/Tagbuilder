@@ -28,7 +28,7 @@ public:
 	ContactPage(int tag = -1, 
 		    QGraphicsItem *parent = 0);
 
-	~ContactPage(void);
+	virtual ~ContactPage(void);
 
 protected:
 

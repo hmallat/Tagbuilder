@@ -27,7 +27,7 @@ public:
 			      QOrganizerManager *manager,
 			      QGraphicsItem *parent = 0);
 
-	~CalendarSelectionPage(void);
+	virtual ~CalendarSelectionPage(void);
 
         virtual void createContent(void);
 

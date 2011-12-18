@@ -31,7 +31,7 @@ public:
 	       int tag = -1, 
 	       QGraphicsItem *parent = 0);
 
-	~BtPage(void);
+	virtual ~BtPage(void);
 
 protected:
 

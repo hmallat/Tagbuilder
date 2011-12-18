@@ -57,3 +57,10 @@ QString Util::languageCodeToString(const QString &code)
 	mDebug(__func__) << code << "->" << lang;
 	return lang;
 }
+
+QString Util::phoneNumberSubtypeToString(const QString &type)
+{
+	(void)type;
+	return "whatever";
+}
+

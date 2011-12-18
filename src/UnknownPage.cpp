@@ -124,5 +124,5 @@ void UnknownPage::showContents(void)
 	}
 
 	MMessageBox *box = new MMessageBox(contents);
-	box->appear();
+	box->appear(MSceneWindow::DestroyWhenDismissed);
 }

@@ -28,7 +28,7 @@ public:
 	CalendarPage(int tag = -1, 
 		     QGraphicsItem *parent = 0);
 
-	~CalendarPage(void);
+	virtual ~CalendarPage(void);
 
 protected:
 

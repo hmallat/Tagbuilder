@@ -27,7 +27,7 @@ public:
 	ContactSelectionPage(QContactManager *manager,
 			     QGraphicsItem *parent = 0);
 
-	~ContactSelectionPage(void);
+	virtual ~ContactSelectionPage(void);
 
         virtual void createContent(void);
 
@@ -38,6 +38,8 @@ signals:
 private Q_SLOTS:
 	
 	void contactSelected(const QModelIndex &which);
+
+	void contactPicked(const QContact which);
 
 private:
 
