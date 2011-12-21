@@ -17,7 +17,8 @@ ContactDetailCell::ContactDetailCell(QGraphicsItem *parent)
 	: MListItem(parent),
 	  m_layout(0),
 	  m_titleLabel(0),
-	  m_subtitleLabel(0)
+	  m_subtitleLabel(0),
+	  m_selected(false)
 {
 	setStyleName("CommonBasicListItem");
 	createLayout();
@@ -82,3 +83,14 @@ void ContactDetailCell::setSubtitle(const QString &subtitle)
 {
 	subtitleLabelWidget()->setText(subtitle);
 }
+
+bool ContactDetailCell::isSelected(void)
+{
+	return m_selected;
+}
+
+void ContactDetailCell::setSelected(bool selected)
+{
+	m_selected = selected;
+}
+

@@ -74,9 +74,16 @@ void ContactDetailPicker::createContent(void)
 				 tr("<h1>No details to select</h1>"),
 				 true,
 				 true);
-	
+	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
+		this, SLOT(itemClicked(const QModelIndex &)));
+
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
 				 titleLabel, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
+}
+
+void ContactDetailPicker::itemClicked(const QModelIndex &index)
+{
+	m_model->setItemSelected(index, !(m_model->itemSelected(index)));
 }

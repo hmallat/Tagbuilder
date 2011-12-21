@@ -24,18 +24,22 @@ ContactDetailPickerListModel(const QContact &contact,
 	: MAbstractItemModel(parent),
 	  m_contact(contact),
 	  m_types(),
-	  m_details()
+	  m_details(),
+	  m_selection()
 {
 	setGrouped(true);
 
 	QList<enum DetailType> types;
 	QMap<enum DetailType, QList<QContactDetail> > details;
+	QMap<enum DetailType, QVector<bool> > selections;
 
 	QList<QContactDetail> names = 
 		m_contact.details(QContactName::DefinitionName);
 	if (names.length() != 0) {
 		types << Name;
 		details[Name] = names;
+		selections[Name] = QVector<bool>(names.length(), 
+						 false);
 	}
 
 	QList<QContactDetail> numbers = 
@@ -43,6 +47,8 @@ ContactDetailPickerListModel(const QContact &contact,
 	if (numbers.length() != 0) {
 		types << PhoneNumber;
 		details[PhoneNumber] = numbers;
+		selections[PhoneNumber] = QVector<bool>(numbers.length(), 
+							false);
 	}
 
 	QList<QContactDetail> emails = 
@@ -50,6 +56,8 @@ ContactDetailPickerListModel(const QContact &contact,
 	if (emails.length() != 0) {
 		types << EmailAddress;
 		details[EmailAddress] = emails;
+		selections[EmailAddress] = QVector<bool>(emails.length(), 
+							 false);
 	}
 
 	QList<QContactDetail> addresses = 
@@ -57,6 +65,8 @@ ContactDetailPickerListModel(const QContact &contact,
 	if (addresses.length() != 0) {
 		types << PhysicalAddress;
 		details[PhysicalAddress] = addresses;
+		selections[PhysicalAddress] = QVector<bool>(addresses.length(),
+							    false);
 	}
 
 	Q_EMIT(layoutAboutToBeChanged());
@@ -64,6 +74,7 @@ ContactDetailPickerListModel(const QContact &contact,
 	beginInsertRows(QModelIndex(), 0, types.length() - 1, false);
 	m_types = types;
 	m_details = details;
+	m_selection = selections;
 	endInsertRows();
 
 	Q_EMIT(layoutChanged());
@@ -179,3 +190,34 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 
 	return qVariantFromValue(parameters);
 }
+
+const QContactDetail ContactDetailPickerListModel::item(int row, 
+							int group) const
+{
+	enum DetailType type = m_types[group];
+	return m_details[type][row];
+}
+
+bool ContactDetailPickerListModel::itemSelected(const QModelIndex &index) const
+{
+	int row = index.row();
+	int group = index.parent().row();
+	enum DetailType type = m_types[group];
+	return m_selection[type][row];
+}
+
+void ContactDetailPickerListModel::setItemSelected(const QModelIndex &index, 
+						   bool selected)
+{
+	int row = index.row();
+	int group = index.parent().row();
+	enum DetailType type = m_types[group];
+	m_selection[type][row] = selected;
+	mDebug(__func__) << "group " << group 
+			 << ", row " << row 
+			 << "set to " << (selected ? "" : "de") 
+			 << "selected. ";
+}
+
+
+

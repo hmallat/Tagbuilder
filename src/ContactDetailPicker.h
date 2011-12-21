@@ -18,6 +18,7 @@ class LabelOrList;
 class MAction;
 class QGraphicsLinearLayout;
 class ContactDetailPickerListModel;
+class QModelIndex;
 
 class ContactDetailPicker : public MApplicationPage
 {
@@ -31,6 +32,10 @@ public:
 	virtual ~ContactDetailPicker(void);
 
         virtual void createContent(void);
+
+private Q_SLOTS:
+
+	void itemClicked(const QModelIndex &index);
 
 private:
 

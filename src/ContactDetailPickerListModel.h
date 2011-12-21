@@ -13,6 +13,7 @@
 #include <QContact>
 #include <QContactDetail>
 #include <QMap>
+#include <QVector>
 
 QTM_USE_NAMESPACE;
 
@@ -43,6 +44,12 @@ public:
 				  int group, 
 				  int role = Qt::DisplayRole) const;
 
+	const QContactDetail item(int row, int group) const;
+
+	bool itemSelected(const QModelIndex &index) const;
+
+	void setItemSelected(const QModelIndex &index, bool selected);
+
 private:
 
 	QContact m_contact;
@@ -50,6 +57,8 @@ private:
 	QList<enum DetailType> m_types;
 
 	QMap<enum DetailType, QList<QContactDetail> > m_details;
+
+	QMap<enum DetailType, QVector<bool> > m_selection;
 
 };
 
