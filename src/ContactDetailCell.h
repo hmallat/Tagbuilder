@@ -33,10 +33,6 @@ public:
 
 	void setSubtitle(const QString &subtitle);
 
-	bool isSelected(void);
-
-	void setSelected(bool);
-
 private:
 
 	Q_DISABLE_COPY(ContactDetailCell);
@@ -52,8 +48,6 @@ private:
 	MLabel *m_titleLabel;
 
 	MLabel *m_subtitleLabel;
-
-	bool m_selected;
 
 };
 

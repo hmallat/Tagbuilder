@@ -22,6 +22,7 @@ class MList;
 class MPannableViewport;
 class QModelIndex;
 class QGraphicsGridLayout;
+class QItemSelectionModel;
 
 class LabelOrList : public QObject, public QGraphicsLayout
 {
@@ -53,6 +54,8 @@ public:
 	virtual void removeAt(int index);
 
 	void scrollTo(const QModelIndex &index);
+
+	QItemSelectionModel *selectionModel(void);
 
 Q_SIGNALS:
 

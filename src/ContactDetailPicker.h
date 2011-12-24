@@ -35,7 +35,7 @@ public:
 
 private Q_SLOTS:
 
-	void itemClicked(const QModelIndex &index);
+	void pickingDone(void);
 
 private:
 

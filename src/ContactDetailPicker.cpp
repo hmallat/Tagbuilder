@@ -19,6 +19,7 @@
 #include <QContactAddress>
 #include <QContactEmailAddress>
 #include <QContactOnlineAccount>
+#include <QItemSelectionModel>
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -57,7 +58,7 @@ void ContactDetailPicker::createContent(void)
 	m_doneAction = new MAction(tr("Done"), this);
 	m_doneAction->setLocation(MAction::ToolBarLocation);
 	connect(m_doneAction, SIGNAL(triggered()),
-		this, SLOT(picked()));
+		this, SLOT(pickingDone()));
 	addAction(m_doneAction);
 
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
@@ -74,8 +75,6 @@ void ContactDetailPicker::createContent(void)
 				 tr("<h1>No details to select</h1>"),
 				 true,
 				 true);
-	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
-		this, SLOT(itemClicked(const QModelIndex &)));
 
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
 				 titleLabel, Qt::BottomLeftCorner);
@@ -83,7 +82,19 @@ void ContactDetailPicker::createContent(void)
 				 layout, Qt::BottomRightCorner);
 }
 
-void ContactDetailPicker::itemClicked(const QModelIndex &index)
+void ContactDetailPicker::pickingDone(void)
 {
-	m_model->setItemSelected(index, !(m_model->itemSelected(index)));
+	QItemSelectionModel *selection = m_list->selectionModel();
+	if (selection == NULL) {
+		mDebug(__func__) << "No selection model. ";
+		return;
+	}
+
+	QModelIndexList list = selection->selectedIndexes();
+	for (int i = 0; i < list.length(); i++) {
+		mDebug(__func__) 
+			<< "Selection " << i << ": "
+			<< "column " << list[i].column() << ", "
+			<< "row " << list[i].row();
+	}
 }

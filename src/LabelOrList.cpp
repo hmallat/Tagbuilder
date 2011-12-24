@@ -12,6 +12,7 @@
 #include <MList>
 #include <MPannableViewport>
 #include <QGraphicsGridLayout>
+#include <QItemSelectionModel>
 
 #include <MDebug>
 
@@ -162,3 +163,10 @@ void LabelOrList::scrollTo(const QModelIndex &index)
 			 MList::PositionAtTopHint,
 			 MList::NonAnimated);
 }
+
+QItemSelectionModel *LabelOrList::selectionModel(void)
+{
+	return m_list->selectionModel();
+}
+
+
