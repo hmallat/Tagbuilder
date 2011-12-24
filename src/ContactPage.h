@@ -46,6 +46,8 @@ private Q_SLOTS:
 
 	void setContact(const QContact contact);
 
+	void setContactDetails(const QContact contact);
+
 private:
 
 	Q_DISABLE_COPY(ContactPage);

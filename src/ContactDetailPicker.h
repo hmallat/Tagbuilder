@@ -33,6 +33,10 @@ public:
 
         virtual void createContent(void);
 
+Q_SIGNALS:
+
+	void contactPicked(const QContact contact);
+
 private Q_SLOTS:
 
 	void pickingDone(void);

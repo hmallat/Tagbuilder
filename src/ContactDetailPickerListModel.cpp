@@ -180,9 +180,11 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 	return qVariantFromValue(parameters);
 }
 
-const QContactDetail ContactDetailPickerListModel::item(int row, 
-							int group) const
+const QContactDetail 
+ContactDetailPickerListModel::detail(const QModelIndex &index) const
 {
+	int row = index.row();
+	int group = index.parent().row();
 	enum DetailType type = m_types[group];
 	return m_details[type][row];
 }

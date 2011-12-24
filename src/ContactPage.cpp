@@ -8,6 +8,7 @@
 
 #include "ContactPage.h"
 #include "ContactSelectionPage.h"
+#include "ContactDetailPicker.h"
 #include "VCardNdefRecord.h"
 #include "Util.h"
 #include "Tag.h"
@@ -136,6 +137,15 @@ void ContactPage::chooseFromAddressbook(void)
 		new ContactSelectionPage(&m_contactManager);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 	connect(page, SIGNAL(selected(const QContact)),
+		this, SLOT(setContactDetails(const QContact)));
+}
+
+void ContactPage::setContactDetails(const QContact contact)
+{
+ 	mDebug(__func__) << contact.displayLabel();
+	ContactDetailPicker *picker = new ContactDetailPicker(contact);
+	picker->appear(MSceneWindow::DestroyWhenDismissed);
+	connect(picker, SIGNAL(contactPicked(const QContact)),
 		this, SLOT(setContact(const QContact)));
 }
 

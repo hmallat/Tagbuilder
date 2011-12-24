@@ -39,8 +39,6 @@ private Q_SLOTS:
 	
 	void contactSelected(const QModelIndex &which);
 
-	void contactPicked(const QContact which);
-
 private:
 
 	Q_DISABLE_COPY(ContactSelectionPage);

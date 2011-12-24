@@ -44,7 +44,7 @@ public:
 				  int group, 
 				  int role = Qt::DisplayRole) const;
 
-	const QContactDetail item(int row, int group) const;
+	const QContactDetail detail(const QModelIndex &index) const;
 
 private:
 

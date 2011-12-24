@@ -84,17 +84,26 @@ void ContactDetailPicker::createContent(void)
 
 void ContactDetailPicker::pickingDone(void)
 {
+	QContactManager manager;
+
 	QItemSelectionModel *selection = m_list->selectionModel();
 	if (selection == NULL) {
 		mDebug(__func__) << "No selection model. ";
 		return;
 	}
 
+	/* Construct a new contact out of the selected details 
+	   and give that as the result of the pick. */
+	QContact picked;
 	QModelIndexList list = selection->selectedIndexes();
 	for (int i = 0; i < list.length(); i++) {
-		mDebug(__func__) 
-			<< "Selection " << i << ": "
-			<< "column " << list[i].column() << ", "
-			<< "row " << list[i].row();
+		QContactDetail detail = m_model->detail(list[i]);
+		/* TODO: will this cause problems, does the 
+		   damn qcontact make a copy or not? */
+		picked.saveDetail(&detail);
 	}
+	manager.synthesizeContactDisplayLabel(&picked);
+
+	dismiss();
+	Q_EMIT(contactPicked(picked));
 }
