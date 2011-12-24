@@ -151,24 +151,32 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 			static_cast<QContactAddress>(detail);
 
 		/* TODO: this shit should be localized */
+		/* TODO: list cells are fixed size? If so, cannot use <br> */
 		QString rep;
+		const char *sep = ", "; /* "<br>" */
 		if (addr.postOfficeBox() != "") {
-			rep += addr.postOfficeBox() + "<br>";
+			if (rep != "") rep += sep;
+			rep += addr.postOfficeBox();
 		}
 		if (addr.street() != "") {
-			rep += addr.street() + "<br>";
+			if (rep != "") rep += sep;
+			rep += addr.street();
 		}
 		if (addr.postcode() != "") {
-			rep += addr.postcode() + "<br>";
+			if (rep != "") rep += sep;
+			rep += addr.postcode();
 		}
 		if (addr.locality() != "") {
-			rep += addr.locality() + "<br>";
+			if (rep != "") rep += sep;
+			rep += addr.locality();
 		}
 		if (addr.region() != "") {
-			rep += addr.region() + "<br>";
+			if (rep != "") rep += sep;
+			rep += addr.region();
 		}
 		if (addr.country() != "") {
-			rep += addr.country() + "<br>";
+			if (rep != "") rep += sep;
+			rep += addr.country();
 		}
 
 		parameters << rep;
@@ -180,9 +188,6 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 			parameters << "";
 		}
 
-	} else {
-		parameters << "Oh-oh";
-		parameters << "Tinky-winky!!!";
 	}
 
 	return qVariantFromValue(parameters);
