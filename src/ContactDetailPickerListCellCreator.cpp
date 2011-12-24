@@ -49,6 +49,14 @@ void ContactDetailPickerListCellCreator::updateCell(const QModelIndex &index,
 	ContactDetailCell *detail = qobject_cast<ContactDetailCell *>(cell);
 	QVariant data = index.data(Qt::DisplayRole);
 	QStringList parameters = data.value<QStringList>();
-	detail->setTitle(parameters[0]);
-	detail->setSubtitle(parameters[1]); 
+	if (parameters.length() > 0) {
+		detail->setTitle(parameters[0]);
+	} else {
+		detail->setTitle("missing-0");
+	}
+	if (parameters.length() > 1) {
+		detail->setSubtitle(parameters[1]); 
+	} else {
+		detail->setTitle("missing-1");
+	}
 }

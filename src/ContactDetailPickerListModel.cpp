@@ -58,13 +58,17 @@ ContactDetailPickerListModel(const QContact &contact,
 		types << PhysicalAddress;
 		details[PhysicalAddress] = addresses;
 	}
-
+	
 	Q_EMIT(layoutAboutToBeChanged());
 
-	beginInsertRows(QModelIndex(), 0, types.length() - 1, false);
+	if (types.length() > 0) {
+		beginInsertRows(QModelIndex(), 0, types.length() - 1, false);
+	}
 	m_types = types;
 	m_details = details;
-	endInsertRows();
+	if (types.length() > 0) {
+		endInsertRows();
+	}
 
 	Q_EMIT(layoutChanged());
 }
@@ -175,6 +179,10 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 		} else {
 			parameters << "";
 		}
+
+	} else {
+		parameters << "Oh-oh";
+		parameters << "Tinky-winky!!!";
 	}
 
 	return qVariantFromValue(parameters);

@@ -14,7 +14,8 @@
 #include <QContact>
 #include <QContactManager>
 
-class MContentItem;
+class MLabel;
+class MList;
 
 QTM_USE_NAMESPACE;
 
@@ -54,11 +55,13 @@ private:
 
 	void updateSize(void);
 
-	MContentItem *m_contact;
-
 	QContactManager m_contactManager;
 
 	QContact m_info;
+
+	MLabel *m_contactTitle;
+
+	MList *m_contactDetails;
 
 };
 

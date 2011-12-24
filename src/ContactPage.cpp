@@ -9,11 +9,15 @@
 #include "ContactPage.h"
 #include "ContactSelectionPage.h"
 #include "ContactDetailPicker.h"
+#include "ContactDetailPickerListCellCreator.h"
+#include "ContactDetailPickerListModel.h"
 #include "VCardNdefRecord.h"
 #include "Util.h"
 #include "Tag.h"
 
 #include <MLabel>
+#include <MList>
+#include <MContainer>
 #include <MButton>
 #include <MContentItem>
 #include <QGraphicsLinearLayout>
@@ -27,8 +31,9 @@
 
 ContactPage::ContactPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
-	  m_contact(0),
-	  m_info()
+	  m_info(),
+	  m_contactTitle(0),
+	  m_contactDetails(0)
 {
 }
 
@@ -38,30 +43,30 @@ ContactPage::~ContactPage(void)
 
 void ContactPage::createPageSpecificContent(void)
 {
-	MLabel *selected = new MLabel(tr("Selected contact"));
-	selected->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	selected->setAlignment(Qt::AlignLeft);
-	layout()->addItem(selected);
-	layout()->setAlignment(selected, Qt::AlignLeft);
+	m_contactTitle = new MLabel();
+	m_contactTitle->setSizePolicy(QSizePolicy::Minimum, 
+				      QSizePolicy::Fixed);
+	m_contactTitle->setAlignment(Qt::AlignLeft);
+	m_contactTitle->setWordWrap(true);
+	layout()->addItem(m_contactTitle);
+	layout()->setAlignment(m_contactTitle, Qt::AlignLeft);
 
-	m_contact = new MContentItem(MContentItem::IconAndSingleTextLabel);
-	m_contact->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	layout()->addItem(m_contact);
-	layout()->setAlignment(m_contact, Qt::AlignCenter);
+	m_contactDetails = new MList();
+	m_contactDetails->setShowGroups(true);
+	ContactDetailPickerListCellCreator *creator = 
+		new ContactDetailPickerListCellCreator;
+	m_contactDetails->setCellCreator(creator);
+	m_contactDetails->setSizePolicy(QSizePolicy::Preferred, 
+					QSizePolicy::Preferred);
+	layout()->addItem(m_contactDetails);
+	layout()->setAlignment(m_contactDetails, Qt::AlignCenter);
 
-	{
-		QGraphicsLinearLayout *sub_layout = 
-			new QGraphicsLinearLayout(Qt::Vertical);
-
-		MButton *pick_button = 
-			new MButton(tr("Choose from contacts"));
-		sub_layout->addItem(pick_button);
-		connect(pick_button, SIGNAL(clicked()),
-			this, SLOT(chooseFromAddressbook()));
-	
-		layout()->addItem(sub_layout);
-		layout()->setAlignment(sub_layout, Qt::AlignCenter);
-	}
+	MButton *pick_button = 
+		new MButton(tr("Choose from contacts"));
+	layout()->addItem(pick_button);
+	layout()->setAlignment(pick_button, Qt::AlignCenter);
+	connect(pick_button, SIGNAL(clicked()),
+		this, SLOT(chooseFromAddressbook()));
 	
 }
 
@@ -153,10 +158,17 @@ void ContactPage::setContact(const QContact contact)
 {
 	mDebug(__func__) << contact.displayLabel();
 	m_info = contact;
-	m_contact->setImageID("icon-m-content-avatar-placeholder"); /* TODO */
-	m_contact->setTitle(m_info.isEmpty() 
-			    ? "No one selected"
-			    : m_info.displayLabel());
+
+	if (m_info.isEmpty() == true) {
+		m_contactTitle->setText(tr("No contact selected"));
+	} else {
+		m_contactTitle->setText(m_info.displayLabel());
+	}
+	ContactDetailPickerListModel *model = 
+		new ContactDetailPickerListModel(m_info,
+						 m_contactDetails);
+	m_contactDetails->setItemModel(model);
+
 	setContentValidity(m_info.isEmpty() ? false : true);
 	updateSize();
 }
