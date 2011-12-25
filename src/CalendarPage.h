@@ -26,7 +26,7 @@ class CalendarPage : public CreateEditPage
 
 public:
 
-	CalendarPage(int tag = -1, 
+	CalendarPage(int tag = TagStorage::NULL_TAG, 
 		     QGraphicsItem *parent = 0);
 
 	virtual ~CalendarPage(void);

@@ -20,6 +20,9 @@
 
 #include <MDebug>
 
+const int TagStorage::NULL_TAG = -1;
+const int TagStorage::TEMPORARY_TAG = -2;
+
 /* TODO: totally inefficient storage implementation to be fixed... */
 
 /*
@@ -232,14 +235,19 @@ private:
 
 	QList<Tag *> tags;
 
+	Tag *m_temp;
+
 };
 
 TagStorage::TagStorageImpl::TagStorageImpl(QList<Tag *> readTags)
-	: tags(readTags)
+	: tags(readTags),
+	  m_temp(0)
 {
 }
 
 TagStorage::TagStorageImpl::TagStorageImpl(void)
+	: tags(),
+	  m_temp(0)
 {
 }
 
@@ -248,6 +256,7 @@ TagStorage::TagStorageImpl::~TagStorageImpl(void)
 	while (tags.isEmpty() == false) {
 		delete tags.takeFirst();
 	}
+	delete m_temp;
 }
 
 int TagStorage::TagStorageImpl::count(void)
@@ -257,6 +266,12 @@ int TagStorage::TagStorageImpl::count(void)
 
 const Tag* TagStorage::TagStorageImpl::at(int which)
 {
+	if (which == TagStorage::NULL_TAG) {
+		return 0;
+	}
+	if (which == TagStorage::TEMPORARY_TAG) {
+		return m_temp;
+	}
 	return tags[which];
 }
 
@@ -271,25 +286,45 @@ bool TagStorage::TagStorageImpl::append(Tag *tag)
 
 bool TagStorage::TagStorageImpl::update(int which, Tag *tag)
 {
-	Tag *old = tags[which];
+	if (which == TagStorage::NULL_TAG) {
+		return false;
+	}
+
+	const Tag *old = at(which);
 
 	mDebug(__func__) << "Appending tag storage: ";
-	mDebug(__func__) << "Previous message: ";
-	Tag::dump(old->message());
+	if (old != NULL) {
+		mDebug(__func__) << "Previous message: ";
+		Tag::dump(old->message());
+	}
 	mDebug(__func__) << "Updated message: ";
 	Tag::dump(tag->message());
 
-	tags[which] = tag;
 	delete old;
-	return _writeStorage(tags);
+	if (which == TagStorage::TEMPORARY_TAG) {
+		m_temp = tag;
+		return true;
+	} else {
+		tags[which] = tag;
+		return _writeStorage(tags);
+	}
 }
 
 bool TagStorage::TagStorageImpl::remove(int which)
 {
-	Tag *old = tags[which];
-	tags.removeAt(which);
+	if (which == TagStorage::NULL_TAG) {
+		return false;
+	}
+
+	const Tag *old = at(which);
 	delete old;
-	return _writeStorage(tags);
+	if (which == TagStorage::TEMPORARY_TAG) {
+		m_temp = NULL;
+		return true;
+	} else {
+		tags.removeAt(which);
+		return _writeStorage(tags);
+	}
 }
 
 static TagStorage *singleton = 0;
@@ -375,8 +410,10 @@ bool TagStorage::update(int which,
 	bool r;
 
 	r = m_impl->update(which, tag);
-	QModelIndex index = createIndex(which, 0);
-	Q_EMIT(dataChanged(index, index));
+	if (r == true && which >= 0) {
+		QModelIndex index = createIndex(which, 0);
+		Q_EMIT(dataChanged(index, index));
+	}
 
 	return r;
 }
@@ -385,11 +422,15 @@ bool TagStorage::remove(int which)
 {
 	bool r;
 
-	Q_EMIT(layoutAboutToBeChanged());
-	beginRemoveRows(QModelIndex(), which, which);
+	if (which >= 0) {
+		Q_EMIT(layoutAboutToBeChanged());
+		beginRemoveRows(QModelIndex(), which, which);
+	}
 	r = m_impl->remove(which);
-	endRemoveRows();
-	Q_EMIT(layoutChanged());
+	if (which >= 0) {
+		endRemoveRows();
+		Q_EMIT(layoutChanged());
+	}
 
 	return r;
 }

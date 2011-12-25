@@ -188,28 +188,36 @@ void MainPage::editTag(void)
 {
 	if (m_longTapIndex.isValid() &&
 	    m_longTapIndex.row() < TagStorage::storage()->count()) {
-		MApplicationPage *page = 0;
-		const Tag *tag = 
-			TagStorage::storage()->tag(m_longTapIndex.row());
-		if (tag->type() == Tag::BLUETOOTH_TAG) {
-			page = new BtPage(m_bluez, m_longTapIndex.row());
-		} else if (tag->type() == Tag::CALENDAR_TAG) {
-			page = new CalendarPage(m_longTapIndex.row());
-		} else if (tag->type() == Tag::CONTACT_TAG) {
-			page = new ContactPage(m_longTapIndex.row());
-		} else if (tag->type() == Tag::TEXT_TAG) {
-			page = new TextPage(m_longTapIndex.row());
-		} else if (tag->type() == Tag::URL_TAG) {
-			page = new UrlPage(m_longTapIndex.row());
-		} else {
-			page = new UnknownPage(m_longTapIndex.row());
-		}
-
-		if (page != 0) {
-			page->appear(scene(), 
-				     MSceneWindow::DestroyWhenDismissed);
-		}
+		editTag(m_longTapIndex.row());
 		m_longTapIndex = QModelIndex();
+	}
+}
+
+void MainPage::editTag(int index)
+{
+	MApplicationPage *page = 0;
+
+	mDebug(__func__) << "Getting tag " << index;
+	const Tag *tag = TagStorage::storage()->tag(index);
+	mDebug(__func__) << "Got tag " << tag;
+
+	if (tag->type() == Tag::BLUETOOTH_TAG) {
+		page = new BtPage(m_bluez, index);
+	} else if (tag->type() == Tag::CALENDAR_TAG) {
+		page = new CalendarPage(index);
+	} else if (tag->type() == Tag::CONTACT_TAG) {
+		page = new ContactPage(index);
+	} else if (tag->type() == Tag::TEXT_TAG) {
+		page = new TextPage(index);
+	} else if (tag->type() == Tag::URL_TAG) {
+		page = new UrlPage(index);
+	} else {
+		page = new UnknownPage(index);
+	}
+	
+	if (page != 0) {
+		page->appear(scene(), 
+			     MSceneWindow::DestroyWhenDismissed);
 	}
 }
 
@@ -289,11 +297,17 @@ void MainPage::messageRead(const QNdefMessage contents)
 		in = contents;
 	}
 
+	mDebug(__func__) << "Saving temp";
 	QString name = "Harvested tag";
-	success = TagStorage::storage()->append(name, in);
+	success = TagStorage::storage()->update(TagStorage::TEMPORARY_TAG,
+						name, 
+						in);
 	if (success == false) {
 		MMessageBox *box = 
 			new MMessageBox(tr("Cannot store the tag. "));
 		box->appear(MSceneWindow::DestroyWhenDismissed);
+	} else {
+		mDebug(__func__) << "Editing temp";
+		editTag(TagStorage::TEMPORARY_TAG);
 	}
 }

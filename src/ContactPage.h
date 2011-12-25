@@ -26,7 +26,7 @@ class ContactPage : public CreateEditPage
 
 public:
 
-	ContactPage(int tag = -1, 
+	ContactPage(int tag = TagStorage::NULL_TAG, 
 		    QGraphicsItem *parent = 0);
 
 	virtual ~ContactPage(void);

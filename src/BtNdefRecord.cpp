@@ -110,7 +110,7 @@ int BtNdefRecord::eirLength(quint8 which) const
 {
 	int off = eirOffset(which);
 	if (off == EIR_NOT_FOUND) {
-		return -1;
+		return 0;
 	}
 	return (int)(payload()[off]);
 }

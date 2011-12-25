@@ -33,7 +33,7 @@ class UrlPage : public CreateEditPage
 
 public:
 
-	UrlPage(int tag = -1, QGraphicsItem *parent = 0);
+	UrlPage(int tag = TagStorage::NULL_TAG, QGraphicsItem *parent = 0);
 
 	virtual ~UrlPage(void);
 

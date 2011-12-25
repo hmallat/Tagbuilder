@@ -66,7 +66,7 @@ void CreateEditPage::createContent(void)
 	anchor->addCornerAnchors(header, Qt::TopLeftCorner,
 				 anchor, Qt::TopLeftCorner);
 
-	MLabel *label = new MLabel(m_tag == -1 
+	MLabel *label = new MLabel(m_tag == TagStorage::NULL_TAG 
 				   ? tr("Create tag contents")
 				   : tr("Edit tag contents"), 
 				   header);
@@ -115,7 +115,7 @@ void CreateEditPage::createContent(void)
 
 	centralWidget()->setLayout(anchor);
 
-	if (m_tag == -1) {
+	if (m_tag == TagStorage::NULL_TAG) {
 		setContentValidity(false);
 		setNameValidity(false);
 		setupNewData();
@@ -190,7 +190,11 @@ void CreateEditPage::storeAndExit(void)
 		goto fail;
 	}
 
-	if (m_tag == -1) {
+	if (m_tag == TagStorage::NULL_TAG) {
+		success = TagStorage::storage()->append(m_name->contents(), 
+							message);
+	} else if (m_tag == TagStorage::TEMPORARY_TAG) {
+		TagStorage::storage()->remove(TagStorage::TEMPORARY_TAG);
 		success = TagStorage::storage()->append(m_name->contents(), 
 							message);
 	} else {

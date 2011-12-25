@@ -28,7 +28,7 @@ class BtPage : public CreateEditPage
 public:
 
 	BtPage(BluezSupplicant *bluez,
-	       int tag = -1, 
+	       int tag = TagStorage::NULL_TAG, 
 	       QGraphicsItem *parent = 0);
 
 	virtual ~BtPage(void);

@@ -22,7 +22,8 @@ class TextPage : public CreateEditPage
 
 public:
 
-	TextPage(int tag = -1, QGraphicsItem *parent = 0);
+	TextPage(int tag = TagStorage::NULL_TAG, 
+		 QGraphicsItem *parent = 0);
 
 	virtual ~TextPage(void);
 

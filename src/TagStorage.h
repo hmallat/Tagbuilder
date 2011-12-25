@@ -24,6 +24,10 @@ class TagStorage : public QAbstractListModel
 
 public:
 
+	static const int NULL_TAG;
+
+	static const int TEMPORARY_TAG;
+
 	static TagStorage *storage(void);
 
 	int count(void) const;

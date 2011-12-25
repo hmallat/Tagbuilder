@@ -22,7 +22,8 @@ class UnknownPage : public CreateEditPage
 
 public:
 
-	UnknownPage(int tag = -1, QGraphicsItem *parent = 0);
+	UnknownPage(int tag = TagStorage::NULL_TAG, 
+		    QGraphicsItem *parent = 0);
 
 	virtual ~UnknownPage(void);
 

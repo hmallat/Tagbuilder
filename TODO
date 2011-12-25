@@ -1,6 +1,8 @@
 GENERAL:
 
 - Drop fields that are not supported from harvested records!
+- Harvest tags via edit page! Don't save directly! Warn when dropping
+  unsupported contents from tags
 
 BLUETOOTH:
 - static handover support?
