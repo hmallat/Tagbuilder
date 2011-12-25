@@ -18,6 +18,7 @@
 #include <MLabel>
 #include <MButton>
 #include <MMessageBox>
+#include <MSeparator>
 #include <QGraphicsLinearLayout>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
@@ -133,6 +134,11 @@ void BtPage::createPageSpecificContent(void)
 	layout()->setAlignment(m_class, Qt::AlignLeft);
 	connect(m_class, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceClassChanged(void)));
+
+	MSeparator *sep = new MSeparator;
+	sep->setStyleName("CommonHorizontalSeparator");
+	sep->setOrientation(Qt::Horizontal);
+	layout()->addItem(sep);
 
 	{
 		QGraphicsLinearLayout *sub_layout = 

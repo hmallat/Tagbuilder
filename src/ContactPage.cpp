@@ -19,7 +19,7 @@
 #include <MList>
 #include <MContainer>
 #include <MButton>
-#include <MContentItem>
+#include <MSeparator>
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>
 #include <QVersitContactExporter>
@@ -60,6 +60,11 @@ void ContactPage::createPageSpecificContent(void)
 					QSizePolicy::Preferred);
 	layout()->addItem(m_contactDetails);
 	layout()->setAlignment(m_contactDetails, Qt::AlignCenter);
+
+	MSeparator *sep = new MSeparator;
+	sep->setStyleName("CommonHorizontalSeparator");
+	sep->setOrientation(Qt::Horizontal);
+	layout()->addItem(sep);
 
 	MButton *pick_button = 
 		new MButton(tr("Choose from contacts"));
@@ -162,7 +167,7 @@ void ContactPage::setContact(const QContact contact)
 	if (m_info.isEmpty() == true) {
 		m_contactTitle->setText(tr("No contact selected"));
 	} else {
-		m_contactTitle->setText(m_info.displayLabel());
+		m_contactTitle->setText(tr("Contact details"));
 	}
 	ContactDetailPickerListModel *model = 
 		new ContactDetailPickerListModel(m_info,

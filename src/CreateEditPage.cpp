@@ -15,6 +15,7 @@
 #include <MLabel>
 #include <MMessageBox>
 #include <MPannableViewport>
+#include <MSeparator>
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
 
@@ -88,6 +89,11 @@ void CreateEditPage::createContent(void)
 	m_layout->setAlignment(m_name, Qt::AlignLeft);
 	connect(m_name, SIGNAL(contentsChanged(void)),
 		this, SLOT(nameChanged(void)));
+
+	MSeparator *sep = new MSeparator;
+	sep->setStyleName("CommonHorizontalSeparator");
+	sep->setOrientation(Qt::Horizontal);
+	layout()->addItem(sep);
 
 	createPageSpecificContent();
 
