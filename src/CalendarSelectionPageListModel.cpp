@@ -19,6 +19,20 @@
 
 #include <MDebug>
 
+static bool _itemAllDay(const QOrganizerItem &i)
+{
+	if (i.type() == QOrganizerItemType::TypeEvent) {
+		return static_cast<QOrganizerEvent>(i).isAllDay();
+	} else if (i.type() == QOrganizerItemType::TypeEventOccurrence) {
+		return false; /* TODO should check parent! */
+	} else if (i.type() == QOrganizerItemType::TypeTodo) {
+		return static_cast<QOrganizerTodo>(i).isAllDay();
+	} else if (i.type() == QOrganizerItemType::TypeTodoOccurrence) {
+		return false; /* TODO should check parent! */
+	} else {
+		return false;
+	}
+}
 static QDateTime _itemStart(const QOrganizerItem &i)
 {
 	if (i.type() == QOrganizerItemType::TypeEvent) {
@@ -213,11 +227,15 @@ QVariant CalendarSelectionPageListModel::itemData(int row,
 	parameters << item.displayLabel();
 
 	/* TODO: handle those which don't have a valid timestamp */
+	bool a = _itemAllDay(item);
 	QDateTime s = _itemStart(item);
 	QDateTime e = _itemEnd(item);
 	QString stamp;
 
-	if (e == QDateTime()) { 
+	if (a == true) {
+		/* Time component is meaningless */
+		stamp = tr("All-day event");
+	} else if (e == QDateTime()) { 
 		/* No end time, only start time */
 		stamp = s.time().toString(Qt::SystemLocaleShortDate);
 	} else if (s.date() == e.date()) { 

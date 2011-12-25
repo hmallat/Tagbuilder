@@ -14,11 +14,6 @@
 
 #include <QContactDetailDefinition>
 #include <QContactManager>
-#include <QContactName>
-#include <QContactPhoneNumber>
-#include <QContactAddress>
-#include <QContactEmailAddress>
-#include <QContactOnlineAccount>
 #include <QItemSelectionModel>
 
 #include <QGraphicsAnchorLayout>

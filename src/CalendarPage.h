@@ -14,7 +14,8 @@
 #include <QOrganizerItem>
 #include <QOrganizerManager>
 
-class MContentItem;
+class MList;
+class MLabel;
 
 QTM_USE_NAMESPACE;
 
@@ -48,17 +49,21 @@ private Q_SLOTS:
 
 	void setCalendarItem(const QOrganizerItem item);
 
+	void selectCalendarDetails(const QOrganizerItem item);
+
 private:
 
 	Q_DISABLE_COPY(CalendarPage);
 
 	void updateSize(void);
 
-	MContentItem *m_calendar;
-
 	QOrganizerManager m_calendarManager;
 
 	QOrganizerItem m_info;
+
+	MLabel *m_calendarTitle;
+
+	MList *m_calendarDetails;
 
 };
 

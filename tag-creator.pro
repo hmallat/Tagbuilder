@@ -25,6 +25,10 @@ HEADERS		+= \
 		src/BtSelectionPageExistingListModel.h \
 		src/BtSelectionPageScanListModel.h \
 		src/BtSelectionPageListModel.h \
+		src/CalendarDetailCell.h \
+		src/CalendarDetailPicker.h \
+		src/CalendarDetailPickerListCellCreator.h \
+		src/CalendarDetailPickerListModel.h \
 		src/CalendarPage.h \
 		src/CalendarSelectionPage.h \
 		src/CalendarSelectionPageListCellCreator.h \
@@ -69,6 +73,10 @@ SOURCES		+= \
 		src/BtSelectionPageExistingListModel.cpp \
 		src/BtSelectionPageScanListModel.cpp \
 		src/BtSelectionPageListModel.cpp \
+		src/CalendarDetailCell.cpp \
+		src/CalendarDetailPicker.cpp \
+		src/CalendarDetailPickerListCellCreator.cpp \
+		src/CalendarDetailPickerListModel.cpp \
 		src/CalendarPage.cpp \
 		src/CalendarSelectionPage.cpp \
 		src/CalendarSelectionPageListCellCreator.cpp \

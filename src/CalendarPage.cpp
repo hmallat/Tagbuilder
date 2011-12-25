@@ -9,12 +9,16 @@
 #include "CalendarPage.h"
 #include "CalendarSelectionPage.h"
 #include "CalendarSelectionPageListModel.h"
+#include "CalendarDetailPicker.h"
+#include "CalendarDetailPickerListCellCreator.h"
+#include "CalendarDetailPickerListModel.h"
 #include "VCalNdefRecord.h"
 #include "Util.h"
 
 #include <MLabel>
+#include <MList>
+#include <MSeparator>
 #include <MButton>
-#include <MContentItem>
 #include <QGraphicsLinearLayout>
 #include <QVersitOrganizerExporter>
 #include <QVersitOrganizerImporter>
@@ -25,8 +29,9 @@
 
 CalendarPage::CalendarPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
-	  m_calendar(0),
-	  m_info()
+	  m_info(),
+	  m_calendarTitle(0),
+	  m_calendarDetails(0)
 {
 }
 
@@ -36,16 +41,28 @@ CalendarPage::~CalendarPage(void)
 
 void CalendarPage::createPageSpecificContent(void)
 {
-	MLabel *selected = new MLabel(tr("Selected calendar entry"));
-	selected->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	selected->setAlignment(Qt::AlignLeft);
-	layout()->addItem(selected);
-	layout()->setAlignment(selected, Qt::AlignLeft);
+	m_calendarTitle = new MLabel();
+	m_calendarTitle->setSizePolicy(QSizePolicy::Minimum, 
+				       QSizePolicy::Fixed);
+	m_calendarTitle->setAlignment(Qt::AlignLeft);
+	m_calendarTitle->setWordWrap(true);
+	layout()->addItem(m_calendarTitle);
+	layout()->setAlignment(m_calendarTitle, Qt::AlignLeft);
 
-	m_calendar = new MContentItem();
-	m_calendar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	layout()->addItem(m_calendar);
-	layout()->setAlignment(m_calendar, Qt::AlignCenter);
+	m_calendarDetails = new MList();
+	m_calendarDetails->setShowGroups(true);
+	CalendarDetailPickerListCellCreator *creator = 
+		new CalendarDetailPickerListCellCreator;
+	m_calendarDetails->setCellCreator(creator);
+	m_calendarDetails->setSizePolicy(QSizePolicy::Preferred, 
+					 QSizePolicy::Preferred);
+	layout()->addItem(m_calendarDetails);
+	layout()->setAlignment(m_calendarDetails, Qt::AlignCenter);
+
+	MSeparator *sep = new MSeparator;
+	sep->setStyleName("CommonHorizontalSeparator");
+	sep->setOrientation(Qt::Horizontal);
+	layout()->addItem(sep);
 
 	{
 		QGraphicsLinearLayout *sub_layout = 
@@ -114,11 +131,13 @@ QNdefMessage CalendarPage::prepareDataForStorage(void)
 
 	if (exporter.exportItems(QList<QOrganizerItem>() << m_info,
 				 QVersitDocument::ICalendar20Type) == false) {
+		mDebug(__func__) << "Export fail";
 		goto fail;
 	}
 
 	if (writer.startWriting(exporter.document()) == false ||
 	    writer.waitForFinished() == false) {
+		mDebug(__func__) << "Write fail";
 		goto fail;
 	}
 
@@ -139,7 +158,7 @@ void CalendarPage::chooseEvent(void)
 		new CalendarSelectionPage(type, &m_calendarManager);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 	connect(page, SIGNAL(selected(const QOrganizerItem)),
-		this, SLOT(setCalendarItem(const QOrganizerItem)));
+		this, SLOT(selectCalendarDetails(const QOrganizerItem)));
 }
 
 void CalendarPage::chooseTodo(void)
@@ -150,19 +169,31 @@ void CalendarPage::chooseTodo(void)
 		new CalendarSelectionPage(type, &m_calendarManager);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 	connect(page, SIGNAL(selected(const QOrganizerItem)),
+		this, SLOT(selectCalendarDetails(const QOrganizerItem)));
+}
+
+void CalendarPage::selectCalendarDetails(const QOrganizerItem item)
+{
+	CalendarDetailPicker *picker = new CalendarDetailPicker(item);
+	picker->appear(MSceneWindow::DestroyWhenDismissed);
+	connect(picker, SIGNAL(calendarPicked(const QOrganizerItem)),
 		this, SLOT(setCalendarItem(const QOrganizerItem)));
 }
 
 void CalendarPage::setCalendarItem(const QOrganizerItem item)
 {
 	m_info = item;
-	m_calendar->setImageID("icon-m-content-calendar"); 
-	m_calendar->setTitle(m_info.isEmpty() 
-			     ? "No entry selected"
-			     : m_info.displayLabel());
-	m_calendar->setSubtitle(m_info.isEmpty()
-				? ""
-				: "Insert time here");
+
+	if (m_info.isEmpty() == true) {
+		m_calendarTitle->setText(tr("No calendar entry selected"));
+	} else {
+		m_calendarTitle->setText(tr("Calendar entry details"));
+	}
+	CalendarDetailPickerListModel *model = 
+		new CalendarDetailPickerListModel(m_info,
+						  m_calendarDetails);
+	m_calendarDetails->setItemModel(model);
+
 	setContentValidity(m_info.isEmpty() ? false : true);
 	updateSize();
 }
