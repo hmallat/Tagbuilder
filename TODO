@@ -1,31 +1,29 @@
 GENERAL:
 
 - Drop fields that are not supported from harvested records!
-- Make UI uniform -- but which is the best way? Now some pages have
-many fields while others have content item + actions.
 
 BLUETOOTH:
 - static handover support?
 - full BT2.0 support (need docs or more data)
+
+EVENTS:
+
+- Sensible time display formats for events (all day, start only,
+start+end on the same day, separate days)
 
 CONTACTS:
 
 MISC (rearrange these):
 * writing of tags to work
 * help/about 
-* BT/Contacts content item should be disabled (blinks when touched)
-* Don't allow storing of BT/Contacts record if invalid device/contact info
 * check BT on/off/flight mode scenarios
 * progress indicator for BT scanning/contact fetching
 * exploratory testing
-* avatars for contacts/icons for BT devices
+* avatars for contacts, icons for BT devices?
 * indications of error situations
 * Alpha-separators on contact list; fast scrolling?
 * If contact tag name is not edited, prefill with contact name when selected
-* contact detail selection (e.g. should not save the address without perm)
-* calendar detail selection?
 * calendar testing with different entries
-* byte counts
 * signing?
 * optimize Sp implementation, creating it all the time when editing Sp
   title to update the NDEF length may get annoying.
