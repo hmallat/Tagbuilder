@@ -10,8 +10,12 @@
 #include "Util.h"
 
 #include <QOrganizerEventTime>
+#include <QOrganizerJournalTime>
 #include <QOrganizerTodoTime>
+#include <QOrganizerItemComment>
 #include <QOrganizerItemDescription>
+#include <QOrganizerItemDisplayLabel>
+#include <QOrganizerItemLocation>
 
 #include <MDebug>
 
@@ -30,6 +34,13 @@ CalendarDetailPickerListModel(const QOrganizerItem &item,
 	QList<enum DetailType> types;
 	QMap<enum DetailType, QList<QOrganizerItemDetail> > details;
 
+	QList<QOrganizerItemDetail> labels = 
+		m_item.details(QOrganizerItemDisplayLabel::DefinitionName);
+	if (labels.length() != 0) {
+		types << Label;
+		details[Label] = labels;
+	}
+
 	QList<QOrganizerItemDetail> eventtimes = 
 		m_item.details(QOrganizerEventTime::DefinitionName);
 	if (eventtimes.length() != 0) {
@@ -44,11 +55,32 @@ CalendarDetailPickerListModel(const QOrganizerItem &item,
 		details[TodoTime] = todotimes;
 	}
 
+	QList<QOrganizerItemDetail> jourtimes = 
+		m_item.details(QOrganizerJournalTime::DefinitionName);
+	if (jourtimes.length() != 0) {
+		types << JournalTime;
+		details[JournalTime] = jourtimes;
+	}
+
+	QList<QOrganizerItemDetail> locs = 
+		m_item.details(QOrganizerItemLocation::DefinitionName);
+	if (locs.length() != 0) {
+		types << Location;
+		details[Location] = locs;
+	}
+
 	QList<QOrganizerItemDetail> descrs = 
 		m_item.details(QOrganizerItemDescription::DefinitionName);
 	if (descrs.length() != 0) {
 		types << Description;
 		details[Description] = descrs;
+	}
+
+	QList<QOrganizerItemDetail> comms = 
+		m_item.details(QOrganizerItemComment::DefinitionName);
+	if (comms.length() != 0) {
+		types << Comment;
+		details[Comment] = comms;
 	}
 
 	Q_EMIT(layoutAboutToBeChanged());
@@ -78,9 +110,13 @@ int CalendarDetailPickerListModel::rowCountInGroup(int group) const
 QString CalendarDetailPickerListModel::groupTitle(int group) const
 {
 	return 
+		(m_types[group] == Label) ? tr("Label") :
+		(m_types[group] == Location) ? tr("Location") :
 		(m_types[group] == EventTime) ? tr("Time") :
+		(m_types[group] == JournalTime) ? tr("Time") :
 		(m_types[group] == TodoTime) ? tr("Time") :
 		(m_types[group] == Description) ? tr("Description") :
+		(m_types[group] == Comment) ? tr("Comment") :
 		tr("Unknown type");
 }
 
@@ -94,7 +130,19 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 	enum DetailType type = m_types[group];
 	QOrganizerItemDetail detail = m_details[type][row];
 
-	if (type == EventTime) {
+	if (type == Label) {
+		QOrganizerItemDisplayLabel label = 
+			static_cast<QOrganizerItemDisplayLabel>(detail);
+		parameters << label.label();
+		parameters << "";
+
+	} else if (type == Location) {
+		QOrganizerItemLocation loc = 
+			static_cast<QOrganizerItemLocation>(detail);
+		parameters << loc.label();
+		parameters << "";
+
+	} else if (type == EventTime) {
 		QOrganizerEventTime time = 
 			static_cast<QOrganizerEventTime>(detail);
 
@@ -117,6 +165,18 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		parameters << rep;
 		parameters << (time.isAllDay() ? tr("All-day event") : "");
 
+	} else if (type == JournalTime) {
+		QOrganizerJournalTime time = 
+			static_cast<QOrganizerJournalTime>(detail);
+
+		QString rep;
+		QDateTime d = time.entryDateTime();
+		
+		rep += d.toString(Qt::SystemLocaleShortDate);
+		
+		parameters << rep;
+		parameters << "";
+
 	} else if (type == TodoTime) {
 		QOrganizerTodoTime time = 
 			static_cast<QOrganizerTodoTime>(detail);
@@ -137,6 +197,12 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		QOrganizerItemDescription description = 
 			static_cast<QOrganizerItemDescription>(detail);
 		parameters << description.description();
+		parameters << "";
+
+	} else if (type == Comment) {
+		QOrganizerItemComment comment = 
+			static_cast<QOrganizerItemComment>(detail);
+		parameters << comment.comment();
 		parameters << "";
 
 	}

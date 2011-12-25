@@ -23,9 +23,13 @@ class CalendarDetailPickerListModel : public MAbstractItemModel
 	Q_OBJECT;
 
 	enum DetailType {
+		Label,
+		Location,
 		EventTime,
+		JournalTime,
 		TodoTime,
-		Description
+		Description,
+		Comment
 	};
 
 public:
