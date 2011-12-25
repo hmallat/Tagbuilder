@@ -32,7 +32,7 @@ void ContactSelectionPage::createContent(void)
 	createCommonContent(m_model,
 			    _getCreator,
 			    tr("<h1>No contact to select</h1>"),
-			    tr("<big>Select the contact to use</big>"),
+			    tr("Select the contact to use"),
 			    true,
 			    false);
 

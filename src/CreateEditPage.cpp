@@ -60,6 +60,19 @@ void CreateEditPage::createContent(void)
 	anchor->setSizePolicy(QSizePolicy::Minimum, 
 			      QSizePolicy::Minimum);
 
+	MWidgetController *header = new MWidgetController();
+	header->setStyleName("CommonHeaderPanel");
+	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	anchor->addCornerAnchors(header, Qt::TopLeftCorner,
+				 anchor, Qt::TopLeftCorner);
+
+	MLabel *label = new MLabel(m_tag == -1 
+				   ? tr("Create tag contents")
+				   : tr("Edit tag contents"), 
+				   header);
+	label->setStyleName("CommonHeader");
+	label->setAlignment(Qt::AlignLeft);
+
 	m_size = new MLabel();
 	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	m_size->setAlignment(Qt::AlignRight);
@@ -72,14 +85,6 @@ void CreateEditPage::createContent(void)
 	m_layout = new QGraphicsLinearLayout(Qt::Vertical, layoutContainer);
 	m_layout->setSizePolicy(QSizePolicy::Preferred, 
 				QSizePolicy::Minimum);
-
-	MLabel *label = new MLabel(m_tag == -1 
-				   ? tr("<big>Create tag contents</big>")
-				   : tr("<big>Edit tag contents</big>"));
-	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	label->setAlignment(Qt::AlignCenter);
-	m_layout->addItem(label);
-	m_layout->setAlignment(label, Qt::AlignCenter);
 
 	m_name = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_name->setLabel(tr("Tag name"));
@@ -103,7 +108,7 @@ void CreateEditPage::createContent(void)
 	view->setMinimumSize(100, 100);
 	view->setWidget(layoutContainer);
 
-	anchor->addAnchor(view, Qt::AnchorTop, anchor, Qt::AnchorTop);
+	anchor->addAnchor(view, Qt::AnchorTop, header, Qt::AnchorBottom);
 	anchor->addAnchor(view, Qt::AnchorBottom, m_size, Qt::AnchorTop);
 	anchor->addAnchor(view, Qt::AnchorLeft, anchor, Qt::AnchorLeft);
 	anchor->addAnchor(view, Qt::AnchorRight, anchor, Qt::AnchorRight);

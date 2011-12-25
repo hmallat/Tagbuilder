@@ -35,12 +35,10 @@ static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 
 ContactDetailPicker::ContactDetailPicker(const QContact contact,
 					 QGraphicsItem *parent)
-	: MApplicationPage(parent),
+	: SelectionPage(parent),
 	  m_contact(contact),
 	  m_model(new ContactDetailPickerListModel(m_contact, this))
 {
-	setComponentsDisplayMode(MApplicationPage::EscapeButton,
-				 MApplicationPageModel::Hide);
 }
 
 ContactDetailPicker::~ContactDetailPicker(void)
@@ -49,37 +47,14 @@ ContactDetailPicker::~ContactDetailPicker(void)
 
 void ContactDetailPicker::createContent(void)
 {
-	m_cancelAction = new MAction(tr("Cancel"), this);
-	m_cancelAction->setLocation(MAction::ToolBarLocation);
-	connect(m_cancelAction, SIGNAL(triggered()),
-		this, SLOT(dismiss()));
-	addAction(m_cancelAction);
+	createCommonContent(m_model,
+			    _getCreator,
+			    tr("<h1>No contact details to select</h1>"),
+			    tr("Select contact details"),
+			    true,
+			    true);
 
-	m_doneAction = new MAction(tr("Done"), this);
-	m_doneAction->setLocation(MAction::ToolBarLocation);
-	connect(m_doneAction, SIGNAL(triggered()),
-		this, SLOT(pickingDone()));
-	addAction(m_doneAction);
-
-	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
-	centralWidget()->setLayout(layout);
-
-	MLabel *titleLabel = new MLabel(tr("Select details"));
-	titleLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	titleLabel->setAlignment(Qt::AlignLeft);
-	layout->addCornerAnchors(titleLabel, Qt::TopLeftCorner,
-				 layout, Qt::TopLeftCorner);
-
-	m_list = new LabelOrList(m_model,
-				 _getCreator,
-				 tr("<h1>No details to select</h1>"),
-				 true,
-				 true);
-
-	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
-				 titleLabel, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
-				 layout, Qt::BottomRightCorner);
+	connect(this, SIGNAL(done()), this, SLOT(pickingDone()));
 }
 
 void ContactDetailPicker::pickingDone(void)

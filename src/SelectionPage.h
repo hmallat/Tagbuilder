@@ -29,6 +29,10 @@ public:
 
         virtual void createContent(void);
 
+Q_SIGNALS:
+
+	void done(void);
+
 protected:
 
 	void createCommonContent(QAbstractItemModel *itemModel,

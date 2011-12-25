@@ -38,7 +38,7 @@ void BtSelectionPage::createContent(void)
 	createCommonContent(m_model,
 			    _getCreator,
 			    tr("<h1>No Bluetooth devices to select</h1>"),
-			    tr("<big>Select the device to use</big>"),
+			    tr("Select the device to use"),
 			    false,
 			    false);
 

@@ -45,12 +45,15 @@ void CreatePage::createContent(void)
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	centralWidget()->setLayout(layout);
 
-	MLabel *label = new MLabel(tr("<big>Select the type of tag "
-				      "to create</big>"));
-	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	label->setAlignment(Qt::AlignLeft);
-	layout->addCornerAnchors(label, Qt::TopLeftCorner,
+	MWidgetController *header = new MWidgetController();
+	header->setStyleName("CommonHeaderPanel");
+	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	layout->addCornerAnchors(header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
+
+	MLabel *label = new MLabel(tr("Create a new tag"), header);
+	label->setStyleName("CommonHeader");
+	label->setAlignment(Qt::AlignLeft);
 
 	MList *list = new MList();
 	TagTypeListCellCreator *creator = new TagTypeListCellCreator;
@@ -64,7 +67,7 @@ void CreatePage::createContent(void)
 	view->setMinimumSize(100, 100);
 	view->setWidget(list);
 	layout->addCornerAnchors(view, Qt::TopLeftCorner,
-				 label, Qt::BottomLeftCorner);
+				 header, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(view, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 

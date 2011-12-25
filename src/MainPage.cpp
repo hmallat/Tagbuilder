@@ -120,11 +120,15 @@ void MainPage::createContent(void)
 
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 
-	MLabel *label = new MLabel(tr("<big>Stored tags</big>"));
-	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	label->setAlignment(Qt::AlignLeft);
-	layout->addCornerAnchors(label, Qt::TopLeftCorner,
+	MWidgetController *header = new MWidgetController();
+	header->setStyleName("CommonHeaderPanel");
+	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	layout->addCornerAnchors(header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
+
+	MLabel *label = new MLabel(tr("Stored tags"), header);
+	label->setStyleName("CommonHeader");
+	label->setAlignment(Qt::AlignLeft);
 
 	LabelOrList *list = new LabelOrList(TagStorage::storage(),
 					    _getTagListCellCreator,
@@ -138,7 +142,7 @@ void MainPage::createContent(void)
 					    false);
 	list->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	layout->addCornerAnchors(list, Qt::TopLeftCorner,
-				 label, Qt::BottomLeftCorner);
+				 header, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 	connect(list, SIGNAL(itemClicked(const QModelIndex &)),

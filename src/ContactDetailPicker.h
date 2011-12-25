@@ -9,7 +9,8 @@
 #ifndef _CONTACT_DETAIL_PICKER_H_
 #define _CONTACT_DETAIL_PICKER_H_
 
-#include <MApplicationPage>
+#include "SelectionPage.h"
+
 #include <QContact>
 
 QTM_USE_NAMESPACE;
@@ -20,7 +21,7 @@ class QGraphicsLinearLayout;
 class ContactDetailPickerListModel;
 class QModelIndex;
 
-class ContactDetailPicker : public MApplicationPage
+class ContactDetailPicker : public SelectionPage
 {
 
 	Q_OBJECT;
@@ -48,12 +49,6 @@ private:
 	QContact m_contact;
 
 	ContactDetailPickerListModel *m_model;
-
-	MAction *m_cancelAction;
-
-	MAction *m_doneAction;
-
-	LabelOrList *m_list;
 
 };
 

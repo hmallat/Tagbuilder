@@ -43,14 +43,26 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 		this, SLOT(dismiss()));
 	addAction(cancelAction);
 
+	if (multiSelect == true) {
+		MAction *doneAction = new MAction(tr("Done"), this);
+		doneAction->setLocation(MAction::ToolBarLocation);
+		connect(doneAction, SIGNAL(triggered()),
+			this, SIGNAL(done()));
+		addAction(doneAction);
+	}
+
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	centralWidget()->setLayout(layout);
 
-	MLabel *titleLabel = new MLabel(title);
-	titleLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	titleLabel->setAlignment(Qt::AlignLeft);
-	layout->addCornerAnchors(titleLabel, Qt::TopLeftCorner,
+	MWidgetController *header = new MWidgetController();
+	header->setStyleName("CommonHeaderPanel");
+	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	layout->addCornerAnchors(header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
+
+	MLabel *titleLabel = new MLabel(title, header);
+	titleLabel->setStyleName("CommonHeader");
+	titleLabel->setAlignment(Qt::AlignLeft);
 
 	m_list = new LabelOrList(itemModel,
 				 getCreator,
@@ -59,7 +71,7 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 				 multiSelect);
 
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
-				 titleLabel, Qt::BottomLeftCorner);
+				 header, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 
