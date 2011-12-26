@@ -26,9 +26,9 @@ public:
 
 	static QString languageCodeToString(const QString &code);
 
-	static QString addressSubtypeToString(const QString &type);
-
 	static QString phoneNumberSubtypeToString(const QString &type);
+
+	static QString contactDetailContextToString(const QString &type);
 
 };
 

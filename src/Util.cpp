@@ -10,9 +10,10 @@
 
 #include <QSystemInfo>
 #include <QLocale>
-#include <MDebug>
+#include <QContactPhoneNumber>
+#include <QMap>
 
-QTM_USE_NAMESPACE;
+#include <MDebug>
 
 static QSystemInfo *_singleton_sysinfo = NULL;
 
@@ -60,13 +61,78 @@ QString Util::languageCodeToString(const QString &code)
 
 QString Util::phoneNumberSubtypeToString(const QString &type)
 {
-	(void)type;
-	return "whatever";
+	static QMap<QString, QString> typeMap;
+	static bool typeMapInitialized = false;
+
+	if (typeMapInitialized == false) {
+		const char* types[] = {
+			QContactPhoneNumber::SubTypeAssistant.latin1(),
+			QContactPhoneNumber::SubTypeBulletinBoardSystem.latin1(),
+			QContactPhoneNumber::SubTypeCar.latin1(),
+			QContactPhoneNumber::SubTypeDtmfMenu.latin1(),
+			QContactPhoneNumber::SubTypeFax.latin1(),
+			QContactPhoneNumber::SubTypeLandline.latin1(),
+			QContactPhoneNumber::SubTypeMessagingCapable.latin1(),
+			QContactPhoneNumber::SubTypeMobile.latin1(),
+			QContactPhoneNumber::SubTypeModem.latin1(),
+			QContactPhoneNumber::SubTypePager.latin1(),
+			QContactPhoneNumber::SubTypeVideo.latin1(),
+			QContactPhoneNumber::SubTypeVoice.latin1()
+		};
+		const QString trans[] = {
+			QObject::tr("Assistant"),
+			QObject::tr("BBS"),
+			QObject::tr("Car phone"),
+			QObject::tr("DTMF Menu"),
+			QObject::tr("Fax"),
+			QObject::tr("Landline"),
+			QObject::tr("Messaging"),
+			QObject::tr("Mobile"),
+			QObject::tr("Modem"),
+			QObject::tr("Pager"),
+			QObject::tr("Video"),
+			QObject::tr("Voice")
+		};
+		const int count = 12;
+
+		for (int i = 0; i < count; i++) {
+			QString key = QString::fromLatin1(types[i]);
+			typeMap[key] = trans[i];
+		}
+		typeMapInitialized = true;
+	}
+
+	if (typeMap.contains(type)) {
+		return typeMap[type];
+	}
+	return QObject::tr("");
 }
 
-QString Util::addressSubtypeToString(const QString &type)
+QString Util::contactDetailContextToString(const QString &ctxt)
 {
-	(void)type;
-	return "whatever";
-}
+	static QMap<QString, QString> ctxtMap;
+	static bool ctxtMapInitialized = false;
 
+	if (ctxtMapInitialized == false) {
+		const char* ctxts[] = {
+			QContactDetail::ContextHome.latin1(),
+			QContactDetail::ContextWork.latin1()
+		};
+		const QString trans[] = {
+			QObject::tr("Home"),
+			QObject::tr("Work")
+		};
+		const int count = 2;
+
+		for (int i = 0; i < count; i++) {
+			QString key = QString::fromLatin1(ctxts[i]);
+			ctxtMap[key] = trans[i];
+		}
+		ctxtMapInitialized = true;
+	}
+
+	if (ctxtMap.contains(ctxt)) {
+		return ctxtMap[ctxt];
+	}
+	return QObject::tr("");
+}

@@ -132,19 +132,47 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 		QContactPhoneNumber number = 
 			static_cast<QContactPhoneNumber>(detail);
 		parameters << number.number();
+
+		QString detail = "";
+
+		if (number.contexts().length() != 0) {
+			QString con = 
+				Util::contactDetailContextToString
+				(number.contexts()[0]);
+			if (con != "") {
+				detail += con;
+			}
+		}
+
 		if (number.subTypes().length() != 0) {
-			parameters << 
+			QString sub = 
 				Util::phoneNumberSubtypeToString
 				(number.subTypes()[0]);
-		} else {
-			parameters << "";
+			if (sub != "") {
+				detail += (detail != "" ? ", " : "");
+				detail += sub;
+			}
 		}
+
+		parameters << detail;
 
 	} else if (type == EmailAddress) {
 		QContactEmailAddress addr = 
 			static_cast<QContactEmailAddress>(detail);
 		parameters << addr.emailAddress();
-		parameters << "";
+
+		QString detail = "";
+
+		if (addr.contexts().length() != 0) {
+			QString con = 
+				Util::contactDetailContextToString
+				(addr.contexts()[0]);
+			if (con != "") {
+				detail += con;
+			}
+		}
+
+		parameters << detail;
 
 	} else if (type == PhysicalAddress) {
 		QContactAddress addr = 
@@ -180,13 +208,19 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 		}
 
 		parameters << rep;
-		if (addr.subTypes().length() != 0) {
-			parameters << 
-				Util::addressSubtypeToString
-				(addr.subTypes()[0]);
-		} else {
-			parameters << "";
+
+		QString detail = "";
+
+		if (addr.contexts().length() != 0) {
+			QString con = 
+				Util::contactDetailContextToString
+				(addr.contexts()[0]);
+			if (con != "") {
+				detail += con;
+			}
 		}
+
+		parameters << detail;
 
 	}
 
