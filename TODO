@@ -1,12 +1,15 @@
 GENERAL:
 
-- Drop fields that are not supported from harvested records!
-- Harvest tags via edit page! Don't save directly! Warn when dropping
+- Styling
+- Drop fields that are not supported from harvested records, warn when dropping
   unsupported contents from tags
+- Multi record message support?
+- List index for lists that can be long (contacts, calendar at least)
 
 BLUETOOTH:
 - static handover support?
-- full BT2.0 support (need docs or more data)
+- full Nokia-proprietary BT2.0 support (need docs or more data)
+- check BT on/off/flight mode scenarios
 
 EVENTS:
 
@@ -15,16 +18,14 @@ start+end on the same day, separate days)
 
 CONTACTS:
 
-MISC (rearrange these):
-* writing of tags to work
-* help/about 
-* check BT on/off/flight mode scenarios
+MISC: (rearrange these)
+
+* online help?
 * progress indicator for BT scanning/contact fetching
 * exploratory testing
 * avatars for contacts, icons for BT devices?
 * indications of error situations
-* Alpha-separators on contact list; fast scrolling?
-* If contact tag name is not edited, prefill with contact name when selected
+* If contact tag name is not edited, prefill with contact name when selected?
 * calendar testing with different entries
 * signing?
 * optimize Sp implementation, creating it all the time when editing Sp

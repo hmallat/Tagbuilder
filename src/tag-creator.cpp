@@ -19,6 +19,9 @@ int main(int argc, char *argv[])
 	app.setApplicationName("Tag Creator");
 
 	MApplicationWindow window;
+	window.setPortraitOrientation();
+	window.lockOrientation();
+
 	MainPage page;
 	page.appear(&window);
 	window.show();

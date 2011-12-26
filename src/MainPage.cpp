@@ -23,6 +23,7 @@
 #include "LabelOrList.h"
 #include "BtNdefRecord.h"
 #include "VCardNdefRecord.h"
+#include "WritePage.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -239,13 +240,24 @@ void MainPage::removeAllTags(void)
 
 void MainPage::showAbout(void)
 {
+	MMessageBox *box = 
+		new MMessageBox(tr("<big>NFC Tag Creator</big><br>"
+                                  "<br>"
+                                  "<br>v%1.%2.%3"
+                                  "<br>"
+                                  "Copyright (c) 2011 Hannu Mallat<br>"
+                                  "http://hannu.mallat.fi/n9/nfctagcreator<br>")
+				.arg(VERSION_MAJOR)
+				.arg(VERSION_MINOR)
+				.arg(VERSION_MICRO));
+	box->appear();
 }
 
 void MainPage::tagSelected(const QModelIndex &which)
 {
-	(void) which;
-	/* TODO: write it */
-	mDebug(__func__) << "Hello!";
+	const Tag *tag = TagStorage::storage()->tag(which.row());
+	WritePage *page = new WritePage(tag->message());
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 }
 
 void MainPage::tagLongSelected(const QModelIndex &which,

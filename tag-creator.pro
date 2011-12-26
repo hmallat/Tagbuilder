@@ -10,6 +10,7 @@ TARGET		 = tag-creator
 PREFIX		 = /opt/tag-creator
 
 QMAKE_CXXFLAGS	+= -Werror -DINSTALLPREFIX='\\\"/opt/tag-creator\\\"'
+QMAKE_CXXFLAGS  += -DVERSION_MAJOR=0 -DVERSION_MINOR=0 -DVERSION_MICRO=2
 
 OBJECTS_DIR	= ./obj
 MOC_DIR		= ./moc
@@ -55,12 +56,14 @@ HEADERS		+= \
 		src/TagTypeListCellCreator.h \
 		src/TagTypeListModel.h \
 		src/TagStorage.h \
+		src/TagWriter.h \
 		src/TextPage.h \
 		src/TextRecordEdit.h \
 		src/UnknownPage.h \
 		src/UrlPage.h \
 		src/Util.h \
-		src/VCardNdefRecord.h
+		src/VCardNdefRecord.h \
+		src/WritePage.h
 
 SOURCES		+= \
 		src/tag-creator.cpp \
@@ -103,12 +106,14 @@ SOURCES		+= \
 		src/TagTypeListCellCreator.cpp \
 		src/TagTypeListModel.cpp \
 		src/TagStorage.cpp \
+		src/TagWriter.cpp \
 		src/TextPage.cpp \
 		src/TextRecordEdit.cpp \
 		src/UnknownPage.cpp \
 		src/UrlPage.cpp \
 		src/Util.cpp \
-		src/VCardNdefRecord.cpp
+		src/VCardNdefRecord.cpp \
+		src/WritePage.cpp
 
 TRANSLATIONS	= \
 		tag-creator_en.ts \
@@ -118,7 +123,8 @@ target.path	= $$PREFIX/bin
 
 gfx.path	= $$PREFIX/share/images
 gfx.files	= \
-		data/tag-creator.jpeg
+		data/tag-creator.jpeg \
+		data/tap.png
 
 trans.path	= $$PREFIX/share/l10n/tag-writing-plugin
 trans.files	= \

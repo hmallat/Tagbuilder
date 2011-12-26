@@ -1,6 +1,11 @@
+tag-creator (0.0.2) unstable; urgency=low
+
+  * All features at least in alpha stage. 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Mon, 26 Dec 2011 12:53:47 +0200
+
 tag-creator (0.0.1) unstable; urgency=low
 
   * Initial build
 
  -- Hannu Mallat <hmallat@gmail.com>  Sun, 27 Nov 2011 16:23:11 +0200
-
