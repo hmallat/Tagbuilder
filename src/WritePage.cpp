@@ -89,9 +89,14 @@ void WritePage::createContent(void)
 		sub_layout->setAlignment(image, Qt::AlignHCenter);
 	
 		MLabel *info = new MLabel();
-		info->setText(tr("<p>Touch a tag to write it.</p>"
-				 "<p>You can write multiple tags, "
-				 "one after another.</p>"));
+		QString first = tr("<p>Touch a tag to write it. "
+				   "You can write multiple tags, "
+				   "one after another.</p>");
+		QString second = tr("<p>Note that tag capacity must be "
+				    "at least %1 bytes.<p>")
+			.arg(m_datalen);
+
+		info->setText(m_datalen > 48 ? first + second : first);
 		info->setWordWrap(true);
 		info->setAlignment(Qt::AlignHCenter);
 		info->setSizePolicy(QSizePolicy::Preferred, 
@@ -99,23 +104,10 @@ void WritePage::createContent(void)
 		sub_layout->addItem(info);
 		sub_layout->setAlignment(info, Qt::AlignHCenter);
 
-		if (m_datalen > 48) {
-			MLabel *sinfo = new MLabel();
-			sinfo->setText(tr("Note that tag capacity must be "
-					  "at least %1 bytes. ")
-				       .arg(m_datalen));
-			sinfo->setWordWrap(true);
-			sinfo->setAlignment(Qt::AlignHCenter);
-			sinfo->setSizePolicy(QSizePolicy::Preferred, 
-					     QSizePolicy::Preferred);
-			sub_layout->addItem(sinfo);
-			sub_layout->setAlignment(sinfo, Qt::AlignHCenter);
-		}
-
 		m_indicator = 
 			new MProgressIndicator(NULL, MProgressIndicator::barType);
 		m_indicator->setUnknownDuration(true);
-		//m_indicator->setVisible(false);
+		m_indicator->setVisible(false);
 		sub_layout->addItem(m_indicator);
 		sub_layout->setAlignment(m_indicator, Qt::AlignHCenter);
 
@@ -137,16 +129,17 @@ void WritePage::createContent(void)
 void WritePage::writeStarted(void)
 {
 	m_done->setEnabled(false);
-	//m_indicator->setVisible(true);
+	m_indicator->setVisible(true);
 }
 
 void WritePage::writeFinished(bool success)
 {
 	m_done->setEnabled(true);
-	//m_indicator->setVisible(false);
+	m_indicator->setVisible(false);
 
 	if (success == true) {
 		/* Nice, now write more or dismiss by "done" action */
+		m_writer->writeMessage();
 	} else {
 		/* Not much error case handling -- just show a dialog */
 		MMessageBox *box = 
