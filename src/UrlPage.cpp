@@ -287,6 +287,7 @@ void UrlPage::addTitle(void)
 
 	TextRecordEdit *title = 
 		new TextRecordEdit(LabeledTextEdit::SingleLineEditOnly);
+	title->setLanguageCode(Util::currentLanguageCode());
 	title->setPrompt(tr("Enter title"));
 	title->setSizePolicy(QSizePolicy::Minimum, 
 			     QSizePolicy::Fixed);

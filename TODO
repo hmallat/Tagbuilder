@@ -6,7 +6,7 @@ GENERAL:
 - Multi record message support?
 - List index for lists that can be long (contacts, calendar at least)
 - Edit fields "Done" instead of enter for single lines at least
-- Preselect curr lang not working 
+- Set keyboard in text record edit text field according to language?
 
 BLUETOOTH:
 - static handover support?
@@ -19,6 +19,10 @@ EVENTS:
 start+end on the same day, separate days)
 
 CONTACTS:
+
+URL:
+
+- Should not allow many titles with same languages
 
 MISC: (rearrange these)
 

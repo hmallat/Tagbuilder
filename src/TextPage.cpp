@@ -49,6 +49,7 @@ void TextPage::createPageSpecificContent(void)
 
 void TextPage::setupNewData(void)
 {
+	m_edit->setLanguageCode(Util::currentLanguageCode());
 	updateSize();
 }
 
