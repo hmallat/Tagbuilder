@@ -17,8 +17,7 @@
 
 #include <MLabel>
 #include <MList>
-#include <MSeparator>
-#include <MButton>
+#include <MAction>
 #include <QGraphicsLinearLayout>
 #include <QVersitOrganizerExporter>
 #include <QVersitOrganizerImporter>
@@ -41,6 +40,20 @@ CalendarPage::~CalendarPage(void)
 
 void CalendarPage::createPageSpecificContent(void)
 {
+	MAction *eventAction = new MAction(tr("Choose an event..."),
+					   this);
+	eventAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(eventAction, SIGNAL(triggered()),
+		this, SLOT(chooseEvent()));
+	addAction(eventAction);
+	
+	MAction *todoAction = new MAction(tr("Choose a to-do item..."),
+					  this);
+	todoAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(todoAction, SIGNAL(triggered()),
+		this, SLOT(chooseTodo()));
+	addAction(todoAction);
+	
 	m_calendarTitle = new MLabel();
 	m_calendarTitle->setSizePolicy(QSizePolicy::Minimum, 
 				       QSizePolicy::Fixed);
@@ -59,31 +72,6 @@ void CalendarPage::createPageSpecificContent(void)
 	layout()->addItem(m_calendarDetails);
 	layout()->setAlignment(m_calendarDetails, Qt::AlignCenter);
 
-	MSeparator *sep = new MSeparator;
-	sep->setStyleName("CommonHorizontalSeparator");
-	sep->setOrientation(Qt::Horizontal);
-	layout()->addItem(sep);
-
-	{
-		QGraphicsLinearLayout *sub_layout = 
-			new QGraphicsLinearLayout(Qt::Vertical);
-
-		MButton *event_button = 
-			new MButton(tr("Choose an event"));
-		sub_layout->addItem(event_button);
-		connect(event_button, SIGNAL(clicked()),
-			this, SLOT(chooseEvent()));
-	
-		MButton *todo_button = 
-			new MButton(tr("Choose a to-do item"));
-		sub_layout->addItem(todo_button);
-		connect(todo_button, SIGNAL(clicked()),
-			this, SLOT(chooseTodo()));
-	
-		layout()->addItem(sub_layout);
-		layout()->setAlignment(sub_layout, Qt::AlignCenter);
-	}
-	
 }
 
 void CalendarPage::setupNewData(void) 

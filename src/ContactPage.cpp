@@ -18,8 +18,7 @@
 #include <MLabel>
 #include <MList>
 #include <MContainer>
-#include <MButton>
-#include <MSeparator>
+#include <MAction>
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>
 #include <QVersitContactExporter>
@@ -43,6 +42,13 @@ ContactPage::~ContactPage(void)
 
 void ContactPage::createPageSpecificContent(void)
 {
+	MAction *pickAction = new MAction(tr("Choose a contact..."),
+					  this);
+	pickAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(pickAction, SIGNAL(triggered()),
+		this, SLOT(chooseFromAddressbook()));
+	addAction(pickAction);
+	
 	m_contactTitle = new MLabel();
 	m_contactTitle->setSizePolicy(QSizePolicy::Minimum, 
 				      QSizePolicy::Fixed);
@@ -61,18 +67,6 @@ void ContactPage::createPageSpecificContent(void)
 	layout()->addItem(m_contactDetails);
 	layout()->setAlignment(m_contactDetails, Qt::AlignCenter);
 
-	MSeparator *sep = new MSeparator;
-	sep->setStyleName("CommonHorizontalSeparator");
-	sep->setOrientation(Qt::Horizontal);
-	layout()->addItem(sep);
-
-	MButton *pick_button = 
-		new MButton(tr("Choose from contacts"));
-	layout()->addItem(pick_button);
-	layout()->setAlignment(pick_button, Qt::AlignCenter);
-	connect(pick_button, SIGNAL(clicked()),
-		this, SLOT(chooseFromAddressbook()));
-	
 }
 
 void ContactPage::setupNewData(void) 

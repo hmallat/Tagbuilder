@@ -9,7 +9,6 @@ GENERAL:
 - Set keyboard in text record edit text field according to language?
 
 BLUETOOTH:
-- static handover support?
 - full Nokia-proprietary BT2.0 support (need docs or more data)
 - check BT on/off/flight mode scenarios
 

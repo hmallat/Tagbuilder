@@ -21,9 +21,8 @@
 #include "Util.h"
 
 #include <MLabel>
-#include <MButton>
+#include <MAction>
 #include <MMessageBox>
-#include <MSeparator>
 #include <QGraphicsLinearLayout>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothLocalDevice>
@@ -104,6 +103,27 @@ BtPage::~BtPage(void)
 
 void BtPage::createPageSpecificContent(void)
 {
+	MAction *chooseThisAction = new MAction(tr("This phone"),
+						this);
+	chooseThisAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(chooseThisAction, SIGNAL(triggered()),
+		this, SLOT(choosePhoneBT()));
+	addAction(chooseThisAction);
+	
+	MAction *pickAction = new MAction(tr("Known device..."),
+					  this);
+	pickAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(pickAction, SIGNAL(triggered()),
+		this, SLOT(chooseExistingBT()));
+	addAction(pickAction);
+
+	MAction *scanAction = new MAction(tr("Scan for a device..."),
+					  this);
+	scanAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(scanAction, SIGNAL(triggered()),
+		this, SLOT(chooseScannedBT()));
+	addAction(scanAction);
+
 	m_name = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_name->setLabel(tr("Device name"));
 	m_name->setPrompt(tr("Enter device name"));
@@ -139,39 +159,6 @@ void BtPage::createPageSpecificContent(void)
 	layout()->setAlignment(m_class, Qt::AlignLeft);
 	connect(m_class, SIGNAL(contentsChanged(void)),
 		this, SLOT(deviceClassChanged(void)));
-
-	MSeparator *sep = new MSeparator;
-	sep->setStyleName("CommonHorizontalSeparator");
-	sep->setOrientation(Qt::Horizontal);
-	layout()->addItem(sep);
-
-	{
-		QGraphicsLinearLayout *sub_layout = 
-			new QGraphicsLinearLayout(Qt::Vertical);
-
-		MButton *this_button = 
-			new MButton(tr("Choose this phone"));
-		this_button->setSizePolicy(QSizePolicy::Minimum, 
-					   QSizePolicy::Fixed);
-		sub_layout->addItem(this_button);
-		connect(this_button, SIGNAL(clicked()),
-			this, SLOT(choosePhoneBT()));
-
-		MButton *pick_button = 
-			new MButton(tr("Choose a known device"));
-		sub_layout->addItem(pick_button);
-		connect(pick_button, SIGNAL(clicked()),
-			this, SLOT(chooseExistingBT()));
-	
-		MButton *scan_button = new MButton(tr("Scan for a device"));
-		sub_layout->addItem(scan_button);
-		connect(scan_button, SIGNAL(clicked()),
-			this, SLOT(chooseScannedBT()));
-
-		layout()->addItem(sub_layout);
-		layout()->setAlignment(sub_layout, Qt::AlignCenter);
-	}
-	
 }
 
 void BtPage::setupNewData(void) 

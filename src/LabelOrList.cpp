@@ -52,6 +52,9 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 
 	m_list = new MList();
 	m_list->setShowGroups(m_grouped);
+	if (m_grouped == true) {
+		m_list->setIndexDisplayMode(MList::Auto);
+	}
 	m_list->setSelectionMode(multiSelect == true
 				 ? MList::MultiSelection
 				 : MList::NoSelection);

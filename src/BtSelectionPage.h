@@ -50,6 +50,8 @@ private:
 
 	Q_DISABLE_COPY(BtSelectionPage);
 
+	enum Type m_type;
+
 	BtSelectionPageListModel *m_model;
 
 };

@@ -22,9 +22,10 @@ BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
 				 enum BtSelectionPage::Type type,
 				 QGraphicsItem *parent)
 	: SelectionPage(parent),
+	  m_type(type),
 	  m_model(0)
 {
-	m_model = (type == SelectFromExisting)
+	m_model = (m_type == SelectFromExisting)
 		? static_cast<BtSelectionPageListModel *>(new BtSelectionPageExistingListModel(bluez, this))
 		: static_cast<BtSelectionPageListModel *>(new BtSelectionPageScanListModel(bluez, this));
 }
@@ -35,9 +36,14 @@ BtSelectionPage::~BtSelectionPage(void)
 
 void BtSelectionPage::createContent(void)
 {
+	QString info = 
+		(m_type == SelectFromExisting)
+		? tr("<h1>No Bluetooth devices to select</h1>")
+		: tr("<h1>Scanning nearby Bluetooth devices ...</h1>");
+
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("<h1>No Bluetooth devices to select</h1>"),
+			    info,
 			    tr("Select the device to use"),
 			    false,
 			    false);
