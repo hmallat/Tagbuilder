@@ -23,6 +23,7 @@
 #include "LabelOrList.h"
 #include "BtNdefRecord.h"
 #include "VCardNdefRecord.h"
+#include "NfcHandoverSelectNdefRecord.h"
 #include "WritePage.h"
 
 #include <QGraphicsAnchorLayout>
@@ -293,6 +294,12 @@ void MainPage::messageRead(const QNdefMessage contents)
 {
 	bool success;
 	QNdefMessage in;
+	QString name;
+
+	if (contents.length() == 0) {
+		success = false;
+		goto done;
+	}
 
 	/* TODO: UI notification if conversion drops data? */
 
@@ -305,15 +312,21 @@ void MainPage::messageRead(const QNdefMessage contents)
 	} else if (BtNdefRecord::hasSupportedMimeType(contents[0]) &&
 		   contents.length() == 1) {
 		in << BtNdefRecord::fromSupportedMimeType(contents[0]);
+	} else if (contents[0].isRecordType<NfcHandoverSelectNdefRecord>() &&
+		   contents.length() == 2 &&
+		   BtNdefRecord::hasSupportedMimeType(contents[1])) {
+		in << contents[0];
+		in << BtNdefRecord::fromSupportedMimeType(contents[1]);
 	} else {
 		in = contents;
 	}
 
 	mDebug(__func__) << "Saving temp";
-	QString name = "Harvested tag";
+	name = "Harvested tag";
 	success = TagStorage::storage()->update(TagStorage::TEMPORARY_TAG,
 						name, 
 						in);
+done:
 	if (success == false) {
 		MMessageBox *box = 
 			new MMessageBox(tr("Cannot store the tag. "));

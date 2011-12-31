@@ -6,6 +6,11 @@
  *
  */
 
+/* BT page needs to handle both standalone BT records as well as
+   static handover tags that contain a handover record followed by a
+   BT record. This is implemented in a slightly hacky manner
+   currently. */ 
+
 /* TODO: check what happens if BT is off */
 
 #include "BtPage.h"
@@ -172,6 +177,9 @@ void BtPage::createPageSpecificContent(void)
 void BtPage::setupNewData(void) 
 {
 	BtNdefRecord bt;
+	m_message.clear();
+	m_message << bt;
+
 	setDevice(QBluetoothDeviceInfo(bt.address(), 
 				       bt.name(), 
 				       bt.classOfDevice()));
@@ -179,7 +187,8 @@ void BtPage::setupNewData(void)
 
 bool BtPage::setupData(const QNdefMessage message)
 {
-	BtNdefRecord bt(message[0]);
+	m_message = message;
+	BtNdefRecord bt(m_message[m_message.length() - 1]);
 	setDevice(QBluetoothDeviceInfo(bt.address(), 
 				       bt.name(), 
 				       bt.classOfDevice()));
@@ -188,18 +197,11 @@ bool BtPage::setupData(const QNdefMessage message)
 
 QNdefMessage BtPage::prepareDataForStorage(void)
 {
-	BtNdefRecord bt;
-	if (m_message.length() == 1) {
-		bt = m_message[0];
-	}
+	BtNdefRecord bt(m_message[m_message.length() - 1]);
 	bt.setAddress(m_info.address());
 	bt.setClassOfDevice(_cod(m_info));
 	bt.setName(m_info.name());
-	if (m_message.length() == 1) {
-		m_message[0] = bt;
-	} else {
-		m_message << bt;
-	}
+	m_message[m_message.length() - 1] = bt;
 
 	return m_message;
 }

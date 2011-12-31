@@ -48,6 +48,7 @@ HEADERS		+= \
 		src/LabeledTextEdit.h \
 		src/LabelOrList.h \
 		src/MainPage.h \
+		src/NfcHandoverSelectNdefRecord.h \
 		src/SelectionPage.h \
 		src/SmartPosterRecord.h \
 		src/Tag.h \
@@ -98,6 +99,7 @@ SOURCES		+= \
 		src/LabeledTextEdit.cpp \
 		src/LabelOrList.cpp \
 		src/MainPage.cpp \
+		src/NfcHandoverSelectNdefRecord.cpp \
 		src/SelectionPage.cpp \
 		src/SmartPosterRecord.cpp \
 		src/Tag.cpp \

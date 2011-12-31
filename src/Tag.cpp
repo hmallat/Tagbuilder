@@ -11,6 +11,7 @@
 #include "VCalNdefRecord.h"
 #include "VCardNdefRecord.h"
 #include "SmartPosterRecord.h"
+#include "NfcHandoverSelectNdefRecord.h"
 
 #include <QNdefNfcTextRecord>
 #include <QNdefNfcUriRecord>
@@ -44,10 +45,12 @@ Tag::Tag(const QString &name,
 	if (m_message.isEmpty()) {
 		mDebug(__func__) << "Empty NDEF for tag " << name;
 	} else {
-		mDebug(__func__) << "NDEF for tag " << name 
-				 << " record zero has " 
-				 << m_message[0].payload().length()
-				 << " bytes. ";
+		for (int i = 0; i < m_message.length(); i++) {
+			mDebug(__func__) << "NDEF for tag " << name 
+					 << " record " << i << " has " 
+					 << m_message[i].payload().length()
+					 << " bytes. ";
+		}
 	}
 }
 
@@ -68,15 +71,17 @@ Tag::Tag(const QString &name,
 		mDebug(__func__) << "NDEF for tag " << name
 				 << " has " << m_message.length()
 				 << " records. ";
-		mDebug(__func__) << "NDEF for tag " << name 
-				 << " record zero has " 
-				 << m_message[0].payload().length()
-				 << " bytes, has TNF "
-				 << m_message[0].typeNameFormat()
-				 << " and has type "
-				 << QString::fromAscii(m_message[0].type().data(),
-						       m_message[0].type().length()) 
-				 << ". ";
+		for (int i = 0; i < m_message.length(); i++) {
+			mDebug(__func__) << "NDEF for tag " << name 
+					 << " record " << i << " has " 
+					 << m_message[i].payload().length()
+					 << " bytes, has TNF "
+					 << m_message[i].typeNameFormat()
+					 << " and has type "
+					 << QString::fromAscii(m_message[i].type().data(),
+							       m_message[i].type().length()) 
+					 << ". ";
+		}
 	}
 }
 
@@ -106,23 +111,32 @@ const QString &Tag::type(void) const
 
 const QString &Tag::type(const QNdefMessage &message)
 {
-	if (message.length() != 1) {
-		return UNKNOWN_TAG;
-	}
-
-	QNdefRecord record = message.at(0);
+	QNdefRecord first = message[0];
 	
-	if (record.isRecordType<QNdefNfcTextRecord>()) {
+	if (first.isRecordType<QNdefNfcTextRecord>() &&
+	    message.length() == 1) {
 		return TEXT_TAG;
-	} else if (record.isRecordType<QNdefNfcUriRecord>() ||
-		   record.isRecordType<SmartPosterRecord>()) {
+	} else if ((first.isRecordType<QNdefNfcUriRecord>() ||
+		    first.isRecordType<SmartPosterRecord>())  &&
+		   message.length() == 1) {
 		return URL_TAG;
-	} else if (record.isRecordType<BtNdefRecord>()) {
+	} else if (first.isRecordType<BtNdefRecord>() &&
+		   message.length() == 1) {
 		return BLUETOOTH_TAG;
-	} else if (record.isRecordType<VCalNdefRecord>()) {
+	} else if (first.isRecordType<VCalNdefRecord>() &&
+		   message.length() == 1) {
 		return CALENDAR_TAG;
-	} else if (record.isRecordType<VCardNdefRecord>()) {
+	} else if (first.isRecordType<VCardNdefRecord>() &&
+		   message.length() == 1) {
 		return CONTACT_TAG;
+	} else if (first.isRecordType<NfcHandoverSelectNdefRecord>() &&
+		   message.length() == 2) {
+		QNdefRecord second = message[1];
+		if (second.isRecordType<BtNdefRecord>()) {
+			return BLUETOOTH_TAG;
+		} else {
+			return UNKNOWN_TAG;
+		}
 	} else {
 		return UNKNOWN_TAG;
 	}
