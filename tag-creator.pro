@@ -1,5 +1,5 @@
 TEMPLATE	 = app
-CONFIG		+= meegotouch mobility debug
+CONFIG		+= meegotouch mobility qtsparql debug
 #CONFIG		+= console
 MOBILITY	+= connectivity contacts organizer systeminfo versit
 QT		+= core
@@ -19,6 +19,9 @@ DESTDIR		= ./out
 HEADERS		+= \
 		src/BluezDevice.h \
 		src/BluezSupplicant.h \
+		src/BookmarkSelectionPage.h \
+		src/BookmarkSelectionPageListCellCreator.h \
+		src/BookmarkSelectionPageListModel.h \
 		src/BtNdefRecord.h \
 		src/BtPage.h \
 		src/BtSelectionPage.h \
@@ -70,6 +73,9 @@ SOURCES		+= \
 		src/tag-creator.cpp \
 		src/BluezDevice.cpp \
 		src/BluezSupplicant.cpp \
+		src/BookmarkSelectionPage.cpp \
+		src/BookmarkSelectionPageListCellCreator.cpp \
+		src/BookmarkSelectionPageListModel.cpp \
 		src/BtNdefRecord.cpp \
 		src/BtPage.cpp \
 		src/BtSelectionPage.cpp \

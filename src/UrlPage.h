@@ -59,6 +59,10 @@ private Q_SLOTS:
 
 	void actChanged(void);
 
+	void chooseFromBookmarks(void);
+
+	void bookmarkChosen(const QNdefMessage message);
+
 private:
 
 	Q_DISABLE_COPY(UrlPage);

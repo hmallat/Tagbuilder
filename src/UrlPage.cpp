@@ -11,6 +11,7 @@
 #include "LabeledTextEdit.h"
 #include "SmartPosterRecord.h"
 #include "Util.h"
+#include "BookmarkSelectionPage.h"
 
 #include <QUrl>
 #include <QGraphicsLinearLayout>
@@ -20,6 +21,7 @@
 #include <MLabel>
 #include <MButton>
 #include <MButtonGroup>
+#include <MAction>
 
 #include <MDebug>
 
@@ -44,6 +46,13 @@ UrlPage::~UrlPage(void)
 
 void UrlPage::createPageSpecificContent(void)
 {
+	MAction *pickAction = new MAction(tr("Choose a bookmark..."),
+					  this);
+	pickAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(pickAction, SIGNAL(triggered()),
+		this, SLOT(chooseFromBookmarks()));
+	addAction(pickAction);
+	
 	m_url = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_url->setLabel(tr("Bookmark URL"));
 	m_url->setPrompt(tr("Enter bookmark URL"));
@@ -160,10 +169,16 @@ bool UrlPage::setupData(const QNdefMessage message)
 
 	QNdefRecord record = message[0];
 
+	while (m_titles.length() != 0) {
+		removeTitle(m_titles[0]);
+	}
+
 	if (record.isRecordType<QNdefNfcUriRecord>()) {
 		QNdefNfcUriRecord U(record);
 		m_url->setContents(U.uri().toString());
 		r = true;
+
+		actButton[NoAction]->setChecked(true);
 
 	} else {
 		SmartPosterRecord Sp(record);
@@ -343,3 +358,19 @@ void UrlPage::removeTitle(QObject *which)
 		}
 	}
 }
+
+void UrlPage::chooseFromBookmarks(void)
+{
+	BookmarkSelectionPage *page = 
+		new BookmarkSelectionPage();
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const QNdefMessage)),
+		this, SLOT(bookmarkChosen(const QNdefMessage)));
+}
+
+void UrlPage::bookmarkChosen(const QNdefMessage message)
+{
+	setupData(message);
+}
+
+
