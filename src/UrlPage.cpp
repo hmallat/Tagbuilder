@@ -12,6 +12,7 @@
 #include "SmartPosterRecord.h"
 #include "Util.h"
 #include "BookmarkSelectionPage.h"
+#include "Tag.h"
 
 #include <QUrl>
 #include <QGraphicsLinearLayout>
@@ -370,6 +371,7 @@ void UrlPage::chooseFromBookmarks(void)
 
 void UrlPage::bookmarkChosen(const QNdefMessage message)
 {
+	Tag::dump(message);
 	setupData(message);
 }
 

@@ -14,10 +14,19 @@
 
 QTM_USE_NAMESPACE;
 
+class QSparqlConnection;
+class QSparqlResult;
+
 class BookmarkSelectionPageListModel : public MAbstractItemModel
 {
 
 	Q_OBJECT;
+
+	struct Bookmark {
+		QString url;
+		QString name;
+		QString icon;
+	};
 
 public:
 
@@ -37,7 +46,19 @@ public:
 
 protected:
 
-	QList<QNdefMessage> m_bookmarks;
+	QList<struct Bookmark> m_bookmarks;
+
+	QSparqlConnection *m_connection;
+
+	QSparqlResult *m_result;
+
+private Q_SLOTS:
+	
+	void queryFinished(void);
+
+private:
+	static bool readDesktopFile(const QString path,
+				    QList<struct Bookmark> &list);
 
 };
 

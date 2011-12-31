@@ -7,6 +7,8 @@ GENERAL:
 - List index for lists that can be long (contacts, calendar at least)
 - Edit fields "Done" instead of enter for single lines at least
 - Set keyboard in text record edit text field according to language?
+- Make sure bytes are updated always (at least when removing sp titles
+  currently it doesn't work)
 
 BLUETOOTH:
 - full Nokia-proprietary BT2.0 support (need docs or more data)

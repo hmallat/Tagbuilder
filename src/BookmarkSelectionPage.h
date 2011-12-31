@@ -16,8 +16,6 @@
 QTM_USE_NAMESPACE;
 
 class BookmarkSelectionPageListModel;
-class QSparqlConnection;
-class QSparqlResult;
 
 class BookmarkSelectionPage : public SelectionPage
 {
@@ -37,8 +35,6 @@ signals:
 
 private Q_SLOTS:
 	
-	void queryFinished(void);
-
 	void bookmarkSelected(const QModelIndex &which);
 
 private:
@@ -46,10 +42,6 @@ private:
 	Q_DISABLE_COPY(BookmarkSelectionPage);
 
 	BookmarkSelectionPageListModel *m_model;
-
-	QSparqlConnection *m_connection;
-
-	QSparqlResult *m_result;
 
 };
 
