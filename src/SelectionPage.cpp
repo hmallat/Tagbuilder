@@ -69,6 +69,10 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 				 label,
 				 groupedList,
 				 multiSelect);
+	if (multiSelect == false) {
+		connect(m_list, SIGNAL(itemClicked(const QModelIndex)),
+			this, SIGNAL(clicked(const QModelIndex)));
+	}
 
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
 				 header, Qt::BottomLeftCorner);

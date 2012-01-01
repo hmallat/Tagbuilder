@@ -11,14 +11,15 @@
 
 #include "SelectionPage.h"
 
+#include "Util.h"
 #include <QContact>
 
 QTM_USE_NAMESPACE;
 
+class ContactDetailPickerListModel;
 class LabelOrList;
 class MAction;
 class QGraphicsLinearLayout;
-class ContactDetailPickerListModel;
 class QModelIndex;
 
 class ContactDetailPicker : public SelectionPage
@@ -28,7 +29,10 @@ class ContactDetailPicker : public SelectionPage
 
 public:
 
-	ContactDetailPicker(const QContact contact, QGraphicsItem *parent = 0);
+	ContactDetailPicker(const QContact contact, 
+			    Util::ContactDetails details = Util::AllDetails,
+			    bool singleDetailOnly = false,
+			    QGraphicsItem *parent = 0);
 
 	virtual ~ContactDetailPicker(void);
 
@@ -42,6 +46,8 @@ private Q_SLOTS:
 
 	void pickingDone(void);
 
+	void detailClicked(const QModelIndex which);
+
 private:
 
 	Q_DISABLE_COPY(ContactDetailPicker);
@@ -49,6 +55,8 @@ private:
 	QContact m_contact;
 
 	ContactDetailPickerListModel *m_model;
+
+	bool m_single;
 
 };
 

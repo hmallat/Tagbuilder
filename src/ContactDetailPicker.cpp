@@ -29,10 +29,15 @@ static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 }
 
 ContactDetailPicker::ContactDetailPicker(const QContact contact,
+					 Util::ContactDetails details,
+					 bool singleDetailOnly,
 					 QGraphicsItem *parent)
 	: SelectionPage(parent),
 	  m_contact(contact),
-	  m_model(new ContactDetailPickerListModel(m_contact, this))
+	  m_model(new ContactDetailPickerListModel(m_contact, 
+						   details,
+						   this)),
+	  m_single(singleDetailOnly)
 {
 }
 
@@ -47,9 +52,14 @@ void ContactDetailPicker::createContent(void)
 			    tr("<h1>No contact details to select</h1>"),
 			    tr("Select contact details"),
 			    true,
-			    true);
+			    m_single == true ? false : true);
 
-	connect(this, SIGNAL(done()), this, SLOT(pickingDone()));
+	if (m_single == true) {
+		connect(this, SIGNAL(clicked(const QModelIndex)),
+			this, SLOT(detailClicked(const QModelIndex)));
+	} else {
+		connect(this, SIGNAL(done()), this, SLOT(pickingDone()));
+	}
 }
 
 void ContactDetailPicker::pickingDone(void)
@@ -72,6 +82,22 @@ void ContactDetailPicker::pickingDone(void)
 		   damn qcontact make a copy or not? */
 		picked.saveDetail(&detail);
 	}
+	manager.synthesizeContactDisplayLabel(&picked);
+
+	dismiss();
+	Q_EMIT(contactPicked(picked));
+}
+
+void ContactDetailPicker::detailClicked(const QModelIndex which)
+{
+	QContactManager manager;
+
+	QContact picked;
+	QContactDetail detail = m_model->detail(which);
+	/* TODO: will this cause problems, does the 
+	   damn qcontact make a copy or not? */
+	picked.saveDetail(&detail);
+
 	manager.synthesizeContactDisplayLabel(&picked);
 
 	dismiss();

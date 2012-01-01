@@ -10,6 +10,8 @@
 #define _CONTACT_SELECTION_PAGE_LIST_MODEL_H_
 
 #include <MAbstractItemModel>
+
+#include "Util.h"
 #include <QContactManager>
 #include <QContact>
 #include <QContactFetchRequest>
@@ -26,6 +28,8 @@ class ContactSelectionPageListModel : public MAbstractItemModel
 public:
 
 	ContactSelectionPageListModel(QContactManager *manager,
+				      Util::ContactDetails requiredDetails =
+				      Util::NoDetails,
 				      QObject *parent = 0);
 
 	virtual int groupCount(void) const;
@@ -55,6 +59,8 @@ protected:
 	QMap<QString, QContact> m_contacts;
 
 	MLocaleBuckets m_buckets;
+
+	Util::ContactDetails m_requiredDetails;
 
 };
 

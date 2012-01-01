@@ -12,14 +12,21 @@
 #include <QStringList>
 #include <MDebug>
 
+#include <QContactName>
+#include <QContactPhoneNumber>
+#include <QContactEmailAddress>
+#include <QContactAddress>
+
 ContactSelectionPageListModel::
 ContactSelectionPageListModel(QContactManager *manager,
+			      Util::ContactDetails requiredDetails,
 			      QObject *parent)
 	: MAbstractItemModel(parent),
 	  m_manager(manager),
 	  m_fetch(0),
 	  m_contacts(),
-	  m_buckets()
+	  m_buckets(),
+	  m_requiredDetails(requiredDetails)
 {
 	setGrouped(true);
 
@@ -71,7 +78,36 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 		}
 
 		if (insertions.contains(contact.displayLabel())) {
-			mDebug(__func__) << "Duplicate, skipping. ";
+			mDebug(__func__) << contact.displayLabel() 
+					 << " is duplicate, skipping. ";
+			continue;
+		}
+
+		if ((m_requiredDetails & Util::Name) != 0 &&
+		    contact.details(QContactName::DefinitionName).length() == 0) {
+			mDebug(__func__) << contact.displayLabel() 
+					 << " doesn't have name, skipping. ";
+			continue;
+		}
+
+		if ((m_requiredDetails & Util::PhoneNumber) != 0 &&
+		    contact.details(QContactPhoneNumber::DefinitionName).length() == 0) {
+			mDebug(__func__) << contact.displayLabel() 
+					 << " doesn't have number, skipping. ";
+			continue;
+		}
+
+		if ((m_requiredDetails & Util::EmailAddress) != 0 &&
+		    contact.details(QContactEmailAddress::DefinitionName).length() == 0) {
+			mDebug(__func__) << contact.displayLabel() 
+					 << " doesn't have email, skipping. ";
+			continue;
+		}
+
+		if ((m_requiredDetails & Util::PhysicalAddress) != 0 &&
+		    contact.details(QContactAddress::DefinitionName).length() == 0) {
+			mDebug(__func__) << contact.displayLabel() 
+					 << " doesn't have addr, skipping. ";
 			continue;
 		}
 

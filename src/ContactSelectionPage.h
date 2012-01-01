@@ -11,6 +11,7 @@
 
 #include "SelectionPage.h"
 
+#include "Util.h"
 #include <QContactManager>
 #include <QContact>
 
@@ -25,6 +26,8 @@ class ContactSelectionPage : public SelectionPage
 public:
 
 	ContactSelectionPage(QContactManager *manager,
+			     Util::ContactDetails requiredDetails = 
+			     Util::NoDetails,
 			     QGraphicsItem *parent = 0);
 
 	virtual ~ContactSelectionPage(void);

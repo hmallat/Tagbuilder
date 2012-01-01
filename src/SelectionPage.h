@@ -11,7 +11,8 @@
 
 #include <MApplicationPage>
 
-class QModelIndex;
+#include <QModelIndex>
+
 class LabelOrList;
 class QAbstractItemModel;
 class MWidget;
@@ -32,6 +33,8 @@ public:
 Q_SIGNALS:
 
 	void done(void);
+
+	void clicked(const QModelIndex which);
 
 protected:
 

@@ -12,12 +12,17 @@
 #include "SmartPosterRecord.h"
 #include "Util.h"
 #include "BookmarkSelectionPage.h"
+#include "ContactSelectionPage.h"
+#include "ContactDetailPicker.h"
+#include "ContactDetailPickerListModel.h"
 #include "Tag.h"
 
 #include <QUrl>
 #include <QGraphicsLinearLayout>
 #include <QNdefNfcUriRecord>
 #include <QSignalMapper>
+#include <QContactEmailAddress>
+
 #include <MContainer>
 #include <MLabel>
 #include <MButton>
@@ -53,6 +58,13 @@ void UrlPage::createPageSpecificContent(void)
 	connect(pickAction, SIGNAL(triggered()),
 		this, SLOT(chooseFromBookmarks()));
 	addAction(pickAction);
+	
+	MAction *emailAction = new MAction(tr("Choose an email address..."),
+					   this);
+	emailAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(emailAction, SIGNAL(triggered()),
+		this, SLOT(chooseEmailContact()));
+	addAction(emailAction);
 	
 	m_url = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_url->setLabel(tr("Bookmark URL"));
@@ -375,4 +387,54 @@ void UrlPage::bookmarkChosen(const QNdefMessage message)
 	setupData(message);
 }
 
+void UrlPage::chooseEmailContact(void)
+{
+	ContactSelectionPage *page = 
+		new ContactSelectionPage(&m_contactManager,
+					 Util::EmailAddress);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const QContact)),
+		this, SLOT(emailContactChosen(const QContact)));
+}
 
+void UrlPage::emailContactChosen(const QContact which)
+{
+ 	mDebug(__func__) << which.displayLabel();
+	m_contactLabel = which.displayLabel();
+	ContactDetailPicker *picker = 
+		new ContactDetailPicker(which,
+					Util::EmailAddress,
+					true);
+	picker->appear(MSceneWindow::DestroyWhenDismissed);
+	connect(picker, SIGNAL(contactPicked(const QContact)),
+		this, SLOT(emailAddressChosen(const QContact)));
+}
+
+void UrlPage::emailAddressChosen(const QContact which)
+{
+ 	mDebug(__func__) << which.displayLabel();
+
+	QNdefMessage message;
+
+	QContactEmailAddress addr = which.detail<QContactEmailAddress>();
+
+	QString mailto = "mailto:" + addr.emailAddress();
+	QNdefNfcUriRecord u;
+	u.setUri(mailto);
+
+	QNdefNfcTextRecord t;
+	t.setText(m_contactLabel);
+	t.setLocale(Util::currentLanguageCode());
+
+	QList<QNdefNfcTextRecord> ts;
+	ts << t;
+
+	SmartPosterRecord sp;
+	sp.setUri(u);
+	sp.setTitles(ts);
+
+	message << sp;
+
+	Tag::dump(message);
+	setupData(message);
+}

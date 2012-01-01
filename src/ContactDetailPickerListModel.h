@@ -10,6 +10,9 @@
 #define _CONTACT_DETAIL_PICKER_LIST_MODEL_H_
 
 #include <MAbstractItemModel>
+
+#include "Util.h"
+
 #include <QContact>
 #include <QContactDetail>
 #include <QMap>
@@ -22,16 +25,10 @@ class ContactDetailPickerListModel : public MAbstractItemModel
 
 	Q_OBJECT;
 
-	enum DetailType {
-		Name,
-		PhoneNumber,
-		EmailAddress,
-		PhysicalAddress
-	};
-
 public:
 
 	ContactDetailPickerListModel(const QContact &contact,
+				     Util::ContactDetails details,
 				     QObject *parent = 0);
 
 	virtual int groupCount(void) const;
@@ -50,9 +47,9 @@ private:
 
 	QContact m_contact;
 
-	QList<enum DetailType> m_types;
+	QList<enum Util::ContactDetail> m_types;
 
-	QMap<enum DetailType, QList<QContactDetail> > m_details;
+	QMap<enum Util::ContactDetail, QList<QContactDetail> > m_details;
 
 };
 

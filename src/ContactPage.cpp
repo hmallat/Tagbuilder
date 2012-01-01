@@ -165,6 +165,7 @@ void ContactPage::setContact(const QContact contact)
 	}
 	ContactDetailPickerListModel *model = 
 		new ContactDetailPickerListModel(m_info,
+						 Util::AllDetails,
 						 m_contactDetails);
 	m_contactDetails->setItemModel(model);
 

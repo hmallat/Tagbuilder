@@ -7,7 +7,6 @@
  */
 
 #include "ContactDetailPickerListModel.h"
-#include "Util.h"
 
 #include <QContactName>
 #include <QContactPhoneNumber>
@@ -20,7 +19,8 @@
 
 ContactDetailPickerListModel::
 ContactDetailPickerListModel(const QContact &contact,
-			      QObject *parent)
+			     Util::ContactDetails d,
+			     QObject *parent)
 	: MAbstractItemModel(parent),
 	  m_contact(contact),
 	  m_types(),
@@ -28,35 +28,43 @@ ContactDetailPickerListModel(const QContact &contact,
 {
 	setGrouped(true);
 
-	QList<enum DetailType> types;
-	QMap<enum DetailType, QList<QContactDetail> > details;
+	QList<enum Util::ContactDetail> types;
+	QMap<enum Util::ContactDetail, QList<QContactDetail> > details;
 
-	QList<QContactDetail> names = 
-		m_contact.details(QContactName::DefinitionName);
-	if (names.length() != 0) {
-		types << Name;
-		details[Name] = names;
+	if ((d & Util::Name) != 0) {
+		QList<QContactDetail> names = 
+			m_contact.details(QContactName::DefinitionName);
+		if (names.length() != 0) {
+			types << Util::Name;
+			details[Util::Name] = names;
+		}
 	}
 
-	QList<QContactDetail> numbers = 
-		m_contact.details(QContactPhoneNumber::DefinitionName);
-	if (numbers.length() != 0) {
-		types << PhoneNumber;
-		details[PhoneNumber] = numbers;
+	if ((d & Util::PhoneNumber) != 0) {
+		QList<QContactDetail> numbers = 
+			m_contact.details(QContactPhoneNumber::DefinitionName);
+		if (numbers.length() != 0) {
+			types << Util::PhoneNumber;
+			details[Util::PhoneNumber] = numbers;
+		}
 	}
 
-	QList<QContactDetail> emails = 
-		m_contact.details(QContactEmailAddress::DefinitionName);
-	if (emails.length() != 0) {
-		types << EmailAddress;
-		details[EmailAddress] = emails;
+	if ((d & Util::EmailAddress) != 0) {
+		QList<QContactDetail> emails = 
+			m_contact.details(QContactEmailAddress::DefinitionName);
+		if (emails.length() != 0) {
+			types << Util::EmailAddress;
+			details[Util::EmailAddress] = emails;
+		}
 	}
 
-	QList<QContactDetail> addresses = 
-		m_contact.details(QContactAddress::DefinitionName);
-	if (addresses.length() != 0) {
-		types << PhysicalAddress;
-		details[PhysicalAddress] = addresses;
+	if ((d & Util::PhysicalAddress) != 0) {
+		QList<QContactDetail> addresses = 
+			m_contact.details(QContactAddress::DefinitionName);
+		if (addresses.length() != 0) {
+			types << Util::PhysicalAddress;
+			details[Util::PhysicalAddress] = addresses;
+		}
 	}
 	
 	Q_EMIT(layoutAboutToBeChanged());
@@ -86,10 +94,14 @@ int ContactDetailPickerListModel::rowCountInGroup(int group) const
 QString ContactDetailPickerListModel::groupTitle(int group) const
 {
 	return 
-		(m_types[group] == Name) ? tr("Name") :
-		(m_types[group] == PhoneNumber) ? tr("Phone number") :
-		(m_types[group] == EmailAddress) ? tr("Email address") :
-		(m_types[group] == PhysicalAddress) ? tr("Address") :
+		(m_types[group] == Util::Name) 
+		? tr("Name") :
+		(m_types[group] == Util::PhoneNumber) 
+		? tr("Phone number") :
+		(m_types[group] == Util::EmailAddress) 
+		? tr("Email address") :
+		(m_types[group] == Util::PhysicalAddress) 
+		? tr("Address") :
 		tr("Unknown type");
 }
 
@@ -100,10 +112,10 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 	(void)role;
 
 	QStringList parameters;
-	enum DetailType type = m_types[group];
+	enum Util::ContactDetail type = m_types[group];
 	QContactDetail detail = m_details[type][row];
 
-	if (type == Name) {
+	if (type == Util::Name) {
 		QContactName name = 
 			static_cast<QContactName>(detail);
 
@@ -128,7 +140,7 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 		parameters << rep;
 		parameters << "";
 
-	} else if (type == PhoneNumber) {
+	} else if (type == Util::PhoneNumber) {
 		QContactPhoneNumber number = 
 			static_cast<QContactPhoneNumber>(detail);
 		parameters << number.number();
@@ -156,7 +168,7 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 
 		parameters << detail;
 
-	} else if (type == EmailAddress) {
+	} else if (type == Util::EmailAddress) {
 		QContactEmailAddress addr = 
 			static_cast<QContactEmailAddress>(detail);
 		parameters << addr.emailAddress();
@@ -174,7 +186,7 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 
 		parameters << detail;
 
-	} else if (type == PhysicalAddress) {
+	} else if (type == Util::PhysicalAddress) {
 		QContactAddress addr = 
 			static_cast<QContactAddress>(detail);
 
@@ -232,6 +244,6 @@ ContactDetailPickerListModel::detail(const QModelIndex &index) const
 {
 	int row = index.row();
 	int group = index.parent().row();
-	enum DetailType type = m_types[group];
+	enum Util::ContactDetail type = m_types[group];
 	return m_details[type][row];
 }

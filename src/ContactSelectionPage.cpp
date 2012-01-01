@@ -17,9 +17,13 @@ static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 }
 
 ContactSelectionPage::ContactSelectionPage(QContactManager *manager,
+					   Util::ContactDetails 
+					   requiredDetails,
 					   QGraphicsItem *parent)
 	: SelectionPage(parent),
-	  m_model(new ContactSelectionPageListModel(manager, this))
+	  m_model(new ContactSelectionPageListModel(manager, 
+						    requiredDetails, 
+						    this))
 {
 }
 

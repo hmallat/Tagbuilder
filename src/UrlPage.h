@@ -11,6 +11,9 @@
 
 #include "CreateEditPage.h"
 
+#include <QNdefMessage>
+#include <QContactManager>
+
 class QSignalMapper;
 class TextRecordEdit;
 class LabeledTextEdit;
@@ -63,6 +66,12 @@ private Q_SLOTS:
 
 	void bookmarkChosen(const QNdefMessage message);
 
+	void chooseEmailContact(void);
+
+	void emailContactChosen(const QContact which);
+
+	void emailAddressChosen(const QContact which);
+
 private:
 
 	Q_DISABLE_COPY(UrlPage);
@@ -84,6 +93,10 @@ private:
 	QList<TextRecordEdit *> m_titles;
 
 	MButton *actButton[4];
+
+	QContactManager m_contactManager;
+
+	QString m_contactLabel;
 
 };
 

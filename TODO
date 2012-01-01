@@ -21,6 +21,8 @@ start+end on the same day, separate days)
 
 CONTACTS:
 
+- move the detail flags to a more sensible class?
+
 URL:
 
 - Should not allow many titles with same languages
