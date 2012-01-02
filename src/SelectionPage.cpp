@@ -8,6 +8,7 @@
 
 #include "SelectionPage.h"
 #include "LabelOrList.h"
+#include "UIUtil.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -37,6 +38,10 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 					bool groupedList,
 					bool multiSelect)
 {
+	MApplicationPage::createContent();
+	setStyleName("CommonApplicationPage");
+	setPannable(false);
+
 	MAction *cancelAction = new MAction(tr("Cancel"), this);
 	cancelAction->setLocation(MAction::ToolBarLocation);
 	connect(cancelAction, SIGNAL(triggered()),
@@ -52,17 +57,11 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	}
 
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
-	centralWidget()->setLayout(layout);
+	layout->setContentsMargins(0, 0, 0, 0);
 
-	MWidgetController *header = new MWidgetController();
-	header->setStyleName("CommonHeaderPanel");
-	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	MWidgetController *header = UIUtil::viewHeader(title);
 	layout->addCornerAnchors(header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
-
-	MLabel *titleLabel = new MLabel(title, header);
-	titleLabel->setStyleName("CommonHeader");
-	titleLabel->setAlignment(Qt::AlignLeft);
 
 	m_list = new LabelOrList(itemModel,
 				 getCreator,
@@ -79,4 +78,6 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 
+
+	centralWidget()->setLayout(layout);
 }

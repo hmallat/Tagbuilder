@@ -72,6 +72,12 @@ private Q_SLOTS:
 
 	void emailAddressChosen(const QContact which);
 
+	void choosePhoneContact(void);
+
+	void phoneContactChosen(const QContact which);
+
+	void phoneNumberChosen(const QContact which);
+
 private:
 
 	Q_DISABLE_COPY(UrlPage);

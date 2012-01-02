@@ -25,6 +25,7 @@
 #include "VCardNdefRecord.h"
 #include "NfcHandoverSelectNdefRecord.h"
 #include "WritePage.h"
+#include "UIUtil.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -95,8 +96,10 @@ void MainPage::createContent(void)
 {
 	m_bluez->start();
 
+	MApplicationPage::createContent();
+	setStyleName("CommonApplicationPage");
 	setPannable(false);
-
+	
 	createObjectMenuActions();
 
 	MAction *newAction = new MAction("icon-m-toolbar-add", 
@@ -121,16 +124,11 @@ void MainPage::createContent(void)
 	addAction(aboutAction);
 
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
+	layout->setContentsMargins(0, 0, 0, 0);
 
-	MWidgetController *header = new MWidgetController();
-	header->setStyleName("CommonHeaderPanel");
-	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	MWidgetController *header = UIUtil::viewHeader(tr("Stored tags"));
 	layout->addCornerAnchors(header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
-
-	MLabel *label = new MLabel(tr("Stored tags"), header);
-	label->setStyleName("CommonHeader");
-	label->setAlignment(Qt::AlignLeft);
 
 	LabelOrList *list = new LabelOrList(TagStorage::storage(),
 					    _getTagListCellCreator,

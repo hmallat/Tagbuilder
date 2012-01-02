@@ -22,6 +22,7 @@
 #include <QNdefNfcUriRecord>
 #include <QSignalMapper>
 #include <QContactEmailAddress>
+#include <QContactPhoneNumber>
 
 #include <MContainer>
 #include <MLabel>
@@ -52,19 +53,26 @@ UrlPage::~UrlPage(void)
 
 void UrlPage::createPageSpecificContent(void)
 {
-	MAction *pickAction = new MAction(tr("Choose a bookmark..."),
+	MAction *pickAction = new MAction(tr("Browser bookmark..."),
 					  this);
 	pickAction->setLocation(MAction::ApplicationMenuLocation);
 	connect(pickAction, SIGNAL(triggered()),
 		this, SLOT(chooseFromBookmarks()));
 	addAction(pickAction);
 	
-	MAction *emailAction = new MAction(tr("Choose an email address..."),
+	MAction *emailAction = new MAction(tr("Addressbook email..."),
 					   this);
 	emailAction->setLocation(MAction::ApplicationMenuLocation);
 	connect(emailAction, SIGNAL(triggered()),
 		this, SLOT(chooseEmailContact()));
 	addAction(emailAction);
+	
+	MAction *phoneAction = new MAction(tr("Addressbook phone number..."),
+					   this);
+	phoneAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(phoneAction, SIGNAL(triggered()),
+		this, SLOT(choosePhoneContact()));
+	addAction(phoneAction);
 	
 	m_url = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_url->setLabel(tr("Bookmark URL"));
@@ -421,6 +429,58 @@ void UrlPage::emailAddressChosen(const QContact which)
 	QString mailto = "mailto:" + addr.emailAddress();
 	QNdefNfcUriRecord u;
 	u.setUri(mailto);
+
+	QNdefNfcTextRecord t;
+	t.setText(m_contactLabel);
+	t.setLocale(Util::currentLanguageCode());
+
+	QList<QNdefNfcTextRecord> ts;
+	ts << t;
+
+	SmartPosterRecord sp;
+	sp.setUri(u);
+	sp.setTitles(ts);
+
+	message << sp;
+
+	Tag::dump(message);
+	setupData(message);
+}
+
+void UrlPage::choosePhoneContact(void)
+{
+	ContactSelectionPage *page = 
+		new ContactSelectionPage(&m_contactManager,
+					 Util::PhoneNumber);
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const QContact)),
+		this, SLOT(phoneContactChosen(const QContact)));
+}
+
+void UrlPage::phoneContactChosen(const QContact which)
+{
+ 	mDebug(__func__) << which.displayLabel();
+	m_contactLabel = which.displayLabel();
+	ContactDetailPicker *picker = 
+		new ContactDetailPicker(which,
+					Util::PhoneNumber,
+					true);
+	picker->appear(MSceneWindow::DestroyWhenDismissed);
+	connect(picker, SIGNAL(contactPicked(const QContact)),
+		this, SLOT(phoneNumberChosen(const QContact)));
+}
+
+void UrlPage::phoneNumberChosen(const QContact which)
+{
+ 	mDebug(__func__) << which.displayLabel();
+
+	QNdefMessage message;
+
+	QContactPhoneNumber num = which.detail<QContactPhoneNumber>();
+
+	QString tel = "tel:" + num.number();
+	QNdefNfcUriRecord u;
+	u.setUri(tel);
 
 	QNdefNfcTextRecord t;
 	t.setText(m_contactLabel);

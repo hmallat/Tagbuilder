@@ -42,7 +42,7 @@ ContactPage::~ContactPage(void)
 
 void ContactPage::createPageSpecificContent(void)
 {
-	MAction *pickAction = new MAction(tr("Choose a contact..."),
+	MAction *pickAction = new MAction(tr("Contact from addressbook..."),
 					  this);
 	pickAction->setLocation(MAction::ApplicationMenuLocation);
 	connect(pickAction, SIGNAL(triggered()),

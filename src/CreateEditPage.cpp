@@ -10,6 +10,7 @@
 #include "LabeledTextEdit.h"
 #include "TagStorage.h"
 #include "Tag.h"
+#include "UIUtil.h"
 
 #include <MAction>
 #include <MLabel>
@@ -42,6 +43,8 @@ CreateEditPage::~CreateEditPage(void)
 
 void CreateEditPage::createContent(void)
 {
+	MApplicationPage::createContent();
+	setStyleName("CommonApplicationPage");
 	setPannable(false);
 
 	m_cancelAction = new MAction(tr("Cancel"), this);
@@ -57,21 +60,16 @@ void CreateEditPage::createContent(void)
 	addAction(m_storeAction);
 
 	QGraphicsAnchorLayout *anchor = new QGraphicsAnchorLayout();
+	anchor->setContentsMargins(0, 0, 0, 0);
 	anchor->setSizePolicy(QSizePolicy::Minimum, 
 			      QSizePolicy::Minimum);
 
-	MWidgetController *header = new MWidgetController();
-	header->setStyleName("CommonHeaderPanel");
-	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	MWidgetController *header = 
+		UIUtil::viewHeader(m_tag == TagStorage::NULL_TAG 
+				   ? tr("Create tag contents")
+				   : tr("Edit tag contents"));
 	anchor->addCornerAnchors(header, Qt::TopLeftCorner,
 				 anchor, Qt::TopLeftCorner);
-
-	MLabel *label = new MLabel(m_tag == TagStorage::NULL_TAG 
-				   ? tr("Create tag contents")
-				   : tr("Edit tag contents"), 
-				   header);
-	label->setStyleName("CommonHeader");
-	label->setAlignment(Qt::AlignLeft);
 
 	m_size = new MLabel();
 	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);

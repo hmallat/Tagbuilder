@@ -1,3 +1,9 @@
+tag-creator (0.0.3) unstable; urgency=low
+
+  * A few features more to URL generation. 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sun, 01 Jan 2012 12:34:37 +0200
+
 tag-creator (0.0.2) unstable; urgency=low
 
   * All features at least in alpha stage. 

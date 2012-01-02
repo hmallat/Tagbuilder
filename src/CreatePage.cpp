@@ -10,24 +10,18 @@
 #include "TextPage.h"
 #include "TagTypeListModel.h"
 #include "TagTypeListCellCreator.h"
+#include "LabelOrList.h"
+#include "UIUtil.h"
 
-#include <QGraphicsAnchorLayout>
-#include <MAction>
-#include <MLabel>
-#include <MList>
-#include <MContentItem>
-#include <MPannableViewport>
-
-/* TODO: own buttons for SMS and CALLTO? What about other URI types? 
-   Codewise could use the same page anyway...
- */
+static MAbstractCellCreator<MWidgetController> *_getCreator(void)
+{
+	return new TagTypeListCellCreator;
+}
 
 CreatePage::CreatePage(QGraphicsItem *parent)
-	: MApplicationPage(parent),
-	  m_model(NULL)
+	: SelectionPage(parent),
+	  m_model(new TagTypeListModel(this))
 {
-	setComponentsDisplayMode(MApplicationPage::EscapeButton,
-				 MApplicationPageModel::Hide);
 }
 
 CreatePage::~CreatePage(void)
@@ -36,42 +30,14 @@ CreatePage::~CreatePage(void)
 
 void CreatePage::createContent(void)
 {
-	MAction *cancelAction = new MAction(tr("Cancel"), this);
-	cancelAction->setLocation(MAction::ToolBarLocation);
-	connect(cancelAction, SIGNAL(triggered()),
-		this, SLOT(dismiss()));
-	addAction(cancelAction);
+	createCommonContent(m_model,
+			    _getCreator,
+			    tr("<h1>No tag type to select</h1>"),
+			    tr("Select tag type"),
+			    false,
+			    false);
 
-	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
-	centralWidget()->setLayout(layout);
-
-	MWidgetController *header = new MWidgetController();
-	header->setStyleName("CommonHeaderPanel");
-	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-	layout->addCornerAnchors(header, Qt::TopLeftCorner,
-				 layout, Qt::TopLeftCorner);
-
-	MLabel *label = new MLabel(tr("Create a new tag"), header);
-	label->setStyleName("CommonHeader");
-	label->setAlignment(Qt::AlignLeft);
-
-	MList *list = new MList();
-	TagTypeListCellCreator *creator = new TagTypeListCellCreator;
-	list->setCellCreator(creator);
-	m_model = new TagTypeListModel(list);
-	list->setItemModel(m_model);
-
-	MPannableViewport *view = new MPannableViewport();
-	view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	view->setPanDirection(Qt::Vertical);
-	view->setMinimumSize(100, 100);
-	view->setWidget(list);
-	layout->addCornerAnchors(view, Qt::TopLeftCorner,
-				 header, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(view, Qt::BottomRightCorner,
-				 layout, Qt::BottomRightCorner);
-
-	connect(list, SIGNAL(itemClicked(const QModelIndex &)),
+	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(tagTypeSelected(const QModelIndex &)));
 }
 

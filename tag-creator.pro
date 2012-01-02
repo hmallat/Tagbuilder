@@ -65,6 +65,7 @@ HEADERS		+= \
 		src/TextRecordEdit.h \
 		src/UnknownPage.h \
 		src/UrlPage.h \
+		src/UIUtil.h \
 		src/Util.h \
 		src/VCardNdefRecord.h \
 		src/WritePage.h
@@ -119,6 +120,7 @@ SOURCES		+= \
 		src/TextRecordEdit.cpp \
 		src/UnknownPage.cpp \
 		src/UrlPage.cpp \
+		src/UIUtil.cpp \
 		src/Util.cpp \
 		src/VCardNdefRecord.cpp \
 		src/WritePage.cpp

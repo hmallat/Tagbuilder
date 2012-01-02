@@ -40,14 +40,14 @@ CalendarPage::~CalendarPage(void)
 
 void CalendarPage::createPageSpecificContent(void)
 {
-	MAction *eventAction = new MAction(tr("Choose an event..."),
+	MAction *eventAction = new MAction(tr("Event from calendar..."),
 					   this);
 	eventAction->setLocation(MAction::ApplicationMenuLocation);
 	connect(eventAction, SIGNAL(triggered()),
 		this, SLOT(chooseEvent()));
 	addAction(eventAction);
 	
-	MAction *todoAction = new MAction(tr("Choose a to-do item..."),
+	MAction *todoAction = new MAction(tr("Todo item from calendar..."),
 					  this);
 	todoAction->setLocation(MAction::ApplicationMenuLocation);
 	connect(todoAction, SIGNAL(triggered()),

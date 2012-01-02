@@ -49,6 +49,8 @@ WritePage::~WritePage(void)
 
 void WritePage::createContent(void)
 {
+	MApplicationPage::createContent();
+
 	setPannable(false);
 
 	m_done = new MAction(tr("Done"), this);

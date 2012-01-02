@@ -9,13 +9,14 @@
 #ifndef _CREATE_PAGE_H_
 #define _CREATE_PAGE_H_
 
-#include <MApplicationPage>
+#include "SelectionPage.h"
 
 class TagTypeListModel;
 class QModelIndex;
 
-class CreatePage : public MApplicationPage
+class CreatePage : public SelectionPage
 {
+
 	Q_OBJECT;
 
 public:
