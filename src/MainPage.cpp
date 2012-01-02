@@ -92,16 +92,8 @@ void MainPage::createObjectMenuActions(void)
 		this, SLOT(removeTag()));
 }
 
-void MainPage::createContent(void)
+void MainPage::createActions(void)
 {
-	m_bluez->start();
-
-	MApplicationPage::createContent();
-	setStyleName("CommonApplicationPage");
-	setPannable(false);
-	
-	createObjectMenuActions();
-
 	MAction *newAction = new MAction("icon-m-toolbar-add", 
 					 tr("Create a new tag"),
 					 this);
@@ -122,6 +114,19 @@ void MainPage::createContent(void)
  	connect(aboutAction, SIGNAL(triggered()),
  		this, SLOT(showAbout()));
 	addAction(aboutAction);
+
+}
+
+void MainPage::createContent(void)
+{
+	m_bluez->start();
+
+	MApplicationPage::createContent();
+	setStyleName("CommonApplicationPage");
+	setPannable(false);
+	
+	createObjectMenuActions();
+	createActions();
 
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	layout->setContentsMargins(0, 0, 0, 0);

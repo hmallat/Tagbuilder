@@ -40,6 +40,8 @@ private:
 
 	Q_DISABLE_COPY(WritePage);
 
+	void createActions(void);
+
 	TagWriter *m_writer;
 
 	MProgressIndicator *m_indicator;

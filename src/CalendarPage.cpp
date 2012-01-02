@@ -38,7 +38,7 @@ CalendarPage::~CalendarPage(void)
 {
 }
 
-void CalendarPage::createPageSpecificContent(void)
+void CalendarPage::createPageSpecificActions(void)
 {
 	MAction *eventAction = new MAction(tr("Event from calendar..."),
 					   this);
@@ -54,6 +54,10 @@ void CalendarPage::createPageSpecificContent(void)
 		this, SLOT(chooseTodo()));
 	addAction(todoAction);
 	
+}
+
+void CalendarPage::createPageSpecificContent(void)
+{
 	m_calendarTitle = new MLabel();
 	m_calendarTitle->setSizePolicy(QSizePolicy::Minimum, 
 				       QSizePolicy::Fixed);

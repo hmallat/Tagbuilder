@@ -40,7 +40,7 @@ ContactPage::~ContactPage(void)
 {
 }
 
-void ContactPage::createPageSpecificContent(void)
+void ContactPage::createPageSpecificActions(void)
 {
 	MAction *pickAction = new MAction(tr("Contact from addressbook..."),
 					  this);
@@ -48,7 +48,11 @@ void ContactPage::createPageSpecificContent(void)
 	connect(pickAction, SIGNAL(triggered()),
 		this, SLOT(chooseFromAddressbook()));
 	addAction(pickAction);
-	
+
+}
+
+void ContactPage::createPageSpecificContent(void)
+{
 	m_contactTitle = new MLabel();
 	m_contactTitle->setSizePolicy(QSizePolicy::Minimum, 
 				      QSizePolicy::Fixed);

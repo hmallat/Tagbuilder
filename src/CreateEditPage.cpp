@@ -41,12 +41,8 @@ CreateEditPage::~CreateEditPage(void)
 {
 }
 
-void CreateEditPage::createContent(void)
+void CreateEditPage::createActions(void)
 {
-	MApplicationPage::createContent();
-	setStyleName("CommonApplicationPage");
-	setPannable(false);
-
 	m_cancelAction = new MAction(tr("Cancel"), this);
 	m_cancelAction->setLocation(MAction::ToolBarLocation);
 	connect(m_cancelAction, SIGNAL(triggered()),
@@ -58,6 +54,18 @@ void CreateEditPage::createContent(void)
 	connect(m_storeAction, SIGNAL(triggered()),
 		this, SLOT(storeAndExit()));
 	addAction(m_storeAction);
+
+	createPageSpecificActions();
+
+}
+
+void CreateEditPage::createContent(void)
+{
+	MApplicationPage::createContent();
+	setStyleName("CommonApplicationPage");
+	setPannable(false);
+
+	createActions();
 
 	QGraphicsAnchorLayout *anchor = new QGraphicsAnchorLayout();
 	anchor->setContentsMargins(0, 0, 0, 0);

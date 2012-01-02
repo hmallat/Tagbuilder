@@ -26,6 +26,10 @@ UnknownPage::~UnknownPage(void)
 {
 }
 
+void UnknownPage::createPageSpecificActions(void)
+{
+}
+
 void UnknownPage::createPageSpecificContent(void)
 {
 	MLabel *title = new MLabel(tr("<b>Unsupported tag</b><br><br>"

@@ -101,7 +101,7 @@ BtPage::~BtPage(void)
 {
 }
 
-void BtPage::createPageSpecificContent(void)
+void BtPage::createPageSpecificActions(void)
 {
 	MAction *chooseThisAction = new MAction(tr("This phone"),
 						this);
@@ -124,6 +124,10 @@ void BtPage::createPageSpecificContent(void)
 		this, SLOT(chooseScannedBT()));
 	addAction(scanAction);
 
+}
+
+void BtPage::createPageSpecificContent(void)
+{
 	m_name = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_name->setLabel(tr("Device name"));
 	m_name->setPrompt(tr("Enter device name"));

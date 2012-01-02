@@ -32,6 +32,10 @@ TextPage::~TextPage(void)
 {
 }
 
+void TextPage::createPageSpecificActions(void)
+{
+}
+
 void TextPage::createPageSpecificContent(void)
 {
 	m_edit = new TextRecordEdit(LabeledTextEdit::MultiLineEditAndLabel);

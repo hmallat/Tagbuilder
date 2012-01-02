@@ -40,6 +40,8 @@ public:
 
 protected:
 
+	virtual void createPageSpecificActions(void) = 0;
+
 	virtual void createPageSpecificContent(void) = 0;
 
 	virtual void setupNewData(void) = 0;
@@ -69,6 +71,8 @@ private Q_SLOTS:
 private:
 
 	Q_DISABLE_COPY(CreateEditPage);
+
+	void createActions(void);
 
 	void updateUI(void);
 

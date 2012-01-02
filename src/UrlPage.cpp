@@ -51,7 +51,7 @@ UrlPage::~UrlPage(void)
 {
 }
 
-void UrlPage::createPageSpecificContent(void)
+void UrlPage::createPageSpecificActions(void)
 {
 	MAction *pickAction = new MAction(tr("Browser bookmark..."),
 					  this);
@@ -74,6 +74,10 @@ void UrlPage::createPageSpecificContent(void)
 		this, SLOT(choosePhoneContact()));
 	addAction(phoneAction);
 	
+}
+
+void UrlPage::createPageSpecificContent(void)
+{
 	m_url = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
 	m_url->setLabel(tr("Bookmark URL"));
 	m_url->setPrompt(tr("Enter bookmark URL"));
@@ -351,6 +355,8 @@ void UrlPage::addTitle(void)
 	m_titleLayout->setAlignment(pack, Qt::AlignHCenter);
 
 	m_titles << title;
+
+	updateSize();
 }
 
 void UrlPage::removeTitle(QObject *which)
@@ -378,6 +384,8 @@ void UrlPage::removeTitle(QObject *which)
 			break;
 		}
 	}
+
+	updateSize();
 }
 
 void UrlPage::chooseFromBookmarks(void)

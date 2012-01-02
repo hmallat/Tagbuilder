@@ -63,6 +63,8 @@ private:
 
 	void createObjectMenuActions(void);
 
+	void createActions(void);
+
 	void editTag(int index);
 
 	MObjectMenu *m_objectMenu;

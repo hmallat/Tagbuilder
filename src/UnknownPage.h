@@ -29,6 +29,8 @@ public:
 
 protected:
 
+	virtual void createPageSpecificActions(void);
+
 	virtual void createPageSpecificContent(void);
 
 	virtual void setupNewData(void);

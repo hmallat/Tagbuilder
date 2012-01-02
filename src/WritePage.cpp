@@ -47,19 +47,26 @@ WritePage::~WritePage(void)
 {
 }
 
-void WritePage::createContent(void)
+void WritePage::createActions(void)
 {
-	MApplicationPage::createContent();
-
-	setPannable(false);
-
 	m_done = new MAction(tr("Done"), this);
 	m_done->setLocation(MAction::ToolBarLocation);
 	connect(m_done, SIGNAL(triggered()),
 		this, SLOT(dismiss()));
 	addAction(m_done);
 
+}
+
+void WritePage::createContent(void)
+{
+	MApplicationPage::createContent();
+	setStyleName("CommonApplicationPage");
+	setPannable(false);
+
+	createActions();
+
 	QGraphicsAnchorLayout *anchor = new QGraphicsAnchorLayout();
+	anchor->setContentsMargins(0, 0, 0, 0);
 	anchor->setSizePolicy(QSizePolicy::Preferred, 
 			      QSizePolicy::Preferred);
 
