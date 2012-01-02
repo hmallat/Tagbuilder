@@ -146,6 +146,8 @@ void CreateEditPage::updateUI(void)
 
 void CreateEditPage::nameChanged(void)
 {
+	mDebug(__func__) << "Name changed. ";
+	m_nameEdited = true;
 	setNameValidity(m_name->contents() != "" ? true : false);
 }
 
@@ -219,4 +221,12 @@ void CreateEditPage::storeAndExit(void)
 fail:
 	MMessageBox *box = new MMessageBox(tr("Cannot store the tag. "));
 	box->appear(MSceneWindow::DestroyWhenDismissed);
+}
+
+void CreateEditPage::setDefaultName(const QString name)
+{
+	if (m_tag == TagStorage::NULL_TAG && m_nameEdited == false) {
+		m_name->setContents(name);
+		m_nameEdited = false;
+	}
 }

@@ -53,17 +53,19 @@ private Q_SLOTS:
 
 	void chooseScannedBT(void);
 
-	void setDevice(const QBluetoothDeviceInfo info);
-
 	void deviceNameChanged(void);
 
 	void deviceAddressChanged(void);
 
 	void deviceClassChanged(void);
 
+	void setDeviceThroughAction(const QBluetoothDeviceInfo info);
+
 private:
 
 	Q_DISABLE_COPY(BtPage);
+
+	void setDevice(const QBluetoothDeviceInfo info);
 
 	void updateDevice(void);
 

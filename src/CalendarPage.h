@@ -49,7 +49,7 @@ private Q_SLOTS:
 
 	void chooseTodo(void);
 
-	void setCalendarItem(const QOrganizerItem item);
+	void setCalendarItemThroughAction(const QOrganizerItem item);
 
 	void selectCalendarDetails(const QOrganizerItem item);
 
@@ -58,6 +58,8 @@ private:
 	Q_DISABLE_COPY(CalendarPage);
 
 	void updateSize(void);
+
+	void setCalendarItem(const QOrganizerItem item);
 
 	QOrganizerManager m_calendarManager;
 

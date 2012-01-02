@@ -401,6 +401,10 @@ void UrlPage::bookmarkChosen(const QNdefMessage message)
 {
 	Tag::dump(message);
 	setupData(message);
+
+	if (m_titles.length() != 0) {
+		setDefaultName(m_titles[0]->contents());
+	}
 }
 
 void UrlPage::chooseEmailContact(void)
@@ -453,6 +457,8 @@ void UrlPage::emailAddressChosen(const QContact which)
 
 	Tag::dump(message);
 	setupData(message);
+
+	setDefaultName(tr("Email address of %1").arg(m_contactLabel));
 }
 
 void UrlPage::choosePhoneContact(void)
@@ -505,4 +511,6 @@ void UrlPage::phoneNumberChosen(const QContact which)
 
 	Tag::dump(message);
 	setupData(message);
+
+	setDefaultName(tr("Phone number of %1").arg(m_contactLabel));
 }

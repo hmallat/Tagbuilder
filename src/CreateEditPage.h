@@ -52,6 +52,8 @@ protected:
 
 	QGraphicsLinearLayout *layout(void);
 
+	void setDefaultName(const QString name);
+
 protected Q_SLOTS:
 
 	void setContentValidity(bool);
@@ -91,6 +93,8 @@ private:
 	bool m_contentValidity;
 
 	bool m_nameValidity;
+
+	bool m_nameEdited;
 
 };
 

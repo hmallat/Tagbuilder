@@ -169,7 +169,7 @@ void CalendarPage::selectCalendarDetails(const QOrganizerItem item)
 	CalendarDetailPicker *picker = new CalendarDetailPicker(item);
 	picker->appear(MSceneWindow::DestroyWhenDismissed);
 	connect(picker, SIGNAL(calendarPicked(const QOrganizerItem)),
-		this, SLOT(setCalendarItem(const QOrganizerItem)));
+		this, SLOT(setCalendarItemThroughAction(const QOrganizerItem)));
 }
 
 void CalendarPage::setCalendarItem(const QOrganizerItem item)
@@ -188,6 +188,12 @@ void CalendarPage::setCalendarItem(const QOrganizerItem item)
 
 	setContentValidity(m_info.isEmpty() ? false : true);
 	updateSize();
+}
+
+void CalendarPage::setCalendarItemThroughAction(const QOrganizerItem item)
+{
+	setCalendarItem(item);
+	setDefaultName(item.displayLabel());
 }
 
 void CalendarPage::updateSize(void)

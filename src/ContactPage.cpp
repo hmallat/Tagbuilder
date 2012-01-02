@@ -154,7 +154,7 @@ void ContactPage::setContactDetails(const QContact contact)
 	ContactDetailPicker *picker = new ContactDetailPicker(contact);
 	picker->appear(MSceneWindow::DestroyWhenDismissed);
 	connect(picker, SIGNAL(contactPicked(const QContact)),
-		this, SLOT(setContact(const QContact)));
+		this, SLOT(setContactThroughAction(const QContact)));
 }
 
 void ContactPage::setContact(const QContact contact)
@@ -175,6 +175,12 @@ void ContactPage::setContact(const QContact contact)
 
 	setContentValidity(m_info.isEmpty() ? false : true);
 	updateSize();
+}
+
+void ContactPage::setContactThroughAction(const QContact contact)
+{
+	setContact(contact);
+	setDefaultName(contact.displayLabel());
 }
 
 void ContactPage::updateSize(void)

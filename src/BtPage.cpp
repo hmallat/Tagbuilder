@@ -210,7 +210,7 @@ void BtPage::choosePhoneBT(void)
 		QBluetoothDeviceInfo info(locals[0].getAddress(),
 					  locals[0].getName(),
 					  N9_COD);
-		setDevice(info);
+		setDeviceThroughAction(info);
 		return;
 	}
 
@@ -229,7 +229,7 @@ void BtPage::chooseExistingBT(void)
 				    BtSelectionPage::SelectFromExisting);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 	connect(page, SIGNAL(selected(const QBluetoothDeviceInfo)),
-		this, SLOT(setDevice(const QBluetoothDeviceInfo)));
+		this, SLOT(setDeviceThroughAction(const QBluetoothDeviceInfo)));
 }
 
 void BtPage::chooseScannedBT(void)
@@ -244,7 +244,7 @@ void BtPage::chooseScannedBT(void)
 				    BtSelectionPage::SelectFromScanned);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 	connect(page, SIGNAL(selected(const QBluetoothDeviceInfo)),
-		this, SLOT(setDevice(const QBluetoothDeviceInfo)));
+		this, SLOT(setDeviceThroughAction(const QBluetoothDeviceInfo)));
 }
 
 void BtPage::setDevice(const QBluetoothDeviceInfo info)
@@ -260,6 +260,17 @@ void BtPage::setDevice(const QBluetoothDeviceInfo info)
 			     : _cod2str(0));
 
 	updateDevice();
+}
+
+void BtPage::setDeviceThroughAction(const QBluetoothDeviceInfo info)
+{
+	setDevice(info);
+
+	if (info.isValid() == true && info.name() != "") {
+		setDefaultName(info.name());
+	} else {
+		setDefaultName(_bdaddr2str(info.address()));
+	}
 }
 
 void BtPage::updateDevice(void)

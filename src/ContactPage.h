@@ -47,7 +47,7 @@ private Q_SLOTS:
 
 	void chooseFromAddressbook(void);
 
-	void setContact(const QContact contact);
+	void setContactThroughAction(const QContact contact);
 
 	void setContactDetails(const QContact contact);
 
@@ -56,6 +56,8 @@ private:
 	Q_DISABLE_COPY(ContactPage);
 
 	void updateSize(void);
+
+	void setContact(const QContact contact);
 
 	QContactManager m_contactManager;
 
