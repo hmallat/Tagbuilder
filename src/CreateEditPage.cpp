@@ -31,7 +31,8 @@ CreateEditPage::CreateEditPage(int tag, QGraphicsItem *parent)
 	  m_size(0),
 	  m_name(0),
 	  m_contentValidity(false),
-	  m_nameValidity(false)
+	  m_nameValidity(false),
+	  m_nameEdited(false)
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
@@ -225,8 +226,15 @@ fail:
 
 void CreateEditPage::setDefaultName(const QString name)
 {
+	mDebug(__func__) << "Call to set default name to " << name;
+	mDebug(__func__) << (m_tag == TagStorage::NULL_TAG ? "" : "non-")
+			 << "null tag. ";
+	mDebug(__func__) << (m_nameEdited == true ? "" : "not ")
+			 << "edited. ";
+
 	if (m_tag == TagStorage::NULL_TAG && m_nameEdited == false) {
 		m_name->setContents(name);
 		m_nameEdited = false;
+		mDebug(__func__) << "Default name set!";
 	}
 }
