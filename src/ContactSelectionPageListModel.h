@@ -44,6 +44,12 @@ public:
 
 	QContact contact(const QModelIndex &index) const;
 
+	bool isFetchDone(void);
+
+Q_SIGNALS:
+
+	void fetchDone(void);
+
 protected Q_SLOTS:
 
 	void resultsAvailable(void);
@@ -51,6 +57,8 @@ protected Q_SLOTS:
 	void stateChanged(QContactAbstractRequest::State);
 
 protected:
+
+	bool m_fetchDone;
 
 	QContactManager *m_manager;
 

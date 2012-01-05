@@ -42,6 +42,12 @@ void ContactSelectionPage::createContent(void)
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(contactSelected(const QModelIndex &)));
+
+	if (m_model->isFetchDone() == false) {
+		setBusy();
+		connect(m_model, SIGNAL(fetchDone()),
+			this, SLOT(clearBusy()));
+	}
 }
 
 void ContactSelectionPage::contactSelected(const QModelIndex &which)

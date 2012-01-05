@@ -39,7 +39,9 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 
-	void setBusyStatus(bool busy);
+	void setBusy(void);
+
+	void clearBusy(void);
 
 protected:
 

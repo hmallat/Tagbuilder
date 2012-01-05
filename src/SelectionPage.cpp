@@ -85,12 +85,12 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	centralWidget()->setLayout(layout);
 }
 
-void SelectionPage::setBusyStatus(bool busy)
+void SelectionPage::setBusy(void)
 {
-	if (busy == true) {
-		m_header->setBusy();
-	} else {
-		m_header->clearBusy();
-	}
+	m_header->setBusy();
 }
 
+void SelectionPage::clearBusy(void)
+{
+	m_header->clearBusy();
+}

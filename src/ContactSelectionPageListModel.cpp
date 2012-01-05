@@ -22,6 +22,7 @@ ContactSelectionPageListModel(QContactManager *manager,
 			      Util::ContactDetails requiredDetails,
 			      QObject *parent)
 	: MAbstractItemModel(parent),
+	  m_fetchDone(true),
 	  m_manager(manager),
 	  m_fetch(0),
 	  m_contacts(),
@@ -54,22 +55,31 @@ ContactSelectionPageListModel(QContactManager *manager,
 	if (m_fetch->start() == false) {
 		mDebug(__func__) << "Cannot fetch contacts. ";
 		/* TODO: indicate in UI */
+	} else {
+		/* It's ongoing now! */
+		m_fetchDone = false;
 	}
+}
+
+bool ContactSelectionPageListModel::isFetchDone(void)
+{
+	return m_fetchDone;
 }
 
 void ContactSelectionPageListModel::resultsAvailable(void)
 {
+	QList<QContact> results;
+	QStringList bucketEntries;
+	QMap<QString, QContact> insertions;
+
 	if (m_fetch->error() != QContactManager::NoError) {
 		mDebug(__func__) << "Cannot fetch contacts, error " 
 				 << m_fetch->error();
 		/* TODO: indicate in UI */
-		return;
+		goto done;
 	}
 
-	QList<QContact> results = m_fetch->contacts();
-
-	QStringList bucketEntries;
-	QMap<QString, QContact> insertions;
+	results = m_fetch->contacts();
 
 	for (int i = 0; i < results.length(); i++) {
 		QContact contact = results[i];
@@ -117,7 +127,7 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 	if (bucketEntries.length() == 0) {
 		mDebug(__func__) << "Nothing to be inserted. ";
 		/* TODO: indicate in UI */
-		return;
+		goto done;
 	}
 
 	Q_EMIT(layoutAboutToBeChanged());
@@ -128,6 +138,10 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 	endInsertRows();
 
 	Q_EMIT(layoutChanged());
+
+done:
+	m_fetchDone = true;
+	Q_EMIT(fetchDone());
 }
 
 void ContactSelectionPageListModel::stateChanged(QContactAbstractRequest::State)
