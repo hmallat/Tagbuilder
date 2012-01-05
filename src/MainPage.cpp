@@ -25,7 +25,7 @@
 #include "VCardNdefRecord.h"
 #include "NfcHandoverSelectNdefRecord.h"
 #include "WritePage.h"
-#include "UIUtil.h"
+#include "ViewHeader.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -131,7 +131,7 @@ void MainPage::createContent(void)
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	layout->setContentsMargins(0, 0, 0, 0);
 
-	MWidgetController *header = UIUtil::viewHeader(tr("Stored tags"));
+	ViewHeader *header = new ViewHeader(tr("Stored tags"));
 	layout->addCornerAnchors(header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
 

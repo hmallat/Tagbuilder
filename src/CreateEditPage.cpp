@@ -10,7 +10,7 @@
 #include "LabeledTextEdit.h"
 #include "TagStorage.h"
 #include "Tag.h"
-#include "UIUtil.h"
+#include "ViewHeader.h"
 
 #include <MAction>
 #include <MLabel>
@@ -73,10 +73,10 @@ void CreateEditPage::createContent(void)
 	anchor->setSizePolicy(QSizePolicy::Minimum, 
 			      QSizePolicy::Minimum);
 
-	MWidgetController *header = 
-		UIUtil::viewHeader(m_tag == TagStorage::NULL_TAG 
-				   ? tr("Create tag contents")
-				   : tr("Edit tag contents"));
+	ViewHeader *header = 
+		new ViewHeader(m_tag == TagStorage::NULL_TAG 
+			       ? tr("Create tag contents")
+			       : tr("Edit tag contents"));
 	anchor->addCornerAnchors(header, Qt::TopLeftCorner,
 				 anchor, Qt::TopLeftCorner);
 

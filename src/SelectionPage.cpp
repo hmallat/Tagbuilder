@@ -8,7 +8,7 @@
 
 #include "SelectionPage.h"
 #include "LabelOrList.h"
-#include "UIUtil.h"
+#include "ViewHeader.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -59,9 +59,12 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	QGraphicsAnchorLayout *layout = new QGraphicsAnchorLayout();
 	layout->setContentsMargins(0, 0, 0, 0);
 
-	MWidgetController *header = UIUtil::viewHeader(title);
-	layout->addCornerAnchors(header, Qt::TopLeftCorner,
+	m_header = new ViewHeader(title);
+
+	layout->addCornerAnchors(m_header, Qt::TopLeftCorner,
 				 layout, Qt::TopLeftCorner);
+	layout->addCornerAnchors(m_header, Qt::TopRightCorner,
+				 layout, Qt::TopRightCorner);
 
 	m_list = new LabelOrList(itemModel,
 				 getCreator,
@@ -74,10 +77,20 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	}
 
 	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
-				 header, Qt::BottomLeftCorner);
+				 m_header, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 
 
 	centralWidget()->setLayout(layout);
 }
+
+void SelectionPage::setBusyStatus(bool busy)
+{
+	if (busy == true) {
+		m_header->setBusy();
+	} else {
+		m_header->clearBusy();
+	}
+}
+

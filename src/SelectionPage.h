@@ -13,6 +13,7 @@
 
 #include <QModelIndex>
 
+class ViewHeader;
 class LabelOrList;
 class QAbstractItemModel;
 class MWidget;
@@ -36,6 +37,10 @@ Q_SIGNALS:
 
 	void clicked(const QModelIndex which);
 
+protected Q_SLOTS:
+
+	void setBusyStatus(bool busy);
+
 protected:
 
 	void createCommonContent(QAbstractItemModel *itemModel,
@@ -50,6 +55,8 @@ protected:
 private:
 
 	Q_DISABLE_COPY(SelectionPage);
+
+	ViewHeader *m_header;
 
 };
 

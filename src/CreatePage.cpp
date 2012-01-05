@@ -11,7 +11,6 @@
 #include "TagTypeListModel.h"
 #include "TagTypeListCellCreator.h"
 #include "LabelOrList.h"
-#include "UIUtil.h"
 
 static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 {
