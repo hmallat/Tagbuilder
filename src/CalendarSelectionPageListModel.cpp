@@ -82,7 +82,7 @@ CalendarSelectionPageListModel(CalendarSelectionPageListModel::ListType type,
 	setGrouped(true);
 }
 
-void CalendarSelectionPageListModel::fetch(void)
+bool CalendarSelectionPageListModel::fetch(void)
 {
 	if (m_fetch != NULL) {
 		delete m_fetch;
@@ -121,8 +121,10 @@ void CalendarSelectionPageListModel::fetch(void)
 	mDebug(__func__) << "Starting fetch. ";
 	if (m_fetch->start() == false) {
 		mDebug(__func__) << "Cannot fetch contacts. ";
-		/* TODO: indicate in UI */
+		return false;
 	}
+
+	return true;
 }
 
 void CalendarSelectionPageListModel::resultsAvailable(void)

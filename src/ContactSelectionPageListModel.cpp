@@ -22,7 +22,6 @@ ContactSelectionPageListModel(QContactManager *manager,
 			      Util::ContactDetails requiredDetails,
 			      QObject *parent)
 	: MAbstractItemModel(parent),
-	  m_fetchDone(true),
 	  m_manager(manager),
 	  m_fetch(0),
 	  m_contacts(),
@@ -30,21 +29,17 @@ ContactSelectionPageListModel(QContactManager *manager,
 	  m_requiredDetails(requiredDetails)
 {
 	setGrouped(true);
+}
 
-	/* Not really needed, but keep for reference */
-	QContactSortOrder order;
-	order.setBlankPolicy(QContactSortOrder::BlanksFirst);
-	order.setCaseSensitivity(Qt::CaseInsensitive);
-	order.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
-				      QContactDisplayLabel::FieldLabel);
-	order.setDirection(Qt::AscendingOrder);
-	
-	QList<QContactSortOrder> sorts;
-	sorts << order;
+bool ContactSelectionPageListModel::fetch(void)
+{
+	if (m_fetch != NULL) {
+		delete m_fetch;
+		m_fetch = NULL;
+	}
 
 	m_fetch = new QContactFetchRequest(this);
-	m_fetch->setManager(manager);
-	m_fetch->setSorting(sorts);
+	m_fetch->setManager(m_manager);
 
 	connect(m_fetch, SIGNAL(resultsAvailable()),
 		this, SLOT(resultsAvailable()));
@@ -54,16 +49,10 @@ ContactSelectionPageListModel(QContactManager *manager,
 	mDebug(__func__) << "Starting fetch. ";
 	if (m_fetch->start() == false) {
 		mDebug(__func__) << "Cannot fetch contacts. ";
-		/* TODO: indicate in UI */
-	} else {
-		/* It's ongoing now! */
-		m_fetchDone = false;
+		return false;
 	}
-}
 
-bool ContactSelectionPageListModel::isFetchDone(void)
-{
-	return m_fetchDone;
+	return true;
 }
 
 void ContactSelectionPageListModel::resultsAvailable(void)
@@ -140,8 +129,7 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 	Q_EMIT(layoutChanged());
 
 done:
-	m_fetchDone = true;
-	Q_EMIT(fetchDone());
+	Q_EMIT(ready());
 }
 
 void ContactSelectionPageListModel::stateChanged(QContactAbstractRequest::State)

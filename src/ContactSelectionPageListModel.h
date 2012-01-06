@@ -44,11 +44,11 @@ public:
 
 	QContact contact(const QModelIndex &index) const;
 
-	bool isFetchDone(void);
+	bool fetch(void);
 
 Q_SIGNALS:
 
-	void fetchDone(void);
+	void ready(void);
 
 protected Q_SLOTS:
 

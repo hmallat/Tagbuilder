@@ -48,7 +48,7 @@ public:
 
 	QModelIndex groupClosestToNow(void) const;
 
-	void fetch(void);
+	bool fetch(void);
 
 Q_SIGNALS:
 

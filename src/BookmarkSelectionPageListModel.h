@@ -44,6 +44,12 @@ public:
 
 	QNdefMessage bookmark(const QModelIndex &index) const;
 
+	bool fetch(void);
+
+Q_SIGNALS:
+
+	void ready(void);
+
 protected:
 
 	QList<struct Bookmark> m_bookmarks;

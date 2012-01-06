@@ -43,10 +43,11 @@ void ContactSelectionPage::createContent(void)
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(contactSelected(const QModelIndex &)));
 
-	if (m_model->isFetchDone() == false) {
+	connect(m_model, SIGNAL(ready()), this, SLOT(clearBusy()));
+	if (m_model->fetch() == true) {
 		setBusy();
-		connect(m_model, SIGNAL(fetchDone()),
-			this, SLOT(clearBusy()));
+	} else {
+		/* TODO: message box or some other indication */
 	}
 }
 

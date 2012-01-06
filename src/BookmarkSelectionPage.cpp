@@ -39,6 +39,13 @@ void BookmarkSelectionPage::createContent(void)
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(bookmarkSelected(const QModelIndex &)));
+
+	connect(m_model, SIGNAL(ready()), this, SLOT(clearBusy()));
+	if (m_model->fetch() == true) {
+		setBusy();
+	} else {
+		/* TODO: message box or some other indication */
+	}
 }
 
 void BookmarkSelectionPage::bookmarkSelected(const QModelIndex &which)

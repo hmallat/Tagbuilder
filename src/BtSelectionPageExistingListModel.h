@@ -22,6 +22,12 @@ public:
 	BtSelectionPageExistingListModel(BluezSupplicant *bluez,
 					 QObject *parent = 0);
 
+	bool isReady(void);
+
+Q_SIGNALS:
+
+	void ready(void);
+
 private Q_SLOTS:
 
 	void initialized(void);
@@ -31,6 +37,10 @@ private Q_SLOTS:
 	void deviceRemoved(QDBusObjectPath which);
 
 	void deviceUpdated(QDBusObjectPath which);
+
+private:
+
+	bool m_ready;
 
 };
 

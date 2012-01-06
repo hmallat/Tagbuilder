@@ -50,6 +50,18 @@ void BtSelectionPage::createContent(void)
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(deviceSelected(const QModelIndex &)));
+
+	if (m_type == SelectFromScanned) {
+		setBusy(); /* Never clears */
+	} else {
+		BtSelectionPageExistingListModel *e_model =
+			static_cast<BtSelectionPageExistingListModel *>(m_model);
+		if (e_model->isReady() == false) {
+			setBusy();
+			connect(e_model, SIGNAL(ready()),
+				this, SLOT(clearBusy()));
+		}
+	}
 }
 
 void BtSelectionPage::deviceSelected(const QModelIndex &which)

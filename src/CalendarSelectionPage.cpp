@@ -43,7 +43,11 @@ void CalendarSelectionPage::createContent(void)
 		this, SLOT(calendarItemSelected(const QModelIndex &)));
 
 	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
-	m_model->fetch();
+	if (m_model->fetch() == true) {
+		setBusy();
+	} else {
+		/* TODO: message box or some other indication */
+	}
 }
 
 void CalendarSelectionPage::calendarItemSelected(const QModelIndex &which)
@@ -54,6 +58,8 @@ void CalendarSelectionPage::calendarItemSelected(const QModelIndex &which)
 
 void CalendarSelectionPage::itemsReady(void)
 {
+	clearBusy();
+
 	QModelIndex group = m_model->groupClosestToNow();
 	if (group.isValid()) {
 		mDebug(__func__) 

@@ -99,7 +99,10 @@ BookmarkSelectionPageListModel(QObject *parent)
 					     this))
 {
 	setGrouped(false);
+}
 
+bool BookmarkSelectionPageListModel::fetch(void)
+{
 	QSparqlQuery q = QSparqlQuery("select ?b where { ?b a nfo:Bookmark }");
 	m_result = m_connection->exec(q);
 	if (m_result == 0 || m_result->hasError() == true) {
@@ -107,12 +110,12 @@ BookmarkSelectionPageListModel(QObject *parent)
 				 << ((m_result == 0) 
 				     ? "Null result"
 				     : m_result->lastError().message());
-		/* TODO: indicate in UI */
-	} else {
-		connect(m_result, SIGNAL(finished()),
-			this, SLOT(queryFinished()));
-	}
+		return false;
+	} 
 
+	connect(m_result, SIGNAL(finished()),
+		this, SLOT(queryFinished()));
+	return true;
 }
 
 void BookmarkSelectionPageListModel::queryFinished(void)
@@ -122,6 +125,7 @@ void BookmarkSelectionPageListModel::queryFinished(void)
 	if (m_result->hasError() == true) {
 		mDebug(__func__) << "Failed to execute query: "
 				 << m_result->lastError().message();
+		goto done;
 	} else {
 		mDebug(__func__) << "Query returned " 
 				 << m_result->size() 
@@ -143,8 +147,7 @@ void BookmarkSelectionPageListModel::queryFinished(void)
 
 	if (marks.length() == 0) {
 		mDebug(__func__) << "Nothing to be inserted. ";
-		/* TODO: indicate in UI */
-		return;
+		goto done;
 	}
 
 	Q_EMIT(layoutAboutToBeChanged());
@@ -154,6 +157,9 @@ void BookmarkSelectionPageListModel::queryFinished(void)
 	endInsertRows();
 
 	Q_EMIT(layoutChanged());
+
+done:
+	Q_EMIT(ready());
 }
 
 int BookmarkSelectionPageListModel::groupCount(void) const
