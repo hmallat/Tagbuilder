@@ -57,6 +57,8 @@ public:
 
 	QItemSelectionModel *selectionModel(void);
 
+	void selectItem(const QModelIndex &index);
+
 Q_SIGNALS:
 
 	void itemClicked(const QModelIndex &);

@@ -14,6 +14,7 @@
 #include <MAction>
 #include <MLabel>
 #include <MContentItem>
+#include <MAbstractItemModel>
 
 SelectionPage::SelectionPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
@@ -93,4 +94,24 @@ void SelectionPage::setBusy(void)
 void SelectionPage::clearBusy(void)
 {
 	m_header->clearBusy();
+}
+
+void SelectionPage::selectAll(MAbstractItemModel *itemModel)
+{
+	if (itemModel->isGrouped() == true) {
+		QModelIndex p;
+		for (int i = 0; i < itemModel->groupCount(); i++) {
+			QModelIndex g = itemModel->index(i, 0, p);
+			for (int j = 0; j < itemModel->rowCountInGroup(i); j++) {
+				QModelIndex s = itemModel->index(j, 0, g);
+				m_list->selectItem(s);
+			}
+		}
+	} else {
+		QModelIndex p;
+		for (int j = 0; j < itemModel->rowCountInGroup(0); j++) {
+			QModelIndex s = itemModel->index(j, 0, p);
+			m_list->selectItem(s);
+		}
+	}
 }

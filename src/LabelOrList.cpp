@@ -172,4 +172,7 @@ QItemSelectionModel *LabelOrList::selectionModel(void)
 	return m_list->selectionModel();
 }
 
-
+void LabelOrList::selectItem(const QModelIndex &index)
+{
+	m_list->selectItem(index);
+}

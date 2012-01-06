@@ -49,6 +49,7 @@ void CalendarDetailPicker::createContent(void)
 			    true);
 
 	connect(this, SIGNAL(done()), this, SLOT(pickingDone()));
+	selectAll(m_model);
 }
 
 void CalendarDetailPicker::pickingDone(void)

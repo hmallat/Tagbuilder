@@ -15,7 +15,7 @@
 
 class ViewHeader;
 class LabelOrList;
-class QAbstractItemModel;
+class MAbstractItemModel;
 class MWidget;
 template <class C> class MAbstractCellCreator;
 
@@ -44,6 +44,8 @@ protected Q_SLOTS:
 	void clearBusy(void);
 
 protected:
+
+	void selectAll(MAbstractItemModel *itemModel);
 
 	void createCommonContent(QAbstractItemModel *itemModel,
 				 MAbstractCellCreator<MWidgetController> *(*getCreator)(void),

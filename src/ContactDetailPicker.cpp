@@ -59,6 +59,7 @@ void ContactDetailPicker::createContent(void)
 			this, SLOT(detailClicked(const QModelIndex)));
 	} else {
 		connect(this, SIGNAL(done()), this, SLOT(pickingDone()));
+		selectAll(m_model);
 	}
 }
 
