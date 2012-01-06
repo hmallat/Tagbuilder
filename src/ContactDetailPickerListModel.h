@@ -27,8 +27,7 @@ class ContactDetailPickerListModel : public MAbstractItemModel
 
 public:
 
-	ContactDetailPickerListModel(const QContact &contact,
-				     Util::ContactDetails details,
+	ContactDetailPickerListModel(Util::ContactDetails details,
 				     QObject *parent = 0);
 
 	virtual int groupCount(void) const;
@@ -43,9 +42,11 @@ public:
 
 	const QContactDetail detail(const QModelIndex &index) const;
 
+	void setContact(const QContact &contact);
+
 private:
 
-	QContact m_contact;
+	Util::ContactDetails m_filter;
 
 	QList<enum Util::ContactDetail> m_types;
 

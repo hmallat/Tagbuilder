@@ -31,8 +31,9 @@ CalendarDetailPicker::CalendarDetailPicker(const QOrganizerItem item,
 					   QGraphicsItem *parent)
 	: SelectionPage(parent),
 	  m_item(item),
-	  m_model(new CalendarDetailPickerListModel(m_item, this))
+	  m_model(new CalendarDetailPickerListModel(this))
 {
+	m_model->setOrganizerItem(item);
 }
 
 CalendarDetailPicker::~CalendarDetailPicker(void)

@@ -11,12 +11,12 @@
 #include "ContactDetailPicker.h"
 #include "ContactDetailPickerListCellCreator.h"
 #include "ContactDetailPickerListModel.h"
+#include "LabelOrList.h"
 #include "VCardNdefRecord.h"
 #include "Util.h"
 #include "Tag.h"
 
 #include <MLabel>
-#include <MList>
 #include <MContainer>
 #include <MAction>
 #include <QGraphicsLinearLayout>
@@ -28,11 +28,16 @@
 
 #include <MDebug>
 
+static MAbstractCellCreator<MWidgetController> *_getCreator(void)
+{
+	return new ContactDetailPickerListCellCreator;
+}
+
 ContactPage::ContactPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
 	  m_info(),
-	  m_contactTitle(0),
-	  m_contactDetails(0)
+	  m_contactDetails(0),
+	  m_model(new ContactDetailPickerListModel(Util::AllDetails, this))
 {
 }
 
@@ -53,24 +58,15 @@ void ContactPage::createPageSpecificActions(void)
 
 void ContactPage::createPageSpecificContent(void)
 {
-	m_contactTitle = new MLabel();
-	m_contactTitle->setSizePolicy(QSizePolicy::Minimum, 
-				      QSizePolicy::Fixed);
-	m_contactTitle->setAlignment(Qt::AlignLeft);
-	m_contactTitle->setWordWrap(true);
-	layout()->addItem(m_contactTitle);
-	layout()->setAlignment(m_contactTitle, Qt::AlignLeft);
-
-	m_contactDetails = new MList();
-	m_contactDetails->setShowGroups(true);
-	ContactDetailPickerListCellCreator *creator = 
-		new ContactDetailPickerListCellCreator;
-	m_contactDetails->setCellCreator(creator);
+	m_contactDetails = new LabelOrList(m_model,
+					   _getCreator,
+					   tr("<h1>No contact selected</h1>"),
+					   true,
+					   false);
 	m_contactDetails->setSizePolicy(QSizePolicy::Preferred, 
 					QSizePolicy::Preferred);
 	layout()->addItem(m_contactDetails);
 	layout()->setAlignment(m_contactDetails, Qt::AlignCenter);
-
 }
 
 void ContactPage::setupNewData(void) 
@@ -162,16 +158,7 @@ void ContactPage::setContact(const QContact contact)
 	mDebug(__func__) << contact.displayLabel();
 	m_info = contact;
 
-	if (m_info.isEmpty() == true) {
-		m_contactTitle->setText(tr("No contact selected"));
-	} else {
-		m_contactTitle->setText(tr("Contact details"));
-	}
-	ContactDetailPickerListModel *model = 
-		new ContactDetailPickerListModel(m_info,
-						 Util::AllDetails,
-						 m_contactDetails);
-	m_contactDetails->setItemModel(model);
+	m_model->setContact(m_info);
 
 	setContentValidity(m_info.isEmpty() ? false : true);
 	updateSize();

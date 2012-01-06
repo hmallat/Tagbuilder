@@ -34,11 +34,11 @@ ContactDetailPicker::ContactDetailPicker(const QContact contact,
 					 QGraphicsItem *parent)
 	: SelectionPage(parent),
 	  m_contact(contact),
-	  m_model(new ContactDetailPickerListModel(m_contact, 
-						   details,
+	  m_model(new ContactDetailPickerListModel(details,
 						   this)),
 	  m_single(singleDetailOnly)
 {
+	m_model->setContact(m_contact);
 }
 
 ContactDetailPicker::~ContactDetailPicker(void)

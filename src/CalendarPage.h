@@ -14,8 +14,9 @@
 #include <QOrganizerItem>
 #include <QOrganizerManager>
 
-class MList;
 class MLabel;
+class LabelOrList;
+class CalendarDetailPickerListModel;
 
 QTM_USE_NAMESPACE;
 
@@ -65,9 +66,9 @@ private:
 
 	QOrganizerItem m_info;
 
-	MLabel *m_calendarTitle;
+	LabelOrList *m_calendarDetails;
 
-	MList *m_calendarDetails;
+	CalendarDetailPickerListModel *m_model;
 
 };
 

@@ -22,62 +22,64 @@
 /* TODO: maybe add more details, at least online accounts */
 
 CalendarDetailPickerListModel::
-CalendarDetailPickerListModel(const QOrganizerItem &item,
-			      QObject *parent)
+CalendarDetailPickerListModel(QObject *parent)
 	: MAbstractItemModel(parent),
-	  m_item(item),
 	  m_types(),
 	  m_details()
 {
 	setGrouped(true);
+}
+
+void CalendarDetailPickerListModel::setOrganizerItem(const QOrganizerItem &item)
+{
 
 	QList<enum DetailType> types;
 	QMap<enum DetailType, QList<QOrganizerItemDetail> > details;
 
 	QList<QOrganizerItemDetail> labels = 
-		m_item.details(QOrganizerItemDisplayLabel::DefinitionName);
+		item.details(QOrganizerItemDisplayLabel::DefinitionName);
 	if (labels.length() != 0) {
 		types << Label;
 		details[Label] = labels;
 	}
 
 	QList<QOrganizerItemDetail> eventtimes = 
-		m_item.details(QOrganizerEventTime::DefinitionName);
+		item.details(QOrganizerEventTime::DefinitionName);
 	if (eventtimes.length() != 0) {
 		types << EventTime;
 		details[EventTime] = eventtimes;
 	}
 
 	QList<QOrganizerItemDetail> todotimes = 
-		m_item.details(QOrganizerTodoTime::DefinitionName);
+		item.details(QOrganizerTodoTime::DefinitionName);
 	if (todotimes.length() != 0) {
 		types << TodoTime;
 		details[TodoTime] = todotimes;
 	}
 
 	QList<QOrganizerItemDetail> jourtimes = 
-		m_item.details(QOrganizerJournalTime::DefinitionName);
+		item.details(QOrganizerJournalTime::DefinitionName);
 	if (jourtimes.length() != 0) {
 		types << JournalTime;
 		details[JournalTime] = jourtimes;
 	}
 
 	QList<QOrganizerItemDetail> locs = 
-		m_item.details(QOrganizerItemLocation::DefinitionName);
+		item.details(QOrganizerItemLocation::DefinitionName);
 	if (locs.length() != 0) {
 		types << Location;
 		details[Location] = locs;
 	}
 
 	QList<QOrganizerItemDetail> descrs = 
-		m_item.details(QOrganizerItemDescription::DefinitionName);
+		item.details(QOrganizerItemDescription::DefinitionName);
 	if (descrs.length() != 0) {
 		types << Description;
 		details[Description] = descrs;
 	}
 
 	QList<QOrganizerItemDetail> comms = 
-		m_item.details(QOrganizerItemComment::DefinitionName);
+		item.details(QOrganizerItemComment::DefinitionName);
 	if (comms.length() != 0) {
 		types << Comment;
 		details[Comment] = comms;
@@ -85,12 +87,17 @@ CalendarDetailPickerListModel(const QOrganizerItem &item,
 
 	Q_EMIT(layoutAboutToBeChanged());
 
+	if (m_types.length() > 0) {
+		beginRemoveRows(QModelIndex(), 0, m_types.length() - 1, false);
+		m_types.clear();
+		m_details.clear();
+		endRemoveRows();
+	}
+
 	if (types.length() > 0) {
 		beginInsertRows(QModelIndex(), 0, types.length() - 1, false);
-	}
-	m_types = types;
-	m_details = details;
-	if (types.length() > 0) {
+		m_types = types;
+		m_details = details;
 		endInsertRows();
 	}
 

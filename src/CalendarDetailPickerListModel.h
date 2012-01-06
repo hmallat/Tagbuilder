@@ -34,8 +34,7 @@ class CalendarDetailPickerListModel : public MAbstractItemModel
 
 public:
 
-	CalendarDetailPickerListModel(const QOrganizerItem &item,
-				     QObject *parent = 0);
+	CalendarDetailPickerListModel(QObject *parent = 0);
 
 	virtual int groupCount(void) const;
 
@@ -49,9 +48,9 @@ public:
 
 	const QOrganizerItemDetail detail(const QModelIndex &index) const;
 
-private:
+	void setOrganizerItem(const QOrganizerItem &item);
 
-	QOrganizerItem m_item;
+private:
 
 	QList<enum DetailType> m_types;
 

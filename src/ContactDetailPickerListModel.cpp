@@ -18,49 +18,51 @@
 /* TODO: maybe add more details, at least online accounts */
 
 ContactDetailPickerListModel::
-ContactDetailPickerListModel(const QContact &contact,
-			     Util::ContactDetails d,
+ContactDetailPickerListModel(Util::ContactDetails d,
 			     QObject *parent)
 	: MAbstractItemModel(parent),
-	  m_contact(contact),
+	  m_filter(d),
 	  m_types(),
 	  m_details()
 {
 	setGrouped(true);
+}
 
+void ContactDetailPickerListModel::setContact(const QContact &contact)
+{
 	QList<enum Util::ContactDetail> types;
 	QMap<enum Util::ContactDetail, QList<QContactDetail> > details;
 
-	if ((d & Util::Name) != 0) {
+	if ((m_filter & Util::Name) != 0) {
 		QList<QContactDetail> names = 
-			m_contact.details(QContactName::DefinitionName);
+			contact.details(QContactName::DefinitionName);
 		if (names.length() != 0) {
 			types << Util::Name;
 			details[Util::Name] = names;
 		}
 	}
 
-	if ((d & Util::PhoneNumber) != 0) {
+	if ((m_filter & Util::PhoneNumber) != 0) {
 		QList<QContactDetail> numbers = 
-			m_contact.details(QContactPhoneNumber::DefinitionName);
+			contact.details(QContactPhoneNumber::DefinitionName);
 		if (numbers.length() != 0) {
 			types << Util::PhoneNumber;
 			details[Util::PhoneNumber] = numbers;
 		}
 	}
 
-	if ((d & Util::EmailAddress) != 0) {
+	if ((m_filter & Util::EmailAddress) != 0) {
 		QList<QContactDetail> emails = 
-			m_contact.details(QContactEmailAddress::DefinitionName);
+			contact.details(QContactEmailAddress::DefinitionName);
 		if (emails.length() != 0) {
 			types << Util::EmailAddress;
 			details[Util::EmailAddress] = emails;
 		}
 	}
 
-	if ((d & Util::PhysicalAddress) != 0) {
+	if ((m_filter & Util::PhysicalAddress) != 0) {
 		QList<QContactDetail> addresses = 
-			m_contact.details(QContactAddress::DefinitionName);
+			contact.details(QContactAddress::DefinitionName);
 		if (addresses.length() != 0) {
 			types << Util::PhysicalAddress;
 			details[Util::PhysicalAddress] = addresses;
@@ -69,12 +71,17 @@ ContactDetailPickerListModel(const QContact &contact,
 	
 	Q_EMIT(layoutAboutToBeChanged());
 
+	if (m_types.length() > 0) {
+		beginRemoveRows(QModelIndex(), 0, m_types.length() - 1, false);
+		m_types.clear();
+		m_details.clear();
+		endRemoveRows();
+	}
+
 	if (types.length() > 0) {
 		beginInsertRows(QModelIndex(), 0, types.length() - 1, false);
-	}
-	m_types = types;
-	m_details = details;
-	if (types.length() > 0) {
+		m_types = types;
+		m_details = details;
 		endInsertRows();
 	}
 

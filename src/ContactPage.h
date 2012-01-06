@@ -15,7 +15,8 @@
 #include <QContactManager>
 
 class MLabel;
-class MList;
+class LabelOrList;
+class ContactDetailPickerListModel;
 
 QTM_USE_NAMESPACE;
 
@@ -63,9 +64,9 @@ private:
 
 	QContact m_info;
 
-	MLabel *m_contactTitle;
+	LabelOrList *m_contactDetails;
 
-	MList *m_contactDetails;
+	ContactDetailPickerListModel *m_model;
 
 };
 

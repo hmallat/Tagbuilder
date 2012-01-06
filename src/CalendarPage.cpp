@@ -12,11 +12,11 @@
 #include "CalendarDetailPicker.h"
 #include "CalendarDetailPickerListCellCreator.h"
 #include "CalendarDetailPickerListModel.h"
+#include "LabelOrList.h"
 #include "VCalNdefRecord.h"
 #include "Util.h"
 
 #include <MLabel>
-#include <MList>
 #include <MAction>
 #include <QGraphicsLinearLayout>
 #include <QVersitOrganizerExporter>
@@ -26,11 +26,16 @@
 
 #include <MDebug>
 
+static MAbstractCellCreator<MWidgetController> *_getCreator(void)
+{
+	return new CalendarDetailPickerListCellCreator;
+}
+
 CalendarPage::CalendarPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
 	  m_info(),
-	  m_calendarTitle(0),
-	  m_calendarDetails(0)
+	  m_calendarDetails(0),
+	  m_model(new CalendarDetailPickerListModel(this))
 {
 }
 
@@ -58,24 +63,16 @@ void CalendarPage::createPageSpecificActions(void)
 
 void CalendarPage::createPageSpecificContent(void)
 {
-	m_calendarTitle = new MLabel();
-	m_calendarTitle->setSizePolicy(QSizePolicy::Minimum, 
-				       QSizePolicy::Fixed);
-	m_calendarTitle->setAlignment(Qt::AlignLeft);
-	m_calendarTitle->setWordWrap(true);
-	layout()->addItem(m_calendarTitle);
-	layout()->setAlignment(m_calendarTitle, Qt::AlignLeft);
-
-	m_calendarDetails = new MList();
-	m_calendarDetails->setShowGroups(true);
-	CalendarDetailPickerListCellCreator *creator = 
-		new CalendarDetailPickerListCellCreator;
-	m_calendarDetails->setCellCreator(creator);
+	m_calendarDetails = new LabelOrList(m_model,
+					    _getCreator,
+					    tr("<h1>No calendar entry "
+					       "selected</h1>"),
+					    true,
+					    false);
 	m_calendarDetails->setSizePolicy(QSizePolicy::Preferred, 
 					 QSizePolicy::Preferred);
 	layout()->addItem(m_calendarDetails);
 	layout()->setAlignment(m_calendarDetails, Qt::AlignCenter);
-
 }
 
 void CalendarPage::setupNewData(void) 
@@ -176,15 +173,7 @@ void CalendarPage::setCalendarItem(const QOrganizerItem item)
 {
 	m_info = item;
 
-	if (m_info.isEmpty() == true) {
-		m_calendarTitle->setText(tr("No calendar entry selected"));
-	} else {
-		m_calendarTitle->setText(tr("Calendar entry details"));
-	}
-	CalendarDetailPickerListModel *model = 
-		new CalendarDetailPickerListModel(m_info,
-						  m_calendarDetails);
-	m_calendarDetails->setItemModel(model);
+	m_model->setOrganizerItem(m_info);
 
 	setContentValidity(m_info.isEmpty() ? false : true);
 	updateSize();
