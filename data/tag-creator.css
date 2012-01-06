@@ -1,3 +1,8 @@
+#CommonApplicationPage {
+  background-image: none;
+  background-color: #f8f8f8;
+}
+
 #CommonHeaderPanel {
   background-image: none;
   background-color: #404040;
@@ -6,3 +11,14 @@
 #CommonHeader {
   color: #ffffff;
 }
+
+#CommonContentItem {
+  background-image: none;
+  background-color: #f8f8f8;
+}
+
+#CommonContentItem:pressed {
+  background-image: none;
+  background-color: #808080;
+}
+

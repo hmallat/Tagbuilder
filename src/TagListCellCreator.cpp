@@ -16,12 +16,12 @@
 void TagListCellCreator::updateCell(const QModelIndex &index, 
 				    MWidget *cell) const
 {
-	MContentItem *contentItem = qobject_cast<MContentItem *>(cell);
 	QVariant data = index.data(Qt::DisplayRole);
 	const Tag *tag = data.value<const Tag *>();
+	quint32 total = Util::messageLength(tag->message());
+
+	MContentItem *contentItem = qobject_cast<MContentItem *>(cell);
 	contentItem->setTitle(tag->name());
 	contentItem->setImageID(Tag::icon(tag->type()));
-
-	quint32 total = Util::messageLength(tag->message());
 	contentItem->setSubtitle(QObject::tr("%1 bytes").arg(total));
 }

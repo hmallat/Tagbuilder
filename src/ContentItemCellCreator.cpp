@@ -31,6 +31,7 @@ MWidget *ContentItemCellCreator::createCell(const QModelIndex &index,
         
         if (cell == NULL) {
 		cell = new MContentItem();
+		cell->setStyleName("CommonContentItem");
         }
 
         updateCell(index, cell);
