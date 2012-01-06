@@ -11,6 +11,8 @@
 
 #include <QNdefMessage>
 
+class QDateTime;
+
 QTM_USE_NAMESPACE;
 
 class Util
@@ -40,6 +42,13 @@ public:
 	static QString phoneNumberSubtypeToString(const QString &type);
 
 	static QString contactDetailContextToString(const QString &type);
+
+	static QString eventTimeToString(const QDateTime &begin,
+					 const QDateTime &end,
+					 bool forceDate = false);
+
+	static QString eventDurationToString(const QDateTime &begin,
+					     const QDateTime &end);
 
 };
 

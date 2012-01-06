@@ -160,17 +160,14 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		if (time.isAllDay() == true) {
 			/* Time component is meaningless */
 			rep += s.date().toString(Qt::SystemLocaleShortDate);
-		} else if (e == QDateTime()) { 
-			/* No end time, only start time */
-			rep += s.toString(Qt::SystemLocaleShortDate);
 		} else {
-			rep += s.toString(Qt::SystemLocaleShortDate);
-			rep += " - ";
-			rep += e.toString(Qt::SystemLocaleShortDate);
+			rep += Util::eventTimeToString(s, e, true);
 		}
 		
 		parameters << rep;
-		parameters << (time.isAllDay() ? tr("All-day event") : "");
+		parameters << (time.isAllDay() 
+			       ? tr("All-day event") 
+			       : Util::eventDurationToString(s, e));
 
 	} else if (type == JournalTime) {
 		QOrganizerJournalTime time = 

@@ -7,7 +7,6 @@ GENERAL:
 - Drop fields that are not supported from harvested records, warn when dropping
   unsupported contents from tags
 - Multi record message support?
-- List index for lists that can be long (contacts, calendar at least)
 - Edit fields "Done" instead of enter for single lines at least
 - Set keyboard in text record edit text field according to language?
 - Make sure bytes are updated always (at least when removing sp titles
@@ -19,12 +18,7 @@ BLUETOOTH:
 
 EVENTS:
 
-- Sensible time display formats for events (all day, start only,
-start+end on the same day, separate days)
-
 CONTACTS:
-
-- move the detail flags to a more sensible class?
 
 URL:
 
@@ -33,11 +27,9 @@ URL:
 MISC: (rearrange these)
 
 * online help?
-* progress indicator for BT scanning/contact fetching
 * exploratory testing
 * avatars for contacts, icons for BT devices?
 * indications of error situations
-* If contact tag name is not edited, prefill with contact name when selected?
 * calendar testing with different entries
 * signing?
 * optimize Sp implementation, creating it all the time when editing Sp

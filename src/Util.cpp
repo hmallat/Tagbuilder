@@ -136,3 +136,87 @@ QString Util::contactDetailContextToString(const QString &ctxt)
 	}
 	return QObject::tr("");
 }
+
+QString Util::eventTimeToString(const QDateTime &begin,
+				const QDateTime &end,
+				bool forceDate)
+{
+	/* Make a nice string rep of an event's time range, without
+	   repeating fields that don't need to be repeated. */
+
+	if (end == QDateTime()) { 
+		return begin.time().toString(Qt::SystemLocaleShortDate);
+	} 
+
+	if (begin.date() == end.date()) { /* within the same day */
+		QString s;
+
+		if (forceDate == true) {
+			s += begin.date().toString(Qt::SystemLocaleShortDate);
+			s += " ";
+		}
+
+		s += begin.time().toString(Qt::SystemLocaleShortDate);
+		s += "-";
+		s += end.time().toString(Qt::SystemLocaleShortDate);
+
+		return s;
+	}
+
+	return 
+		begin.toString(Qt::SystemLocaleShortDate) +
+		"-" +
+		end.toString(Qt::SystemLocaleShortDate);
+}
+
+QString Util::eventDurationToString(const QDateTime &begin,
+				    const QDateTime &end)
+{
+	if (end == QDateTime()) { 
+		return "";
+	}
+
+	int diff = begin.secsTo(end);
+	QString rep;
+
+	if (diff >= 24*60*60) {
+		int days = diff / (24*60*60);
+		rep += QString("%1 %2").arg(days).arg(days == 1 
+						      ? QObject::tr("day") 
+						      : QObject::tr("days"));
+		diff %= 24*60*60;
+		if (diff != 0) {
+			rep += " ";
+		}
+	}
+
+	if (diff >= 60*60) {
+		int hours = diff / (60*60);
+		rep += QString("%1 %2").arg(hours).arg(hours == 1 
+						       ? QObject::tr("hour") 
+						       : QObject::tr("hours"));
+		diff %= 60*60;
+		if (diff != 0) {
+			rep += " ";
+		}
+	}
+
+	if (diff >= 60) {
+		int mins = diff / 60;
+		rep += QString("%1 %2").arg(mins).arg(mins == 1 
+						      ? QObject::tr("minute") 
+						      : QObject::tr("minutes"));
+		diff %= 60;
+		if (diff != 0) {
+			rep += " ";
+		}
+	}
+
+	if (diff > 0) {
+		rep += QString("%1 %2").arg(diff).arg(diff == 1 
+						      ? QObject::tr("second") 
+						      : QObject::tr("seconds"));
+	}
+
+	return rep;
+}

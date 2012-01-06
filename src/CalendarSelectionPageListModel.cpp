@@ -7,6 +7,7 @@
  */
 
 #include "CalendarSelectionPageListModel.h"
+#include "Util.h"
 
 #include <QMap>
 #include <QOrganizerItemDetailFilter>
@@ -237,20 +238,8 @@ QVariant CalendarSelectionPageListModel::itemData(int row,
 	if (a == true) {
 		/* Time component is meaningless */
 		stamp = tr("All-day event");
-	} else if (e == QDateTime()) { 
-		/* No end time, only start time */
-		stamp = s.time().toString(Qt::SystemLocaleShortDate);
-	} else if (s.date() == e.date()) { 
-		/* begins, ends on the same day -> only print time */
-		stamp = 
-			s.time().toString(Qt::SystemLocaleShortDate) +
-			" - " +
-			e.time().toString(Qt::SystemLocaleShortDate);
 	} else {
-		stamp = 
-			s.toString(Qt::SystemLocaleShortDate) +
-			" - " +
-			e.toString(Qt::SystemLocaleShortDate);
+		stamp = Util::eventTimeToString(s, e);
 	}
 	parameters << stamp;
 
