@@ -11,6 +11,8 @@
 #include "ContactSelectionPageListModel.h"
 #include "LabelOrList.h"
 
+#include <MDebug>
+
 static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 {
 	return new ContactSelectionPageListCellCreator;

@@ -27,22 +27,6 @@ ViewHeader::ViewHeader(const QString text,
 		      QSizePolicy::Fixed);
 }
 
-void ViewHeader::setBusy(void)
-{
-	if (m_progress != NULL) {
-		m_progress->setVisible(true);
-		m_progress->setUnknownDuration(true);
-	}
-}
-
-void ViewHeader::clearBusy(void)
-{
-	if (m_progress != NULL) {
-		m_progress->setVisible(false);
-		m_progress->setUnknownDuration(false);
-	}
-}
-
 MLabel *ViewHeader::labelWidget(void)
 {
 	if (m_label == NULL) {
@@ -61,7 +45,7 @@ MProgressIndicator *ViewHeader::progressWidget(void)
 	if (m_progress == NULL) {
 		m_progress = new MProgressIndicator
 			(0, MProgressIndicator::spinnerType);
-		m_progress->setStyleName("CommonViewHeaderSpinner");
+		m_progress->setStyleName("CommonViewHeaderSpinnerInverted");
 		m_progress->setSizePolicy(QSizePolicy::Fixed, 
 					  QSizePolicy::Fixed);
 		clearBusy();
@@ -104,3 +88,16 @@ void ViewHeader::resizeEvent(QGraphicsSceneResizeEvent *event)
 		setLayout(createLayout());
 	}
 }
+
+void ViewHeader::setBusy(void)
+{
+	progressWidget()->setVisible(true);
+	progressWidget()->setUnknownDuration(true);
+}
+
+void ViewHeader::clearBusy(void)
+{
+	progressWidget()->setVisible(false);
+	progressWidget()->setUnknownDuration(false);
+}
+
