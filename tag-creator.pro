@@ -136,7 +136,7 @@ gfx.files	= \
 		data/tag-creator.jpeg \
 		data/tap.png
 
-trans.path	= $$PREFIX/share/l10n/tag-writing-plugin
+trans.path	= $$PREFIX/share/l10n/tag-creator
 trans.files	= \
 		tag-creator_en.qm \
 		tag-creator_fi.qm
@@ -145,4 +145,8 @@ desktop.path	= /usr/share/applications
 desktop.files	= \
 		data/tag-creator.desktop
 
-INSTALLS	+= target gfx trans desktop
+style.path	= /usr/share/themes/base/meegotouch/tag-creator/style
+style.files	= \
+		data/tag-creator.css
+
+INSTALLS	+= target gfx trans desktop style

@@ -12,6 +12,8 @@
 #include <MProgressIndicator>
 #include <QGraphicsLinearLayout>
 
+#include <MDebug>
+
 ViewHeader::ViewHeader(const QString text,
 		       QGraphicsItem *parent)
 	: MStylableWidget(parent),

@@ -32,7 +32,7 @@ public Q_SLOTS:
 
 protected:
 
-	void resizeEvent(QGraphicsSceneResizeEvent *event);
+	virtual void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 private:
 
