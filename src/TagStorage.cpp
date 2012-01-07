@@ -55,7 +55,7 @@ static bool _createStorageLocation(void)
 
 static QString _storageFilename(void)
 {
-	return _storageLocation() + "/" + "tag-creator-storage.bin";
+	return _storageLocation() + "/" + "storage.bin";
 }
 
 static bool _writeStorage(QList<Tag *> &contents)

@@ -5,12 +5,12 @@ MOBILITY	+= connectivity contacts organizer systeminfo versit
 QT		+= core
 QT		+= dbus
 
-TARGET		 = tag-creator
+TARGET		 = Tagbuilder
 
-PREFIX		 = /opt/tag-creator
+PREFIX		 = /opt/Tagbuilder
 
-QMAKE_CXXFLAGS	+= -Werror -DINSTALLPREFIX='\\\"/opt/tag-creator\\\"'
-QMAKE_CXXFLAGS  += -DVERSION_MAJOR=0 -DVERSION_MINOR=0 -DVERSION_MICRO=3
+QMAKE_CXXFLAGS	+= -Werror -DINSTALLPREFIX='\\\"/opt/Tagbuilder\\\"'
+QMAKE_CXXFLAGS  += -DVERSION_MAJOR=0 -DVERSION_MINOR=0 -DVERSION_MICRO=4
 
 OBJECTS_DIR	= ./obj
 MOC_DIR		= ./moc
@@ -71,7 +71,7 @@ HEADERS		+= \
 		src/WritePage.h
 
 SOURCES		+= \
-		src/tag-creator.cpp \
+		src/Tagbuilder.cpp \
 		src/BluezDevice.cpp \
 		src/BluezSupplicant.cpp \
 		src/BookmarkSelectionPage.cpp \
@@ -126,27 +126,27 @@ SOURCES		+= \
 		src/WritePage.cpp
 
 TRANSLATIONS	= \
-		tag-creator_en.ts \
-		tag-creator_fi.ts
+		Tagbuilder_en.ts \
+		Tagbuilder_fi.ts
 
 target.path	= $$PREFIX/bin
 
 gfx.path	= $$PREFIX/share/images
 gfx.files	= \
-		data/tag-creator.jpeg \
+		data/Tagbuilder.jpeg \
 		data/tap.png
 
-trans.path	= $$PREFIX/share/l10n/tag-creator
+trans.path	= $$PREFIX/share/l10n/Tagbuilder
 trans.files	= \
-		tag-creator_en.qm \
-		tag-creator_fi.qm
+		Tagbuilder_en.qm \
+		Tagbuilder_fi.qm
 
 desktop.path	= /usr/share/applications
 desktop.files	= \
-		data/tag-creator.desktop
+		data/Tagbuilder.desktop
 
-style.path	= /usr/share/themes/base/meegotouch/tag-creator/style
+style.path	= /usr/share/themes/base/meegotouch/Tagbuilder/style
 style.files	= \
-		data/tag-creator.css
+		data/Tagbuilder.css
 
 INSTALLS	+= target gfx trans desktop style

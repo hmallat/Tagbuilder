@@ -244,12 +244,12 @@ void MainPage::removeAllTags(void)
 void MainPage::showAbout(void)
 {
 	MMessageBox *box = 
-		new MMessageBox(tr("<big>NFC Tag Creator</big><br>"
+		new MMessageBox(tr("<big>NFC Tag Builder</big><br>"
                                   "<br>"
                                   "<br>v%1.%2.%3"
                                   "<br>"
                                   "Copyright (c) 2011 Hannu Mallat<br>"
-                                  "http://hannu.mallat.fi/n9/nfctagcreator<br>")
+                                  "http://hannu.mallat.fi/n9/nfctagbuilder<br>")
 				.arg(VERSION_MAJOR)
 				.arg(VERSION_MINOR)
 				.arg(VERSION_MICRO));

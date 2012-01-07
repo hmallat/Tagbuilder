@@ -1,11 +1,18 @@
-Source: tag-creator
+Source: Tagbuilder
 Section: user/other
 Priority: optional
 Maintainer: Hannu Mallat <hmallat@gmail.com>
 Build-Depends: debhelper (>= 7.0.0), libqtm-connectivity-dev (>= 1.2.1), libqtm-systeminfo-dev (>= 1.2.1)
 Standards-Version: 3.8.0
 
-Package: tag-creator
+Package: Tagbuilder
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: NFC Tag Creator
+Description: NFC Tag Builder
+  Read, write and create new NFC tags with a variery of information: 
+  bookmarks, contact information, calendar entries, free text or 
+  Bluetooth device connectivity details. You can use the created 
+  tags for instance to share your contact details with people, open
+  Bluetooth connections between your phone and non-NFC accessories, or 
+  create posters with web links people can read with their NFC phones. 
+

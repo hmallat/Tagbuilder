@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	MApplication app(argc, argv);
 	app.setOrganizationDomain("hannu.mallat.fi");
 	app.setOrganizationName("Hannu Mallat");
-	app.setApplicationName("Tag Creator");
+	app.setApplicationName("Tagbuilder");
 
 	MApplicationWindow window;
 	window.setPortraitOrientation();
