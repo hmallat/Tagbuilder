@@ -152,5 +152,7 @@ void LabeledTextEdit::adjustAction(void)
 
 void LabeledTextEdit::returnPressed(void)
 {
-	/* TODO */
+	/* TODO: could set focus to the next widget */
+	mDebug(__func__) << "Return pressed. ";
+	textWidget()->clearFocus();
 }
