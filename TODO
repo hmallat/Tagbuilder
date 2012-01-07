@@ -3,18 +3,19 @@ GENERAL:
 - Guideline: when reading a tag, don't copy unsupported stuff over verbatim,
   just issue a warning or something if data is dropped. Check that this is
   done for all types!
-- Styling
+- Styling (partly done)
 - Drop fields that are not supported from harvested records, warn when dropping
   unsupported contents from tags
 - Multi record message support?
-- Edit fields "Done" instead of enter for single lines at least
 - Set keyboard in text record edit text field according to language?
 - Make sure bytes are updated always (at least when removing sp titles
   currently it doesn't work)
+- Check why input limiting with regexes doesn't work on N9?
 
 BLUETOOTH:
 - full Nokia-proprietary BT2.0 support (need docs or more data)
 - check BT on/off/flight mode scenarios
+- automatic semicolon add/del for address field?
 
 EVENTS:
 
