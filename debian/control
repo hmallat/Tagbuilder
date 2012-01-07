@@ -1,11 +1,11 @@
-Source: Tagbuilder
+Source: tagbuilder
 Section: user/other
 Priority: optional
 Maintainer: Hannu Mallat <hmallat@gmail.com>
 Build-Depends: debhelper (>= 7.0.0), libqtm-connectivity-dev (>= 1.2.1), libqtm-systeminfo-dev (>= 1.2.1)
 Standards-Version: 3.8.0
 
-Package: Tagbuilder
+Package: tagbuilder
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: NFC Tag Builder

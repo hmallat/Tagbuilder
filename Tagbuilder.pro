@@ -133,7 +133,7 @@ target.path	= $$PREFIX/bin
 
 gfx.path	= $$PREFIX/share/images
 gfx.files	= \
-		data/Tagbuilder.jpeg \
+		data/Tagbuilder.png \
 		data/tap.png
 
 trans.path	= $$PREFIX/share/l10n/Tagbuilder

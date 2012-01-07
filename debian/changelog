@@ -1,22 +1,22 @@
-Tagbuilder (0.0.4) unstable; urgency=low
+tagbuilder (0.0.4) unstable; urgency=low
 
   * Styling, UI tweaking, name change. 
 
  -- Hannu Mallat <hmallat@gmail.com>  Sat, 07 Jan 2012 19:18:58 +0200
 
-Tagbuilder (0.0.3) unstable; urgency=low
+tagbuilder (0.0.3) unstable; urgency=low
 
   * A few features more to URL generation. 
 
  -- Hannu Mallat <hmallat@gmail.com>  Sun, 01 Jan 2012 12:34:37 +0200
 
-Tagbuilder (0.0.2) unstable; urgency=low
+tagbuilder (0.0.2) unstable; urgency=low
 
   * All features at least in alpha stage. 
 
  -- Hannu Mallat <hmallat@gmail.com>  Mon, 26 Dec 2011 12:53:47 +0200
 
-Tagbuilder (0.0.1) unstable; urgency=low
+tagbuilder (0.0.1) unstable; urgency=low
 
   * Initial build
 
