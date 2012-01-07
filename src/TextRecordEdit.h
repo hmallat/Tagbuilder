@@ -25,7 +25,8 @@ class TextRecordEdit : public MStylableWidget
 
 public:
 
-	TextRecordEdit(LabeledTextEdit::Style style,
+	TextRecordEdit(const QString actionKeyLabel,
+		       LabeledTextEdit::Style style,
 		       QGraphicsItem *parent = 0);
 
 	QString label(void) const;
@@ -61,6 +62,8 @@ private:
 	LabeledTextEdit *textWidget(void);
 
 	MComboBox *comboWidget(void);
+
+	QString m_actionLabel;
 
 	LabeledTextEdit::Style m_style;
 

@@ -16,6 +16,8 @@ class TagTypeListCellCreator : public ContentItemCellCreator
 
 public:
 
+	TagTypeListCellCreator(void);
+
 	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
 
 };

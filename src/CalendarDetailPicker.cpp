@@ -44,7 +44,7 @@ void CalendarDetailPicker::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("<h1>No calendar entry details to select</h1>"),
+			    tr("No calendar entry details to select from"),
 			    tr("Select calendar entry details"),
 			    true,
 			    true);

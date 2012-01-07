@@ -49,6 +49,8 @@ public:
 
 	static QString eventDurationToString(const QDateTime &begin,
 					     const QDateTime &end);
+	
+	static int imAttributeExtensionId(void);
 
 };
 

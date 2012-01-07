@@ -93,7 +93,8 @@ void CreateEditPage::createContent(void)
 	m_layout->setSizePolicy(QSizePolicy::Preferred, 
 				QSizePolicy::Minimum);
 
-	m_name = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_name = new LabeledTextEdit(tr("Ok"),
+				     LabeledTextEdit::SingleLineEditAndLabel);
 	m_name->setLabel(tr("Tag name"));
 	m_name->setPrompt(tr("Enter tag name"));
 	m_name->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);

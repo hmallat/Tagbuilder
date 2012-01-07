@@ -7,14 +7,20 @@
  */
 
 #include "LabeledTextEdit.h"
+#include "Util.h"
 
 #include <MLabel>
 #include <MTextEdit>
+#include <MInputMethodState>
 #include <QGraphicsLinearLayout>
+
 #include <MDebug>
 
-LabeledTextEdit::LabeledTextEdit(Style style, QGraphicsItem *parent)
+LabeledTextEdit::LabeledTextEdit(const QString actionLabel,
+				 Style style, 
+				 QGraphicsItem *parent)
 	: MStylableWidget(parent),
+	  m_actionLabel(actionLabel),
 	  m_style(style),
 	  m_layout(0),
 	  m_label(0),
@@ -41,8 +47,23 @@ MTextEdit *LabeledTextEdit::textWidget(void)
 			? MTextEditModel::SingleLine 
 			: MTextEditModel::MultiLine;
 		m_text = new MTextEdit(mode, "", this);
+		if (m_actionLabel != "") {
+			m_text->attachToolbar(Util::imAttributeExtensionId());
+			MInputMethodState::instance()->setExtendedAttribute
+				(Util::imAttributeExtensionId(),
+				 "/keys",
+				 "actionKey",
+				 "label",
+				 QVariant(QString(m_actionLabel)));
+		}
+
 		connect(m_text, SIGNAL(textChanged()),
 			this, SIGNAL(contentsChanged()));
+
+		if (mode == MTextEditModel::SingleLine) {
+			connect(m_text, SIGNAL(returnPressed()),
+				this, SLOT(returnPressed()));
+		}
 	}
 
 	return m_text;
@@ -107,9 +128,29 @@ void LabeledTextEdit::setContents(const QString &c)
 void LabeledTextEdit::setValidator(QValidator *v)
 {
 	textWidget()->setValidator(v);
+	if (m_actionLabel != "") {
+		connect(m_text, SIGNAL(textChanged()),
+			this, SLOT(adjustAction()));
+		adjustAction();
+	}
 }
 
 bool LabeledTextEdit::hasAcceptableInput(void)
 {
 	return textWidget()->hasAcceptableInput();
+}
+
+void LabeledTextEdit::adjustAction(void)
+{
+	MInputMethodState::instance()->setExtendedAttribute
+		(Util::imAttributeExtensionId(),
+		 "/keys",
+		 "actionKey",
+		 "enabled",
+		 QVariant(hasAcceptableInput()));
+}
+
+void LabeledTextEdit::returnPressed(void)
+{
+	/* TODO */
 }

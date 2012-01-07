@@ -30,7 +30,8 @@ public:
 		MultiLineEditAndLabel,
 	};
 
-	LabeledTextEdit(Style style = MultiLineEditAndLabel, 
+	LabeledTextEdit(const QString actionKeyLabel,
+			Style style = MultiLineEditAndLabel, 
 			QGraphicsItem *parent = 0);
 
 	QString label(void) const;
@@ -53,6 +54,12 @@ Q_SIGNALS:
 
 	void contentsChanged(void);
 
+private Q_SLOTS:
+
+	void adjustAction(void);
+
+	void returnPressed(void);
+
 private:
 
 	Q_DISABLE_COPY(LabeledTextEdit);
@@ -64,6 +71,8 @@ private:
 	MLabel *labelWidget(void);
 
 	MTextEdit *textWidget(void);
+
+	QString m_actionLabel;
 
 	enum Style m_style;
 

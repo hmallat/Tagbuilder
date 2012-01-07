@@ -15,9 +15,11 @@
 #include <MComboBox>
 #include <MDebug>
 
-TextRecordEdit::TextRecordEdit(LabeledTextEdit::Style style,
+TextRecordEdit::TextRecordEdit(const QString actionLabel,
+			       LabeledTextEdit::Style style,
 			       QGraphicsItem *parent)
 	: MStylableWidget(parent),
+	  m_actionLabel(actionLabel),
 	  m_style(style),
 	  m_layout(0),
 	  m_text(0),
@@ -28,7 +30,7 @@ TextRecordEdit::TextRecordEdit(LabeledTextEdit::Style style,
 LabeledTextEdit *TextRecordEdit::textWidget(void)
 {
 	if (m_text == NULL) {
-		m_text = new LabeledTextEdit(m_style, this);
+		m_text = new LabeledTextEdit(m_actionLabel, m_style, this);
 		connect(m_text, SIGNAL(contentsChanged()),
 			this, SIGNAL(contentsChanged()));
 	}

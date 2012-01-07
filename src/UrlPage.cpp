@@ -78,7 +78,8 @@ void UrlPage::createPageSpecificActions(void)
 
 void UrlPage::createPageSpecificContent(void)
 {
-	m_url = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_url = new LabeledTextEdit(tr("Ok"),
+				    LabeledTextEdit::SingleLineEditAndLabel);
 	m_url->setLabel(tr("Bookmark URL"));
 	m_url->setPrompt(tr("Enter bookmark URL"));
 	m_url->setContents("http://");
@@ -326,7 +327,8 @@ void UrlPage::addTitle(void)
 		new QGraphicsLinearLayout(Qt::Horizontal);
 
 	TextRecordEdit *title = 
-		new TextRecordEdit(LabeledTextEdit::SingleLineEditOnly);
+		new TextRecordEdit(tr("Ok"),
+				   LabeledTextEdit::SingleLineEditOnly);
 	title->setLanguageCode(Util::currentLanguageCode());
 	title->setPrompt(tr("Enter title"));
 	title->setSizePolicy(QSizePolicy::Minimum, 

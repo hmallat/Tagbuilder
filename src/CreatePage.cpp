@@ -31,7 +31,7 @@ void CreatePage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("<h1>No tag type to select</h1>"),
+			    tr("No tag types to select from"),
 			    tr("Select tag type"),
 			    false,
 			    false);

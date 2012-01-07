@@ -38,8 +38,8 @@ void BtSelectionPage::createContent(void)
 {
 	QString info = 
 		(m_type == SelectFromExisting)
-		? tr("<h1>No Bluetooth devices to select</h1>")
-		: tr("<h1>Scanning nearby Bluetooth devices ...</h1>");
+		? tr("No Bluetooth devices to select from")
+		: tr("Scanning for nearby Bluetooth devices ...");
 
 	createCommonContent(m_model,
 			    _getCreator,

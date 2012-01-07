@@ -34,8 +34,8 @@ void CalendarSelectionPage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("<h1>No calendar entries to select</h1>"),
-			    tr("Select the calendar entry to use"),
+			    tr("No calendar entries to select from"),
+			    tr("Select calendar entry"),
 			    true,
 			    false);
 

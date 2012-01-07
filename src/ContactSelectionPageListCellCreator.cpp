@@ -11,6 +11,11 @@
 #include <QVariant>
 #include <MContentItem>
 
+ContactSelectionPageListCellCreator::ContactSelectionPageListCellCreator(void)
+	: ContentItemCellCreator(MContentItem::IconAndSingleTextLabel)
+{
+}
+
 void ContactSelectionPageListCellCreator::updateCell(const QModelIndex &index, 
 						     MWidget *cell) const
 {

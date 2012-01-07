@@ -38,7 +38,8 @@ void TextPage::createPageSpecificActions(void)
 
 void TextPage::createPageSpecificContent(void)
 {
-	m_edit = new TextRecordEdit(LabeledTextEdit::MultiLineEditAndLabel);
+	m_edit = new TextRecordEdit("", 
+				    LabeledTextEdit::MultiLineEditAndLabel);
 	m_edit->setLabel(tr("Text"));
 	m_edit->setPrompt(tr("Enter text"));
 	layout()->addItem(m_edit);

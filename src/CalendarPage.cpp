@@ -65,8 +65,7 @@ void CalendarPage::createPageSpecificContent(void)
 {
 	m_calendarDetails = new LabelOrList(m_model,
 					    _getCreator,
-					    tr("<h1>No calendar entry "
-					       "selected</h1>"),
+					    tr("Select a calendar entry"),
 					    true,
 					    false);
 	m_calendarDetails->setSizePolicy(QSizePolicy::Preferred, 

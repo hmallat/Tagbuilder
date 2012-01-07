@@ -60,7 +60,7 @@ void ContactPage::createPageSpecificContent(void)
 {
 	m_contactDetails = new LabelOrList(m_model,
 					   _getCreator,
-					   tr("<h1>No contact selected</h1>"),
+					   tr("Select a contact"),
 					   true,
 					   false);
 	m_contactDetails->setSizePolicy(QSizePolicy::Preferred, 

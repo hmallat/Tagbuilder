@@ -137,12 +137,11 @@ void MainPage::createContent(void)
 
 	LabelOrList *list = new LabelOrList(TagStorage::storage(),
 					    _getTagListCellCreator,
-					    tr("<h1>You don't have any "
+					    tr("You don't have any "
 					       "stored tags currently. "
 					       "Create some or harvest "
 					       "existing ones by touching "
-					       "them. "
-					       "</h1>"),
+					       "them."),
 					    false,
 					    false);
 	list->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);

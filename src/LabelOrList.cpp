@@ -79,6 +79,7 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 	m_label->setWordWrap(true);
 	m_label->setSizePolicy(QSizePolicy::Ignored,
 			       QSizePolicy::Ignored);
+	m_label->setStyleName("LabelOrListLabel");
 
 	setDisplay();
 }

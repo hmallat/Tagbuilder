@@ -18,6 +18,8 @@ class ContactSelectionPageListCellCreator : public ContentItemCellCreator
 
 public:
 
+	ContactSelectionPageListCellCreator(void);
+
 	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
 
 };

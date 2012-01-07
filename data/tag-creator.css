@@ -21,3 +21,7 @@
 #CommonHeader {
   color: #ffffff;
 }
+
+#LabelOrListLabel { 
+  font: $FONT_FAMILY light 48
+}

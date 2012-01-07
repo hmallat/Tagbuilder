@@ -12,6 +12,7 @@
 #include <QLocale>
 #include <QContactPhoneNumber>
 #include <QMap>
+#include <MInputMethodState>
 
 #include <MDebug>
 
@@ -220,3 +221,15 @@ QString Util::eventDurationToString(const QDateTime &begin,
 
 	return rep;
 }
+
+int Util::imAttributeExtensionId(void)
+{
+	static int id = -1;
+
+	if (id == -1) {
+		id = MInputMethodState::instance()->registerAttributeExtension();
+	}
+
+	return id;
+}
+

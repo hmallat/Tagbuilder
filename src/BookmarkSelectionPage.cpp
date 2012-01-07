@@ -32,8 +32,8 @@ void BookmarkSelectionPage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("<h1>No bookmarks to select</h1>"),
-			    tr("Select the bookmark to use"),
+			    tr("No bookmarks to select from"),
+			    tr("Select bookmark"),
 			    false,
 			    false);
 

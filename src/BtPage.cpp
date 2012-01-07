@@ -128,7 +128,8 @@ void BtPage::createPageSpecificActions(void)
 
 void BtPage::createPageSpecificContent(void)
 {
-	m_name = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_name = new LabeledTextEdit(tr("Ok"),
+				     LabeledTextEdit::SingleLineEditAndLabel);
 	m_name->setLabel(tr("Device name"));
 	m_name->setPrompt(tr("Enter device name"));
 	m_name->setContents(m_info.name());
@@ -140,7 +141,8 @@ void BtPage::createPageSpecificContent(void)
 
 	QRegExpValidator *addrValidator =
 		new QRegExpValidator(m_bdaddrRegexp, this);
-	m_addr = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_addr = new LabeledTextEdit(tr("Ok"),
+				     LabeledTextEdit::SingleLineEditAndLabel);
 	m_addr->setLabel(tr("Device address"));
 	m_addr->setPrompt(tr("Enter device address"));
 	m_addr->setContents(_bdaddr2str(m_info.address()));
@@ -153,7 +155,8 @@ void BtPage::createPageSpecificContent(void)
 
 	QRegExpValidator *codValidator =
 		new QRegExpValidator(m_codRegexp, this);
-	m_class = new LabeledTextEdit(LabeledTextEdit::SingleLineEditAndLabel);
+	m_class = new LabeledTextEdit(tr("Ok"),
+				      LabeledTextEdit::SingleLineEditAndLabel);
 	m_class->setLabel(tr("Device class"));
 	m_class->setPrompt(tr("Enter device class"));
 	m_class->setContents(_cod2str(_cod(m_info)));

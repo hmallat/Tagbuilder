@@ -49,7 +49,7 @@ void ContactDetailPicker::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("<h1>No contact details to select</h1>"),
+			    tr("No contact details to select from"),
 			    tr("Select contact details"),
 			    true,
 			    m_single == true ? false : true);

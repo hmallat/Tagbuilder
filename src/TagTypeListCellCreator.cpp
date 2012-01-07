@@ -11,6 +11,11 @@
 #include <QVariant>
 #include <MContentItem>
 
+TagTypeListCellCreator::TagTypeListCellCreator(void)
+	: ContentItemCellCreator(MContentItem::IconAndSingleTextLabel)
+{
+}
+
 void TagTypeListCellCreator::updateCell(const QModelIndex &index, 
 					MWidget *cell) const
 {
