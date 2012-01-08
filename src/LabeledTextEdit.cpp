@@ -125,9 +125,14 @@ void LabeledTextEdit::setContents(const QString &c)
 	textWidget()->setText(c);
 }
 
-void LabeledTextEdit::setValidator(QValidator *v)
+void LabeledTextEdit::setValidator(QValidator *v, int maxLen)
 {
+	textWidget()->setContentType(M::CustomContentType);
+	textWidget()->setInputMethodCorrectionEnabled(true);
 	textWidget()->setValidator(v);
+	if (maxLen > 0) {
+		textWidget()->setMaxLength(maxLen);
+	}
 	if (m_actionLabel != "") {
 		connect(m_text, SIGNAL(textChanged()),
 			this, SLOT(adjustAction()));

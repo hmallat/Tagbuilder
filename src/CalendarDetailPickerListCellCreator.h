@@ -9,27 +9,16 @@
 #ifndef _CALENDAR_DETAIL_PICKER_LIST_CELL_CREATOR_H_
 #define _CALENDAR_DETAIL_PICKER_LIST_CELL_CREATOR_H_
 
-#include <MAbstractCellCreator>
+#include "ContentItemCellCreator.h"
 
-class MWidgetController;
-
-class CalendarDetailPickerListCellCreator : public MAbstractCellCreator<MWidgetController>
+class CalendarDetailPickerListCellCreator : public ContentItemCellCreator
 {
 
 public:
 
-	CalendarDetailPickerListCellCreator(void);
-
-	virtual QSizeF cellSize(void) const;
-
-	virtual MWidget *createCell(const QModelIndex &index, 
-				    MWidgetRecycler &recycler) const;
+	CalendarDetailPickerListCellCreator(const QString styleName = "CommonContentItem");
 
 	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
-
-private:
-
-	QSizeF m_cellSize;
 
 };
 

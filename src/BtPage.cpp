@@ -86,11 +86,11 @@ BtPage::BtPage(BluezSupplicant *bluez, int tag, QGraphicsItem *parent)
 	  m_deviceAddrValidity(true),
 	  m_deviceClassValidity(true)
 {
-	m_bdaddrRegexp = QRegExp(HEX HEX COL 
-				 HEX HEX COL 
-				 HEX HEX COL 
-				 HEX HEX COL 
-				 HEX HEX COL 
+	m_bdaddrRegexp = QRegExp(HEX HEX COL
+				 HEX HEX COL
+				 HEX HEX COL
+				 HEX HEX COL
+				 HEX HEX COL
 				 HEX HEX);
 	m_codRegexp = QRegExp(HEX HEX 
 			      HEX HEX 
@@ -146,7 +146,7 @@ void BtPage::createPageSpecificContent(void)
 	m_addr->setLabel(tr("Device address"));
 	m_addr->setPrompt(tr("Enter device address"));
 	m_addr->setContents(_bdaddr2str(m_info.address()));
-	m_addr->setValidator(addrValidator);
+	m_addr->setValidator(addrValidator, 17);
 	m_addr->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_addr);
 	layout()->setAlignment(m_addr, Qt::AlignLeft);
@@ -160,7 +160,7 @@ void BtPage::createPageSpecificContent(void)
 	m_class->setLabel(tr("Device class"));
 	m_class->setPrompt(tr("Enter device class"));
 	m_class->setContents(_cod2str(_cod(m_info)));
-	m_class->setValidator(codValidator);
+	m_class->setValidator(codValidator, 6);
 	m_class->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	layout()->addItem(m_class);
 	layout()->setAlignment(m_class, Qt::AlignLeft);

@@ -7,56 +7,19 @@
  */
 
 #include "ContactDetailPickerListCellCreator.h"
-#include "ContactDetailCell.h"
 
-#include <QVariant>
-
-ContactDetailPickerListCellCreator::ContactDetailPickerListCellCreator(void)
-	: MAbstractCellCreator<MWidgetController>(),
-	  m_cellSize(QSizeF(-1, -1))
+ContactDetailPickerListCellCreator::ContactDetailPickerListCellCreator(const QString styleName)
+	: ContentItemCellCreator(MContentItem::TwoTextLabels,
+				 styleName)
 {
-	ContactDetailCell *cell = new ContactDetailCell;
-	m_cellSize = cell->effectiveSizeHint(Qt::PreferredSize);
-	delete cell;
-}
-
-QSizeF ContactDetailPickerListCellCreator::cellSize(void) const
-{
-	return m_cellSize;
-}
-
-MWidget *ContactDetailPickerListCellCreator::
-createCell(const QModelIndex &index, 
-	   MWidgetRecycler &recycler) const {
-
-        ContactDetailCell *cell = 
-		dynamic_cast<ContactDetailCell*>
-		(recycler.take(ContactDetailCell::staticMetaObject.className()));
-        
-        if (cell == NULL) {
-		cell = new ContactDetailCell();
-		cell->setLayoutPosition(M::CenterPosition);
-        }
-
-        updateCell(index, cell);
-
-        return cell;
 }
 
 void ContactDetailPickerListCellCreator::updateCell(const QModelIndex &index, 
 						    MWidget *cell) const
 {
-	ContactDetailCell *detail = qobject_cast<ContactDetailCell *>(cell);
+	MContentItem *contentItem = qobject_cast<MContentItem *>(cell);
 	QVariant data = index.data(Qt::DisplayRole);
 	QStringList parameters = data.value<QStringList>();
-	if (parameters.length() > 0) {
-		detail->setTitle(parameters[0]);
-	} else {
-		detail->setTitle("missing-0");
-	}
-	if (parameters.length() > 1) {
-		detail->setSubtitle(parameters[1]); 
-	} else {
-		detail->setTitle("missing-1");
-	}
+	contentItem->setTitle(parameters[0]);
+	contentItem->setSubtitle(parameters[1]); 
 }

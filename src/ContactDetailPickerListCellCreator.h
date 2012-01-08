@@ -9,27 +9,16 @@
 #ifndef _CONTACT_DETAIL_PICKER_LIST_CELL_CREATOR_H_
 #define _CONTACT_DETAIL_PICKER_LIST_CELL_CREATOR_H_
 
-#include <MAbstractCellCreator>
+#include "ContentItemCellCreator.h"
 
-class MWidgetController;
-
-class ContactDetailPickerListCellCreator : public MAbstractCellCreator<MWidgetController>
+class ContactDetailPickerListCellCreator : public ContentItemCellCreator
 {
 
 public:
 
-	ContactDetailPickerListCellCreator(void);
-
-	virtual QSizeF cellSize(void) const;
-
-	virtual MWidget *createCell(const QModelIndex &index, 
-				    MWidgetRecycler &recycler) const;
+	ContactDetailPickerListCellCreator(const QString styleName = "CommonContentItem");
 
 	virtual void updateCell(const QModelIndex &index, MWidget *cell) const;
-
-private:
-
-	QSizeF m_cellSize;
 
 };
 

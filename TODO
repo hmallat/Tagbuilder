@@ -2,7 +2,7 @@ GENERAL:
 
 - Guideline: when reading a tag, don't copy unsupported stuff over verbatim,
   just issue a warning or something if data is dropped. Check that this is
-  done for all types!
+  done for all types! ALSO for contact and calendar individual fields!!!
 - Styling (partly done)
 - Drop fields that are not supported from harvested records, warn when dropping
   unsupported contents from tags
@@ -22,9 +22,15 @@ EVENTS:
 
 CONTACTS:
 
+CALENDAR:
+
 URL:
 
 - Should not allow many titles with same languages
+- Fix UI niglets (bad alignments, Add title button -> '+', Del title button
+  with borders)
+
+UNKNOWN:
 
 MISC: (rearrange these)
 

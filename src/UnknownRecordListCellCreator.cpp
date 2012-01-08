@@ -6,16 +6,19 @@
  *
  */
 
-#include "CalendarDetailPickerListCellCreator.h"
+#include "UnknownRecordListCellCreator.h"
 
-CalendarDetailPickerListCellCreator::CalendarDetailPickerListCellCreator(const QString styleName)
+#include <QVariant>
+#include <MContentItem>
+
+UnknownRecordListCellCreator::UnknownRecordListCellCreator(void)
 	: ContentItemCellCreator(MContentItem::TwoTextLabels,
-				 styleName)
+				 "UnselectableContentItem")
 {
 }
 
-void CalendarDetailPickerListCellCreator::updateCell(const QModelIndex &index, 
-						     MWidget *cell) const
+void UnknownRecordListCellCreator::updateCell(const QModelIndex &index, 
+					      MWidget *cell) const
 {
 	MContentItem *contentItem = qobject_cast<MContentItem *>(cell);
 	QVariant data = index.data(Qt::DisplayRole);

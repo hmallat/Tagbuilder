@@ -30,7 +30,7 @@
 
 static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 {
-	return new ContactDetailPickerListCellCreator;
+	return new ContactDetailPickerListCellCreator("UnselectableContentItem");
 }
 
 ContactPage::ContactPage(int tag, QGraphicsItem *parent)

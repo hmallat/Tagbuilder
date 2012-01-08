@@ -17,7 +17,8 @@ class ContentItemCellCreator : public MAbstractCellCreator<MWidgetController>
 
 public:
 
-	ContentItemCellCreator(MContentItem::ContentItemStyle style = MContentItem::IconAndTwoTextLabels);
+	ContentItemCellCreator(MContentItem::ContentItemStyle style = MContentItem::IconAndTwoTextLabels,
+			       const QString styleName = "CommonContentItem");
 
 	virtual MWidget *createCell(const QModelIndex &index, 
 				    MWidgetRecycler &recycler) const;
@@ -29,6 +30,8 @@ private:
 	QSizeF m_cellSize;
 
 	MContentItem::ContentItemStyle m_style;
+
+	QString m_styleName;
 
 };
 

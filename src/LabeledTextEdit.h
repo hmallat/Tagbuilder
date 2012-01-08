@@ -46,7 +46,7 @@ public:
 
 	void setContents(const QString &);
 
-	void setValidator(QValidator *v);
+	void setValidator(QValidator *v, int maxLen);
 
 	bool hasAcceptableInput(void);
 

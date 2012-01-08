@@ -15,6 +15,9 @@
 
 QTM_USE_NAMESPACE;
 
+class UnknownRecordListModel;
+class LabelOrList;
+
 class UnknownPage : public CreateEditPage
 {
 
@@ -39,10 +42,6 @@ protected:
 
 	virtual QNdefMessage prepareDataForStorage(void);
 
-private Q_SLOTS:
-
-	void showContents(void);
-
 private:
 
 	Q_DISABLE_COPY(UnknownPage);
@@ -50,6 +49,10 @@ private:
 	void updateSize(void);
 
 	QNdefMessage m_message;
+
+	LabelOrList *m_unknownDetails;
+
+	UnknownRecordListModel *m_model;
 
 };
 

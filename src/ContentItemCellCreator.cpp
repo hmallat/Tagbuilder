@@ -8,10 +8,12 @@
 
 #include "ContentItemCellCreator.h"
 
-ContentItemCellCreator::ContentItemCellCreator(MContentItem::ContentItemStyle style)
+ContentItemCellCreator::ContentItemCellCreator(MContentItem::ContentItemStyle style,
+					       const QString styleName)
 	: MAbstractCellCreator<MWidgetController>(),
 	  m_cellSize(QSizeF(-1, -1)),
-	  m_style(style)
+	  m_style(style),
+	  m_styleName(styleName)
 {
   MContentItem *cell = new MContentItem(m_style);
 	m_cellSize = cell->effectiveSizeHint(Qt::PreferredSize);
@@ -32,7 +34,7 @@ MWidget *ContentItemCellCreator::createCell(const QModelIndex &index,
         
         if (cell == NULL) {
 		cell = new MContentItem(m_style);
-		cell->setStyleName("CommonContentItem");
+		cell->setStyleName(m_styleName);
         }
 
         updateCell(index, cell);

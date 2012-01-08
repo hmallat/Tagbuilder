@@ -28,7 +28,7 @@
 
 static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 {
-	return new CalendarDetailPickerListCellCreator;
+	return new CalendarDetailPickerListCellCreator("UnselectableContentItem");
 }
 
 CalendarPage::CalendarPage(int tag, QGraphicsItem *parent)

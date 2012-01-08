@@ -13,6 +13,26 @@
   background-color: #808080;
 }
 
+#CommonContentItem:selected {
+  background-image: none;
+  background-color: #808080;
+}
+
+#UnselectableContentItem {
+  background-image: none;
+  background-color: #f0f0f0;
+}
+
+#UnselectableContentItem:pressed {
+  background-image: none;
+  background-color: #f0f0f0;
+}
+
+#UnselectableContentItem:selected {
+  background-image: none;
+  background-color: #f0f0f0;
+}
+
 #CommonHeaderPanel {
   background-image: none;
   background-color: #606060;

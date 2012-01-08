@@ -29,7 +29,6 @@ HEADERS		+= \
 		src/BtSelectionPageExistingListModel.h \
 		src/BtSelectionPageScanListModel.h \
 		src/BtSelectionPageListModel.h \
-		src/CalendarDetailCell.h \
 		src/CalendarDetailPicker.h \
 		src/CalendarDetailPickerListCellCreator.h \
 		src/CalendarDetailPickerListModel.h \
@@ -37,7 +36,6 @@ HEADERS		+= \
 		src/CalendarSelectionPage.h \
 		src/CalendarSelectionPageListCellCreator.h \
 		src/CalendarSelectionPageListModel.h \
-		src/ContactDetailCell.h \
 		src/ContactDetailPicker.h \
 		src/ContactDetailPickerListCellCreator.h \
 		src/ContactDetailPickerListModel.h \
@@ -64,6 +62,8 @@ HEADERS		+= \
 		src/TextPage.h \
 		src/TextRecordEdit.h \
 		src/UnknownPage.h \
+		src/UnknownRecordListCellCreator.h \
+		src/UnknownRecordListModel.h \
 		src/UrlPage.h \
 		src/Util.h \
 		src/VCardNdefRecord.h \
@@ -84,7 +84,6 @@ SOURCES		+= \
 		src/BtSelectionPageExistingListModel.cpp \
 		src/BtSelectionPageScanListModel.cpp \
 		src/BtSelectionPageListModel.cpp \
-		src/CalendarDetailCell.cpp \
 		src/CalendarDetailPicker.cpp \
 		src/CalendarDetailPickerListCellCreator.cpp \
 		src/CalendarDetailPickerListModel.cpp \
@@ -92,7 +91,6 @@ SOURCES		+= \
 		src/CalendarSelectionPage.cpp \
 		src/CalendarSelectionPageListCellCreator.cpp \
 		src/CalendarSelectionPageListModel.cpp \
-		src/ContactDetailCell.cpp \
 		src/ContactDetailPicker.cpp \
 		src/ContactDetailPickerListCellCreator.cpp \
 		src/ContactDetailPickerListModel.cpp \
@@ -119,6 +117,8 @@ SOURCES		+= \
 		src/TextPage.cpp \
 		src/TextRecordEdit.cpp \
 		src/UnknownPage.cpp \
+		src/UnknownRecordListCellCreator.cpp \
+		src/UnknownRecordListModel.cpp \
 		src/UrlPage.cpp \
 		src/Util.cpp \
 		src/VCardNdefRecord.cpp \
