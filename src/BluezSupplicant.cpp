@@ -32,7 +32,7 @@ extern "C"
 BluezSupplicant::BluezSupplicant(QObject *parent)
 	: QObject(parent),
 	  m_started(false),
-	  m_scanning(false),
+	  m_scanning(BluezSupplicant::NotScanning),
 	  m_initialized(false),
 	  m_pendingCalls(0),
 	  m_sys(QDBusConnection::systemBus()),
@@ -334,6 +334,11 @@ BluezSupplicant::devices(void) const
 	return list;
 }
 
+enum BluezSupplicant::DiscoveryState BluezSupplicant::discoveryState(void)
+{
+	return m_scanning;
+}
+
 bool BluezSupplicant::beginScan(void)
 {
 	if (isInitialized() == false || m_adapter == 0) {
@@ -341,9 +346,14 @@ bool BluezSupplicant::beginScan(void)
 		return false;
 	}
 
-	if (m_scanning == true) {
-		mDebug(__func__) << "Already scanning. ";
-		return true;
+	if (m_scanning == ScanStarting || m_scanning == Scanning) {
+		mDebug(__func__) << "Already scanning or trying to. ";
+		return false;
+	}
+
+	if (m_scanning == ScanEnding) {
+		mDebug(__func__) << "Still ending previous scan. ";
+		return false;
 	}
 
 	m_sys.connect("org.bluez",
@@ -361,23 +371,72 @@ bool BluezSupplicant::beginScan(void)
 		      this,
 		      SLOT(deviceRemoved(const QString)));
 	
-	m_adapter->asyncCall("StartDiscovery");
+	QDBusPendingCall call = m_adapter->asyncCall("RequestSession");
+	QDBusPendingCallWatcher *watcher =
+		new QDBusPendingCallWatcher(call, this);
+	connect(watcher, 
+		SIGNAL(finished(QDBusPendingCallWatcher *)),
+		this, 
+		SLOT(sessionRequested(QDBusPendingCallWatcher *)));
 
-	m_scanning = true;
+	changeDiscoveryState(ScanStarting);
 
 	return true;
 }
+	
+void BluezSupplicant::sessionRequested(QDBusPendingCallWatcher *watcher)
+{
+	mDebug(__func__) << "ENTER";
 
-void BluezSupplicant::endScan(void)
+	QDBusPendingReply<> reply = *watcher;
+	if (reply.isError()) {
+		mDebug(__func__) << "Failed to request a session. ";
+		changeDiscoveryState(NotScanning);
+	} else {
+		QDBusPendingCall nextcall = 
+			m_adapter->asyncCall("StartDiscovery");
+		QDBusPendingCallWatcher *nextwatcher =
+			new QDBusPendingCallWatcher(nextcall, this);
+		connect(nextwatcher, 
+			SIGNAL(finished(QDBusPendingCallWatcher *)),
+			this, 
+			SLOT(discoveryStarted(QDBusPendingCallWatcher *)));
+	}
+
+	watcher->deleteLater();
+}
+
+void BluezSupplicant::discoveryStarted(QDBusPendingCallWatcher *watcher)
+{
+	mDebug(__func__) << "ENTER";
+
+	QDBusPendingReply<> reply = *watcher;
+	if (reply.isError()) {
+		mDebug(__func__) << "Failed to start a scan. ";
+		m_adapter->asyncCall("ReleaseSession");
+		changeDiscoveryState(NotScanning);
+	} else {
+		changeDiscoveryState(Scanning);
+	}
+
+	watcher->deleteLater();
+}
+
+bool BluezSupplicant::endScan(void)
 {
 	if (isInitialized() == false || m_adapter == 0) {
 		mDebug("Not yet initialized/no adapter. ");
-		return;
+		return false;
 	}
 
-	if (m_scanning == false) {
-		mDebug(__func__) << "Already not scanning. ";
-		return;
+	if (m_scanning == NotScanning || m_scanning == ScanEnding) {
+		mDebug(__func__) << "Already not scanning or ending it. ";
+		return false;
+	}
+
+	if (m_scanning == ScanStarting) {
+		mDebug(__func__) << "Still starting previous scan. ";
+		return false;
 	}
 
 	m_sys.disconnect("org.bluez",
@@ -395,14 +454,43 @@ void BluezSupplicant::endScan(void)
 			 this,
 			 SLOT(deviceRemoved(const QString)));
 	
-	m_adapter->asyncCall("StopDiscovery");
-
 	while (m_scannedDevices.length() != 0) {
 		BluezDevice *device = m_scannedDevices.takeFirst();
 		delete device;
 	}
 
-	m_scanning = false;
+	QDBusPendingCall call = m_adapter->asyncCall("StopDiscovery");
+	QDBusPendingCallWatcher *watcher =
+		new QDBusPendingCallWatcher(call, this);
+	connect(watcher, 
+		SIGNAL(finished(QDBusPendingCallWatcher *)),
+		this, 
+		SLOT(discoveryEnded(QDBusPendingCallWatcher *)));
+
+	changeDiscoveryState(ScanEnding);
+
+	return true;
+}
+
+void BluezSupplicant::discoveryEnded(QDBusPendingCallWatcher *watcher)
+{
+	mDebug(__func__) << "ENTER";
+
+	QDBusPendingReply<> reply = *watcher;
+	if (reply.isError()) {
+		mDebug(__func__) << "Failed to end a scan, quitting anyway. ";
+	}
+	m_adapter->asyncCall("ReleaseSession");
+
+	changeDiscoveryState(NotScanning);
+
+	watcher->deleteLater();
+}
+
+void BluezSupplicant::changeDiscoveryState(enum DiscoveryState newState)
+{
+	m_scanning = newState;
+	Q_EMIT(discoveryStateChanged(m_scanning));
 }
 
 void BluezSupplicant::deviceFound(const QString address, 

@@ -1,3 +1,9 @@
+tagbuilder (0.0.5) unstable; urgency=low
+
+  * Bluetooth interaction mostly correct; only thing missing is monitoring whether Bluetooth becomes available when scan failure text is shown (e.g. if user goes to control panel and disables flight mode). 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Mon, 09 Jan 2012 22:30:1458 +0200
+
 tagbuilder (0.0.4) unstable; urgency=low
 
   * Styling, UI tweaking, name change. 

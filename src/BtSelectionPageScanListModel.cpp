@@ -47,7 +47,24 @@ void BtSelectionPageScanListModel::initialized(void)
 		m_devices[scannedDevices[i].first] = scannedDevices[i].second;
 	}
 
-	m_bluez->beginScan();
+	connect(m_bluez, 
+		SIGNAL(discoveryStateChanged(enum BluezSupplicant::DiscoveryState)),
+		this,
+		SLOT(discoveryStateChanged(enum BluezSupplicant::DiscoveryState)));
+
+	if (m_bluez->beginScan() == false) {
+		Q_EMIT(scanFailure());
+	}
+}
+
+void BtSelectionPageScanListModel::discoveryStateChanged(enum BluezSupplicant::DiscoveryState state)
+{
+	/* Since we only stop scan when going away, getting a state
+	   change to ScanEnding or NotScanning is an error. */
+	if (state == BluezSupplicant::NotScanning ||
+	    state == BluezSupplicant::ScanEnding) {
+		Q_EMIT(scanFailure());
+	}
 }
 
 void BtSelectionPageScanListModel::deviceFound(QString which)

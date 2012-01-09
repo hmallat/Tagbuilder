@@ -33,6 +33,13 @@ class BluezSupplicant : public QObject
 
 public:
 
+	enum DiscoveryState {
+		NotScanning,
+		ScanStarting,
+		Scanning,
+		ScanEnding
+	};
+
 	BluezSupplicant(QObject *parent = 0);
 
 	~BluezSupplicant(void);
@@ -50,7 +57,9 @@ public:
 
 	bool beginScan(void);
 
-	void endScan(void);
+	bool endScan(void);
+
+	enum DiscoveryState discoveryState(void);
 
 	QBluetoothDeviceInfo scannedDevice(QString which) const;
 	
@@ -75,6 +84,8 @@ signals:
 
 	void bluezDeviceLost(QString which);
 
+	void discoveryStateChanged(enum BluezSupplicant::DiscoveryState what);
+
 private Q_SLOTS:
 
 	void defaultAdapterDone(QDBusPendingCallWatcher *watcher);
@@ -95,6 +106,12 @@ private Q_SLOTS:
 
 	void deviceLost(const QString);
 
+	void sessionRequested(QDBusPendingCallWatcher *watcher);
+
+	void discoveryStarted(QDBusPendingCallWatcher *watcher);
+
+	void discoveryEnded(QDBusPendingCallWatcher *watcher);
+
 private:
 
 	Q_DISABLE_COPY(BluezSupplicant);
@@ -103,9 +120,11 @@ private:
 
 	void callFinished(void);
 
+	void changeDiscoveryState(enum DiscoveryState newState);
+
 	bool m_started;
 
-	bool m_scanning;
+	enum DiscoveryState m_scanning;
 
 	bool m_initialized;
 

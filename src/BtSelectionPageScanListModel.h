@@ -23,6 +23,10 @@ public:
 
 	~BtSelectionPageScanListModel(void);
 
+Q_SIGNALS:
+
+	void scanFailure(void);
+
 private Q_SLOTS:
 
 	void initialized(void);
@@ -30,6 +34,8 @@ private Q_SLOTS:
 	void deviceFound(QString which);
 
 	void deviceLost(QString which);
+
+	void discoveryStateChanged(enum BluezSupplicant::DiscoveryState);
 
 };
 

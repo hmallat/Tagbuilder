@@ -177,3 +177,8 @@ void LabelOrList::selectItem(const QModelIndex &index)
 {
 	m_list->selectItem(index);
 }
+
+void LabelOrList::setLabel(const QString label)
+{
+	m_label->setText(label);
+}

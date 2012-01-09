@@ -59,6 +59,8 @@ public:
 
 	void selectItem(const QModelIndex &index);
 
+	void setLabel(const QString label);
+
 Q_SIGNALS:
 
 	void itemClicked(const QModelIndex &);

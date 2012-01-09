@@ -46,6 +46,8 @@ private Q_SLOTS:
 	
 	void deviceSelected(const QModelIndex &which);
 
+	void scanFailure(void);
+
 private:
 
 	Q_DISABLE_COPY(BtSelectionPage);

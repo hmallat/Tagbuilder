@@ -12,7 +12,7 @@
 #include <QAbstractListModel>
 #include <QBluetoothDeviceInfo>
 
-class BluezSupplicant;
+#include "BluezSupplicant.h"
 
 QTM_USE_NAMESPACE;
 

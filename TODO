@@ -15,8 +15,9 @@ GENERAL:
 
 BLUETOOTH:
 - full Nokia-proprietary BT2.0 support (need docs or more data)
-- check BT on/off/flight mode scenarios
 - automatic semicolon add/del for address field?
+- Pretends to be scanning when in flight mode, should error instead.
+  Also check normal BT off situation. 
 
 EVENTS:
 

@@ -28,6 +28,10 @@ BtSelectionPage::BtSelectionPage(BluezSupplicant *bluez,
 	m_model = (m_type == SelectFromExisting)
 		? static_cast<BtSelectionPageListModel *>(new BtSelectionPageExistingListModel(bluez, this))
 		: static_cast<BtSelectionPageListModel *>(new BtSelectionPageScanListModel(bluez, this));
+	if (m_type == SelectFromScanned) {
+		connect(m_model, SIGNAL(scanFailure(void)),
+			this, SLOT(scanFailure(void)));
+	}
 }
 
 BtSelectionPage::~BtSelectionPage(void)
@@ -70,3 +74,9 @@ void BtSelectionPage::deviceSelected(const QModelIndex &which)
 	Q_EMIT(selected(m_model->device(which)));
 }
 
+void BtSelectionPage::scanFailure(void)
+{
+	m_list->setLabel(tr("Cannot scan. Check that Bluetooth "
+			    "is available. "));
+	clearBusy();
+}
