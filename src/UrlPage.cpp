@@ -329,10 +329,11 @@ void UrlPage::addTitle(void)
 		m_titleChangeMapper, SLOT(map()));
 	m_titleChangeMapper->setMapping(title, title);
 
-	MButton *xButton = new MButton("icon-s-cancel", "");
-	xButton->setViewType(MButton::iconType);
-	xButton->setSizePolicy(QSizePolicy::Fixed, 
-			       QSizePolicy::Fixed);
+	MButton *xButton = new MButton();
+	xButton->setIconID("icon-s-cancel");
+	xButton->setSizePolicy(QSizePolicy::Preferred, 
+			       QSizePolicy::Preferred);
+	xButton->setStyleName("CommonSquareButton");
 	pack->addItem(xButton);
 	pack->setAlignment(xButton, Qt::AlignRight | Qt::AlignVCenter);
 	pack->setStretchFactor(xButton, 0);
@@ -344,6 +345,8 @@ void UrlPage::addTitle(void)
 	m_titleLayout->setAlignment(pack, Qt::AlignHCenter);
 
 	m_titles << title;
+
+	layout()->invalidate();
 
 	updateSize();
 }

@@ -46,8 +46,7 @@
   font: $FONT_FAMILY light 48
 }
 
-#DBUG {
-  background-image: none;
-  background-color: #ff00ff;
+/* This is no good -- the size is simply copied from Buttons CSS */
+#CommonSquareButton { 
+  maximum-size: 5.1mm 5.1mm
 }
-
