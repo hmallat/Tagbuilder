@@ -246,13 +246,11 @@ void MainPage::showAbout(void)
 	MMessageBox *box = 
 		new MMessageBox(tr("<big>NFC Tag Builder</big><br>"
                                   "<br>"
-                                  "<br>v%1.%2.%3"
+                                  "<br>v%1"
                                   "<br>"
                                   "Copyright (c) 2011 Hannu Mallat<br>"
                                   "http://hannu.mallat.fi/n9/nfctagbuilder<br>")
-				.arg(VERSION_MAJOR)
-				.arg(VERSION_MINOR)
-				.arg(VERSION_MICRO));
+				.arg(VERSION));
 	box->appear();
 }
 
@@ -284,11 +282,13 @@ void MainPage::tagLongSelected(const QModelIndex &which,
 
 void MainPage::pageAppeared(void)
 {
+	mDebug(__func__) << "Enabling NFC read. ";
 	m_reader->start();
 }
 
 void MainPage::pageDisappearing(void)
 {
+	mDebug(__func__) << "Disabling NFC read. ";
 	m_reader->stop();
 }
 

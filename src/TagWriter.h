@@ -26,9 +26,13 @@ public:
 
 	TagWriter(QObject *parent = NULL);
 
+	~TagWriter(void);
+
 	void setMessage(QNdefMessage &message);
 
 	void writeMessage(void);
+
+	void stopWriting(void);
 
 protected Q_SLOTS:
 

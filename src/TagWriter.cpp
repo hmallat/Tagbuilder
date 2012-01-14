@@ -26,9 +26,21 @@ TagWriter::TagWriter(QObject *parent) :
                 SLOT(targetLost(QNearFieldTarget*)));
 }
 
+TagWriter::~TagWriter(void)
+{
+	stopWriting();
+}
+
 void TagWriter::setMessage(QNdefMessage &message)
 {
 	m_message = message;
+}
+
+void TagWriter::stopWriting(void)
+{
+        mDebug(__func__) << "Stopping detecting targets. ";
+        m_manager->setTargetAccessModes(0);
+        m_manager->stopTargetDetection();
 }
 
 void TagWriter::writeMessage(void)
@@ -41,9 +53,7 @@ void TagWriter::writeMessage(void)
 
 void TagWriter::writingComplete(bool success)
 {
-        mDebug(__func__) << "Stopping detecting targets. ";
-        m_manager->setTargetAccessModes(0);
-        m_manager->stopTargetDetection();
+	/* Keep going, just inform the UI */
 	Q_EMIT(complete(success));
 }
 
@@ -71,13 +81,13 @@ void TagWriter::writeError(QNearFieldTarget::Error err,
 
 void TagWriter::targetDetected(QNearFieldTarget *target)
 {
-        mDebug(__func__) << "Saw target. ";
+        mDebug(__func__) << "Saw target (W). ";
 	m_target = target;
 
-	connect(target, SIGNAL(ndefMessagesWritten(void)),
+	connect(m_target, SIGNAL(ndefMessagesWritten(void)),
 		this, SLOT(targetWritten(void)));
-	connect(target, SIGNAL(error(QNearFieldTarget::Error, 
-				     QNearFieldTarget::RequestId)),
+	connect(m_target, SIGNAL(error(QNearFieldTarget::Error, 
+				       QNearFieldTarget::RequestId)),
 		this, SLOT(writeError(QNearFieldTarget::Error, 
 				      QNearFieldTarget::RequestId)));
 	
@@ -88,8 +98,15 @@ void TagWriter::targetDetected(QNearFieldTarget *target)
 
 void TagWriter::targetLost(QNearFieldTarget *target)
 {
-        mDebug(__func__) << "Lost target. ";
+        mDebug(__func__) << "Lost target (W). ";
 	if (target == m_target) {
+		disconnect(m_target, SIGNAL(ndefMessagesWritten(void)),
+			   this, SLOT(targetWritten(void)));
+		disconnect(m_target, SIGNAL(error(QNearFieldTarget::Error, 
+						  QNearFieldTarget::RequestId)),
+			   this, SLOT(writeError(QNearFieldTarget::Error, 
+						 QNearFieldTarget::RequestId)));
+		
 		m_target = NULL;
 	}
 }

@@ -1,8 +1,14 @@
+tagbuilder (0.0.6) unstable; urgency=low
+
+  * Tag writing fixed to write only once per detection. 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Thu, 12 Jan 2012 20:15:33 +0200
+
 tagbuilder (0.0.5) unstable; urgency=low
 
   * Bluetooth interaction mostly correct; only thing missing is monitoring whether Bluetooth becomes available when scan failure text is shown (e.g. if user goes to control panel and disables flight mode). 
 
- -- Hannu Mallat <hmallat@gmail.com>  Mon, 09 Jan 2012 22:30:1458 +0200
+ -- Hannu Mallat <hmallat@gmail.com>  Mon, 09 Jan 2012 22:30:14 +0200
 
 tagbuilder (0.0.4) unstable; urgency=low
 

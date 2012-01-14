@@ -49,10 +49,11 @@ void TagReader::stop(void)
 
 void TagReader::targetDetected(QNearFieldTarget *target)
 {
-        mDebug(__func__) << "Saw target. ";
+        mDebug(__func__) << "Saw target (R). ";
 	m_target = target;
 
 	if (m_started == false) {
+		mDebug(__func__) << "Ignoring read target, for now. ";
 		return; /* Not now dear */
 	}
 
@@ -68,7 +69,7 @@ void TagReader::targetDetected(QNearFieldTarget *target)
 
 void TagReader::targetLost(QNearFieldTarget *target)
 {
-        mDebug(__func__) << "Lost target. ";
+        mDebug(__func__) << "Lost target (R). ";
 
 	if (target == m_target) {
 

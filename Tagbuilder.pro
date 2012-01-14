@@ -10,7 +10,6 @@ TARGET		 = Tagbuilder
 PREFIX		 = /opt/Tagbuilder
 
 QMAKE_CXXFLAGS	+= -Werror -DINSTALLPREFIX='\\\"/opt/Tagbuilder\\\"'
-QMAKE_CXXFLAGS  += -DVERSION_MAJOR=0 -DVERSION_MINOR=0 -DVERSION_MICRO=4
 
 OBJECTS_DIR	= ./obj
 MOC_DIR		= ./moc

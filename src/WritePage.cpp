@@ -147,8 +147,7 @@ void WritePage::writeFinished(bool success)
 	m_indicator->setVisible(false);
 
 	if (success == true) {
-		/* Nice, now write more or dismiss by "done" action */
-		m_writer->writeMessage();
+		/* Nice, sinply keep going until the user dismisses the page */
 	} else {
 		/* Not much error case handling -- just show a dialog */
 		MMessageBox *box = 

@@ -1,4 +1,8 @@
 #!/usr/bin/make -f
+
+LOGVER := $(shell dpkg-parsechangelog | grep '^Version:.*' | cut -d ' ' -f 2)
+CXXFLAGS += -DVERSION=\\\"$(LOGVER)\\\"
+
 %:
 	dh $@
 
