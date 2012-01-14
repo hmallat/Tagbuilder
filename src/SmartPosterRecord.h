@@ -32,7 +32,7 @@ public:
 	Q_DECLARE_NDEF_RECORD(SmartPosterRecord,
 			      QNdefRecord::NfcRtd,
 			      "Sp",
-			      QByteArray("\xd0\x00\x00", 3));
+			      QByteArray("\xd1\x01\x01U\x00", 5));
 
 	SmartPosterRecord(QNdefNfcUriRecord uri);
 
