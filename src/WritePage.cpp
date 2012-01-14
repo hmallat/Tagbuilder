@@ -8,6 +8,7 @@
 
 #include "WritePage.h"
 #include "TagWriter.h"
+#include "NfcdMonitor.h"
 
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
@@ -21,10 +22,13 @@
 #define TAP_IMAGE INSTALLPREFIX "/share/images/tap.png"
 
 WritePage::WritePage(QNdefMessage message, 
+		     NfcdMonitor *monitor,
 		     QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_writer(NULL),
-	  m_indicator(NULL)
+	  m_indicator(NULL),
+	  m_monitor(monitor),
+	  m_info(NULL)
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
@@ -41,6 +45,10 @@ WritePage::WritePage(QNdefMessage message,
 		this, SLOT(writeFinished(bool)));
 
 	m_writer->setMessage(message);
+
+	connect(m_monitor, SIGNAL(nfcStatusChanged()),
+		this, SLOT(updateInfo()));
+
 }
 
 WritePage::~WritePage(void)
@@ -97,21 +105,13 @@ void WritePage::createContent(void)
 		sub_layout->addItem(image);
 		sub_layout->setAlignment(image, Qt::AlignHCenter);
 	
-		MLabel *info = new MLabel();
-		QString first = tr("<p>Touch a tag to write it. "
-				   "You can write multiple tags, "
-				   "one after another.</p>");
-		QString second = tr("<p>Note that tag capacity must be "
-				    "at least %1 bytes.<p>")
-			.arg(m_datalen);
-
-		info->setText(m_datalen > 48 ? first + second : first);
-		info->setWordWrap(true);
-		info->setAlignment(Qt::AlignHCenter);
-		info->setSizePolicy(QSizePolicy::Preferred, 
-				    QSizePolicy::Preferred);
-		sub_layout->addItem(info);
-		sub_layout->setAlignment(info, Qt::AlignHCenter);
+		m_info = new MLabel();
+		m_info->setWordWrap(true);
+		m_info->setAlignment(Qt::AlignHCenter);
+		m_info->setSizePolicy(QSizePolicy::Preferred, 
+				      QSizePolicy::Preferred);
+		sub_layout->addItem(m_info);
+		sub_layout->setAlignment(m_info, Qt::AlignHCenter);
 
 		m_indicator = 
 			new MProgressIndicator(NULL, MProgressIndicator::barType);
@@ -132,7 +132,30 @@ void WritePage::createContent(void)
 
 	centralWidget()->setLayout(anchor);
 
+	updateInfo();
+
 	m_writer->writeMessage();
+}
+
+void WritePage::updateInfo(void)
+{
+	if (m_info == 0) {
+		return;
+	}
+
+	if (m_monitor->status() == NfcdMonitor::NfcStatusOn) {
+		QString first = tr("<p>Touch a tag to write it. "
+				   "You can write multiple tags, "
+				   "one after another.</p>");
+		QString second = tr("<p>Note that tag capacity must be "
+				    "at least %1 bytes.<p>")
+			.arg(m_datalen);
+		m_info->setText(m_datalen > 48 ? first + second : first);
+	} else {
+		m_info->setText(tr("<p>NFC is not enabled. To write "
+				   "tags, please enable NFC from the "
+				   "control panel. </p>"));
+	}
 }
 
 void WritePage::writeStarted(void)

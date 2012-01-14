@@ -15,6 +15,8 @@
 class MAction;
 class MProgressIndicator;
 class TagWriter;
+class MLabel;
+class NfcdMonitor;
 
 QTM_USE_NAMESPACE;
 
@@ -24,7 +26,9 @@ class WritePage : public MApplicationPage
 
 public:
 
-	WritePage(QNdefMessage message, QGraphicsItem *parent = 0);
+	WritePage(QNdefMessage message, 
+		  NfcdMonitor *monitor,
+		  QGraphicsItem *parent = 0);
 
 	virtual ~WritePage(void);
 
@@ -35,6 +39,8 @@ private Q_SLOTS:
 	void writeStarted(void);
 
 	void writeFinished(bool success);
+
+	void updateInfo(void);
 
 private:
 
@@ -49,6 +55,10 @@ private:
 	MAction *m_done;
 
 	int m_datalen;
+
+	NfcdMonitor *m_monitor;
+
+	MLabel *m_info;
 
 };
 

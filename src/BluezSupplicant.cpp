@@ -284,15 +284,6 @@ void BluezSupplicant::deviceRemoved(const QDBusObjectPath which)
 		return;
 	}
 
-	/* Remove listening to signals for this device */
-	m_sys.disconnect("org.bluez",
-			 which.path(),
-			 "org.bluez.Device",
-			 "PropertyChanged",
-			 this,
-			 SLOT(devicePropertyChanged(QString, 
-						    QDBusVariant)));
-	
 	/* Finally, kill the device itself */
 	BluezDevice *device = m_devices[i];
 	m_devices.removeAt(i);

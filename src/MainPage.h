@@ -17,6 +17,7 @@ class QGraphicsAnchorLayout;
 class MObjectMenu;
 class BluezSupplicant;
 class TagReader;
+class NfcdMonitor;
 
 QTM_USE_NAMESPACE;
 
@@ -76,6 +77,8 @@ private:
 	BluezSupplicant *m_bluez;
 
 	TagReader *m_reader;
+
+	NfcdMonitor *m_monitor;
 
 };
 

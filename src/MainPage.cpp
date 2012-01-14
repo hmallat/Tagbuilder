@@ -26,6 +26,7 @@
 #include "NfcHandoverSelectNdefRecord.h"
 #include "WritePage.h"
 #include "ViewHeader.h"
+#include "NfcdMonitor.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -56,6 +57,7 @@ MainPage::MainPage(QGraphicsItem *parent)
 {
 	m_bluez = new BluezSupplicant(this);
 	m_reader = new TagReader(this);
+	m_monitor = new NfcdMonitor(this);
 
 	connect(this, SIGNAL(appeared()), 
 		this, SLOT(pageAppeared()));
@@ -66,6 +68,7 @@ MainPage::MainPage(QGraphicsItem *parent)
 	connect(m_reader, SIGNAL(messageRead(const QNdefMessage)),
 		this, SLOT(messageRead(const QNdefMessage)));
 
+	m_monitor->start();
 }
 
 MainPage::~MainPage(void)
@@ -261,7 +264,7 @@ void MainPage::showAbout(void)
 void MainPage::tagSelected(const QModelIndex &which)
 {
 	const Tag *tag = TagStorage::storage()->tag(which.row());
-	WritePage *page = new WritePage(tag->message());
+	WritePage *page = new WritePage(tag->message(), m_monitor);
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 }
 
