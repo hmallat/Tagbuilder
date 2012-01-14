@@ -1,3 +1,9 @@
+tagbuilder (0.0.7) unstable; urgency=low
+
+  * Fixed empty calendar and addressbook handling (ready signaling).
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sat, 14 Jan 2012 12:18:17 +0200
+
 tagbuilder (0.0.6) unstable; urgency=low
 
   * Tag writing fixed to write only once per detection. 

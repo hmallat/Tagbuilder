@@ -119,16 +119,25 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 		goto done;
 	}
 
+done:
 	Q_EMIT(layoutAboutToBeChanged());
 
-	beginInsertRows(QModelIndex(), 0, bucketEntries.length() - 1, false);
-	m_buckets.setItems(bucketEntries);
-	m_contacts = insertions;
-	endInsertRows();
+	if (m_buckets.bucketCount() > 0) {
+		beginRemoveRows(QModelIndex(), 0, m_buckets.bucketCount() - 1, false);
+		m_buckets.clear();
+		m_contacts.clear();
+		endRemoveRows();
+	}
+
+	if (bucketEntries.length() > 0) {
+		beginInsertRows(QModelIndex(), 0, bucketEntries.length() - 1, false);
+		m_buckets.setItems(bucketEntries);
+		m_contacts = insertions;
+		endInsertRows();
+	}
 
 	Q_EMIT(layoutChanged());
 
-done:
 	Q_EMIT(ready());
 }
 

@@ -130,16 +130,16 @@ bool CalendarSelectionPageListModel::fetch(void)
 
 void CalendarSelectionPageListModel::resultsAvailable(void)
 {
+	QMap <QDate, QList<QOrganizerItem> > insertions;
+	QList<QOrganizerItem> results;
+
 	if (m_fetch->error() != QOrganizerManager::NoError) {
 		mDebug(__func__) << "Cannot fetch calendar entries, error " 
 				 << m_fetch->error();
-		/* TODO: indicate in UI */
-		return;
+		goto done;
 	}
 
-	QMap <QDate, QList<QOrganizerItem> > insertions;
-
-	QList<QOrganizerItem> results = m_fetch->items();
+	results = m_fetch->items();
 	for (int i = 0; i < results.length(); i++) {
 		QDate bucket = _itemStart(results[i]).date();
 
@@ -154,45 +154,62 @@ void CalendarSelectionPageListModel::resultsAvailable(void)
 
 	if (insertions.size() == 0) {
 		mDebug(__func__) << "Nothing to be inserted. ";
-		/* TODO: indicate in UI */
-		return;
+		goto done;
 	}
 
+done:
 	Q_EMIT(layoutAboutToBeChanged());
+
+	if (m_items.length() > 0) {
+		beginRemoveRows(QModelIndex(), 0, m_items.length() - 1, false);
+		m_items.clear();
+		endRemoveRows();
+	}
+
+
 	QList<QDate> keys = insertions.keys();
-	beginInsertRows(QModelIndex(), 0, keys.length() - 1, false);
+	if (keys.length() != 0) {
+		QList< QPair <QDate, QList< QOrganizerItem > > > pairs;
 
-	/* TODO: check the date() for non-dated todos */
+		beginInsertRows(QModelIndex(), 0, keys.length() - 1, false);
 
-	QDate now = QDate::currentDate();
-	int closestToNow = -1;
-	int daysToClosest = 0;
+		/* TODO: check the date() for non-dated todos */
 
-	for (int i = 0; i < keys.length(); i++) {
-		QList<QOrganizerItem> items = insertions[keys[i]];
-		qSort(items);
-		QPair<QDate, QList<QOrganizerItem> > pair(keys[i], items);
-		m_items << pair;
+		QDate now = QDate::currentDate();
+		int closestToNow = -1;
+		int daysToClosest = 0;
+
+		for (int i = 0; i < keys.length(); i++) {
+			QList<QOrganizerItem> items = insertions[keys[i]];
+			qSort(items);
+			QPair<QDate, QList<QOrganizerItem> > pair(keys[i], items);
+			pairs << pair;
 		
-		if (closestToNow == -1) {
-			closestToNow = i;
-			daysToClosest = qAbs(now.daysTo(keys[i]));
-		} else {
-			int delta = qAbs(now.daysTo(keys[i]));
-			if (delta < daysToClosest) {
+			if (closestToNow == -1) {
 				closestToNow = i;
-				daysToClosest = delta;
+				daysToClosest = qAbs(now.daysTo(keys[i]));
+			} else {
+				int delta = qAbs(now.daysTo(keys[i]));
+				if (delta < daysToClosest) {
+					closestToNow = i;
+					daysToClosest = delta;
+				}
 			}
 		}
+		
+		m_items = pairs;
+
+		mDebug(__func__) << "Closest to now is group " << closestToNow;
+
+		QModelIndex groupIndex = index(closestToNow, 0);
+		m_closest = groupIndex;
+		
+		endInsertRows();
+
+	} else {
+		m_closest = QModelIndex();
 	}
 
-	mDebug(__func__) << "Closest to now is group " << closestToNow;
-
-	QModelIndex groupIndex = index(closestToNow, 0);
-	QModelIndex entryIndex = index(0, 0, groupIndex);
-	m_closest = entryIndex;
-
-	endInsertRows();
 	Q_EMIT(layoutChanged());
 
 	Q_EMIT(ready());
