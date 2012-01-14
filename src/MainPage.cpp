@@ -255,7 +255,7 @@ void MainPage::showAbout(void)
                                   "<br>"
                                   "<br>v%1"
                                   "<br>"
-                                  "Copyright (c) 2011 Hannu Mallat<br>"
+                                  "Copyright (c) 2012 Hannu Mallat<br>"
                                   "http://hannu.mallat.fi/n9/nfctagbuilder<br>")
 				.arg(VERSION));
 	box->appear();

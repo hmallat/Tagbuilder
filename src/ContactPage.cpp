@@ -17,7 +17,6 @@
 #include "Tag.h"
 
 #include <MLabel>
-#include <MContainer>
 #include <MAction>
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>

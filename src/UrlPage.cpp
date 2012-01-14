@@ -83,94 +83,81 @@ void UrlPage::createPageSpecificContent(void)
 	m_url->setLabel(tr("Bookmark URL"));
 	m_url->setPrompt(tr("Enter bookmark URL"));
 	m_url->setContents("http://");
-	m_url->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	m_url->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	layout()->addItem(m_url);
 	layout()->setAlignment(m_url, Qt::AlignCenter);
 	connect(m_url, SIGNAL(contentsChanged()),
 		this, SLOT(urlChanged(void)));
 
 	{
-		MContainer *container = new MContainer(tr("Titles"));
-		container->setSizePolicy(QSizePolicy::Minimum, 
-					 QSizePolicy::Minimum);
-		
-		m_titleLayout =
-			new QGraphicsLinearLayout(Qt::Vertical,
-						  container->centralWidget());
-		m_titleLayout->setSizePolicy(QSizePolicy::Minimum, 
-					     QSizePolicy::Minimum);
+		MLabel *label = new MLabel(tr("Titles"));
+		label->setAlignment(Qt::AlignLeft);
+		layout()->addItem(label);
+		layout()->setAlignment(label, Qt::AlignLeft);
+
+		m_titleLayout =	new QGraphicsLinearLayout(Qt::Vertical);
+		m_titleLayout->setSizePolicy(QSizePolicy::Preferred, 
+					     QSizePolicy::Preferred);
+		layout()->addItem(m_titleLayout);
+		layout()->setAlignment(m_titleLayout, Qt::AlignCenter);
 
 		m_addTitle = new MButton();
 		m_addTitle->setText("Add a title");
-		m_addTitle->setSizePolicy(QSizePolicy::Minimum, 
+		m_addTitle->setSizePolicy(QSizePolicy::Preferred, 
 					  QSizePolicy::Fixed);
 		m_titleLayout->addItem(m_addTitle);
 		m_titleLayout->setAlignment(m_addTitle, Qt::AlignCenter);
 		connect(m_addTitle, SIGNAL(clicked()),
 			this, SLOT(addTitle()));
-
-		layout()->addItem(container);
-		layout()->setAlignment(container, Qt::AlignCenter);
 	}
 
 	{
-		MContainer *container = new MContainer(tr("Action"));
-		container->setSizePolicy(QSizePolicy::Minimum, 
-					 QSizePolicy::Minimum);
-		
-		QGraphicsLinearLayout *sub_layout =
-			new QGraphicsLinearLayout(Qt::Vertical,
-						  container->centralWidget());
-		sub_layout->setSizePolicy(QSizePolicy::Minimum, 
-				      QSizePolicy::Minimum);
-		sub_layout->setSpacing(0);
+		MLabel *label = new MLabel(tr("Action"));
+		label->setAlignment(Qt::AlignLeft);
+		layout()->addItem(label);
+		layout()->setAlignment(label, Qt::AlignLeft);
 
-		actButton[NoAction] = new MButton();
-		actButton[NoAction]->setText(tr("No action"));
-		actButton[NoAction]->setStyleName("CommonTopSplitButton");
-		actButton[NoAction]->setCheckable(true);
-		actButton[NoAction]->setViewType(MButton::groupType);
-		connect(actButton[NoAction], SIGNAL(clicked()),
-			this, SLOT(actChanged()));
+		QGraphicsLinearLayout *but_layout =
+			new QGraphicsLinearLayout(Qt::Vertical);
+		but_layout->setSizePolicy(QSizePolicy::Preferred, 
+					  QSizePolicy::Preferred);
+		but_layout->setSpacing(0);
+		layout()->addItem(but_layout);
+		layout()->setAlignment(but_layout, Qt::AlignCenter);
 
-		actButton[DoAction] = new MButton();
-		actButton[DoAction]->setText(tr("Execute"));
-		actButton[DoAction]->setStyleName("CommonVerticalCenterSplitButton");
-		actButton[DoAction]->setCheckable(true);
-		actButton[DoAction]->setViewType(MButton::groupType);
-		connect(actButton[DoAction], SIGNAL(clicked()),
-			this, SLOT(actChanged()));
+		const QString title[4] = {
+			tr("No action"),
+			tr("Execute"),
+			tr("Save for later"),
+			tr("Open for editing")
+		};
 
-		actButton[SaveAction] = new MButton();
-		actButton[SaveAction]->setText(tr("Save for later"));
-		actButton[SaveAction]->setStyleName("CommonVerticalCenterSplitButton");
-		actButton[SaveAction]->setCheckable(true);
-		actButton[SaveAction]->setViewType(MButton::groupType);
-		connect(actButton[SaveAction], SIGNAL(clicked()),
-			this, SLOT(actChanged()));
-
-		actButton[EditAction] = new MButton();
-		actButton[EditAction]->setText(tr("Open for editing"));
-		actButton[EditAction]->setStyleName("CommonBottomSplitButton");
-		actButton[EditAction]->setCheckable(true);
-		actButton[EditAction]->setViewType(MButton::groupType);
-		connect(actButton[EditAction], SIGNAL(clicked()),
-			this, SLOT(actChanged()));
-
-		sub_layout->addItem(actButton[NoAction]);
-		sub_layout->addItem(actButton[DoAction]);
-		sub_layout->addItem(actButton[SaveAction]);
-		sub_layout->addItem(actButton[EditAction]);
+		const QString style[4] = {
+			"CommonTopSplitButton",
+			"CommonVerticalCenterSplitButton",
+			"CommonVerticalCenterSplitButton",
+			"CommonBottomSplitButton"
+		};
 
 		MButtonGroup* group = new MButtonGroup(this);
-		group->addButton(actButton[NoAction]);
-		group->addButton(actButton[DoAction]);
-		group->addButton(actButton[SaveAction]);
-		group->addButton(actButton[EditAction]);
-		actButton[NoAction]->setChecked(true);
+		for (int i = 0; i < 4; i++) {
+			actButton[i] = new MButton();
+			actButton[i]->setText(title[i]);
+			actButton[i]->setStyleName(style[i]);
+			actButton[i]->setCheckable(true);
+			actButton[i]->setViewType(MButton::groupType);
+			actButton[i]->setSizePolicy(QSizePolicy::Preferred, 
+						    QSizePolicy::Fixed);
 
-		layout()->addItem(container);
-		layout()->setAlignment(container, Qt::AlignCenter);
+			connect(actButton[i], SIGNAL(clicked()),
+				this, SLOT(actChanged()));
+
+			but_layout->addItem(actButton[i]);
+			but_layout->setAlignment(actButton[i], 
+						 Qt::AlignHCenter);
+			group->addButton(actButton[i]);
+		}
+		actButton[NoAction]->setChecked(true);
 	}
 
 }
@@ -331,7 +318,7 @@ void UrlPage::addTitle(void)
 				   LabeledTextEdit::SingleLineEditOnly);
 	title->setLanguageCode(Util::currentLanguageCode());
 	title->setPrompt(tr("Enter title"));
-	title->setSizePolicy(QSizePolicy::Minimum, 
+	title->setSizePolicy(QSizePolicy::Preferred, 
 			     QSizePolicy::Fixed);
 	pack->addItem(title);
 	pack->setAlignment(title, Qt::AlignLeft | Qt::AlignVCenter);
@@ -374,14 +361,16 @@ void UrlPage::removeTitle(QObject *which)
 			QGraphicsLinearLayout *pack = 
 				static_cast<QGraphicsLinearLayout *>
 				(m_titleLayout->itemAt(pos));
+			m_titleLayout->removeAt(pos);
 			while (pack->count() != 0) {
 				mDebug(__func__) << "Remove packed item. ";
 				QGraphicsLayoutItem *item = pack->itemAt(0);
 				pack->removeAt(0);
 				delete item;
 			}
-			m_titleLayout->removeAt(pos);
 			delete pack;
+
+			layout()->invalidate();
 
 			break;
 		}

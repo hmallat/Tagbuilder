@@ -45,3 +45,9 @@
 #LabelOrListLabel { 
   font: $FONT_FAMILY light 48
 }
+
+#DBUG {
+  background-image: none;
+  background-color: #ff00ff;
+}
+
