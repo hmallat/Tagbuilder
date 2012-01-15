@@ -58,7 +58,9 @@ protected Q_SLOTS:
 
 	void setContentValidity(bool);
 
+#ifdef LABEL_SIZE
 	void setContentSize(quint32 bytes);
+#endif
 
 private Q_SLOTS:
 
@@ -86,7 +88,9 @@ private:
 
 	QGraphicsLinearLayout *m_layout;
 
+#ifdef LABEL_SIZE
 	MLabel *m_size;
+#endif
 
 	LabeledTextEdit *m_name;
 

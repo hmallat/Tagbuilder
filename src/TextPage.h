@@ -49,7 +49,9 @@ private:
 
 	Q_DISABLE_COPY(TextPage);
 
+#ifdef LABEL_SIZE
 	void updateSize(void);
+#endif
 
 	TextRecordEdit *m_edit;
 

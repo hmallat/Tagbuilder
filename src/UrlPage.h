@@ -84,7 +84,9 @@ private:
 
 	Q_DISABLE_COPY(UrlPage);
 
+#ifdef LABEL_SIZE
 	void updateSize(void);
+#endif
 
 	enum Action checkedAction(void);
 

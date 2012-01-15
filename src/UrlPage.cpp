@@ -73,7 +73,6 @@ void UrlPage::createPageSpecificActions(void)
 	connect(phoneAction, SIGNAL(triggered()),
 		this, SLOT(choosePhoneContact()));
 	addAction(phoneAction);
-	
 }
 
 void UrlPage::createPageSpecificContent(void)
@@ -173,7 +172,9 @@ enum UrlPage::Action UrlPage::checkedAction(void)
 
 void UrlPage::setupNewData(void)
 {
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 bool UrlPage::setupData(const QNdefMessage message)
@@ -227,7 +228,9 @@ bool UrlPage::setupData(const QNdefMessage message)
 	}
 
 exit:
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 	return r;
 }
 
@@ -275,6 +278,7 @@ QNdefMessage UrlPage::prepareDataForStorage(void)
 	return message;
 }
 
+#ifdef LABEL_SIZE
 void UrlPage::updateSize(void)
 {
 	/* A bunch of calculations could be done without creating the
@@ -284,24 +288,31 @@ void UrlPage::updateSize(void)
 	quint32 ndefLength = Util::messageLength(message);
 	setContentSize(ndefLength);
 }
+#endif
 
 void UrlPage::urlChanged(void)
 {
 	/* TODO: how about checking also that the URL is a valid one */
 	setContentValidity(m_url->contents() != "" ? true : false);
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void UrlPage::actChanged(void)
 {
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void UrlPage::titleChanged(QObject *which)
 {
 	/* TODO for reals */
 	(void) which;
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void UrlPage::addTitle(void)
@@ -348,7 +359,9 @@ void UrlPage::addTitle(void)
 
 	layout()->invalidate();
 
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void UrlPage::removeTitle(QObject *which)
@@ -379,7 +392,9 @@ void UrlPage::removeTitle(QObject *which)
 		}
 	}
 
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void UrlPage::chooseFromBookmarks(void)

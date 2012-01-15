@@ -55,7 +55,9 @@ void TextPage::createPageSpecificContent(void)
 void TextPage::setupNewData(void)
 {
 	m_edit->setLanguageCode(Util::currentLanguageCode());
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 bool TextPage::setupData(QNdefMessage message)
@@ -63,7 +65,9 @@ bool TextPage::setupData(QNdefMessage message)
 	QNdefNfcTextRecord T(message[0]);
 	m_edit->setLanguageCode(T.locale());
 	m_edit->setContents(T.text());
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 	return true;
 }
 
@@ -81,14 +85,19 @@ QNdefMessage TextPage::prepareDataForStorage(void)
 void TextPage::textChanged(void)
 {
 	setContentValidity(m_edit->contents() != "" ? true : false);
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void TextPage::langChanged(void)
 {
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
+#ifdef LABEL_SIZE
 void TextPage::updateSize(void)
 {
 	/* Quite a bunch of calculation just to get one byte count */
@@ -110,5 +119,4 @@ void TextPage::updateSize(void)
 
 	setContentSize(ndefLength);
 }
-
-
+#endif

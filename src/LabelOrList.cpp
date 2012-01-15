@@ -10,8 +10,10 @@
 
 #include <MLabel>
 #include <MList>
+#include <MButton>
 #include <MPannableViewport>
 #include <QGraphicsGridLayout>
+#include <QGraphicsLinearLayout>
 #include <QItemSelectionModel>
 
 #include <MDebug>
@@ -21,6 +23,7 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 			 const QString &text,
 			 bool showGroups, 
 			 bool multiSelect,
+			 QList<MButton *> buttons,
 			 QGraphicsLayoutItem *parent)
 	: QGraphicsLayout(parent),
 	  m_grouped(showGroups),
@@ -31,7 +34,8 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 	  m_previousRowCount(-1),
 	  m_list(0),
 	  m_view(0),
-	  m_label(0)
+	  m_label(0),
+	  m_labelBox(0)
 {
 
 	m_layout = new QGraphicsGridLayout(this);
@@ -74,12 +78,40 @@ LabelOrList::LabelOrList(QAbstractItemModel *itemModel,
 	m_view->setMinimumSize(100, 100);
 	m_view->setWidget(m_list);
 
-	m_label = new MLabel(m_text);
-	m_label->setAlignment(Qt::AlignCenter);
-	m_label->setWordWrap(true);
-	m_label->setSizePolicy(QSizePolicy::Ignored,
-			       QSizePolicy::Ignored);
-	m_label->setStyleName("LabelOrListLabel");
+	{
+		m_labelBox = new MWidgetController();
+		m_labelBox->setSizePolicy(QSizePolicy::Ignored,
+					  QSizePolicy::Ignored);
+
+		QGraphicsLinearLayout *layout = 
+			new QGraphicsLinearLayout(Qt::Vertical,
+						  m_labelBox);
+
+		MLabel *topSpacer = new MLabel();
+		layout->addItem(topSpacer);
+		
+		m_label = new MLabel(m_text);
+		m_label->setAlignment(Qt::AlignCenter);
+		m_label->setWordWrap(true);
+#if 0
+		m_label->setSizePolicy(QSizePolicy::Ignored,
+				       QSizePolicy::Ignored);
+#else
+		m_label->setSizePolicy(QSizePolicy::Ignored,
+				       QSizePolicy::Fixed);
+#endif
+		m_label->setStyleName("LabelOrListLabel");
+		layout->addItem(m_label);
+		layout->setAlignment(m_label, Qt::AlignCenter);
+
+		for (int i = 0; i < buttons.length(); i++) {
+			layout->addItem(buttons[i]);
+			layout->setAlignment(buttons[i], Qt::AlignCenter);
+		}
+
+		MLabel *botSpacer = new MLabel();
+		layout->addItem(botSpacer);
+	}
 
 	setDisplay();
 }
@@ -142,7 +174,7 @@ void LabelOrList::setDisplay(void)
 		if (m_layout->count() != 0) {
 			m_layout->removeAt(0);
 		}
-		m_label->hide();
+		m_labelBox->hide();
 		m_view->show();
 		m_layout->addItem(m_view, 0, 0);
 
@@ -154,8 +186,8 @@ void LabelOrList::setDisplay(void)
 			m_layout->removeAt(0);
 		}
 		m_view->hide();
-		m_label->show();
-		m_layout->addItem(m_label, 0, 0);
+		m_labelBox->show();
+		m_layout->addItem(m_labelBox, 0, 0);
 	}
 
 	m_previousRowCount = rowCount;

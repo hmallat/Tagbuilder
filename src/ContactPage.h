@@ -56,7 +56,9 @@ private:
 
 	Q_DISABLE_COPY(ContactPage);
 
+#ifdef LABEL_SIZE
 	void updateSize(void);
+#endif
 
 	void setContact(const QContact contact);
 

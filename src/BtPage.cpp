@@ -287,7 +287,9 @@ void BtPage::updateDevice(void)
 				      name,
 				      cod);
 	prepareDataForStorage();
+#ifdef LABEL_SIZE
 	setContentSize(Util::messageLength(m_message));
+#endif
 }
 
 void BtPage::deviceNameChanged(void)

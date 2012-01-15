@@ -46,7 +46,9 @@ private:
 
 	Q_DISABLE_COPY(UnknownPage);
 
+#ifdef LABEL_SIZE
 	void updateSize(void);
+#endif
 
 	QNdefMessage m_message;
 

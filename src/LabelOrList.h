@@ -15,9 +15,11 @@
 #include <QGraphicsLayout>
 #include <QAbstractItemModel>
 #include <MAbstractCellCreator>
+#include <QList>
 
 class MWidgetController;
 class MLabel;
+class MButton;
 class MList;
 class MPannableViewport;
 class QModelIndex;
@@ -38,6 +40,7 @@ public:
 		    const QString &label,
 		    bool showGroups,
 		    bool multiSelect,
+		    QList<MButton *> buttons = QList<MButton *>(),
 		    QGraphicsLayoutItem *parent = 0);
 
 	virtual ~LabelOrList(void);
@@ -92,6 +95,8 @@ private:
 	MPannableViewport *m_view;
 
 	MLabel *m_label;
+
+	MWidgetController *m_labelBox;
 
 };
 

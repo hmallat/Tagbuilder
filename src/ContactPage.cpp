@@ -18,6 +18,7 @@
 
 #include <MLabel>
 #include <MAction>
+#include <MButton>
 #include <QGraphicsLinearLayout>
 #include <QContactLocalIdFilter>
 #include <QVersitContactExporter>
@@ -52,16 +53,26 @@ void ContactPage::createPageSpecificActions(void)
 	connect(pickAction, SIGNAL(triggered()),
 		this, SLOT(chooseFromAddressbook()));
 	addAction(pickAction);
-
 }
 
 void ContactPage::createPageSpecificContent(void)
 {
+	QList<MButton *> buttons;
+
+	MButton *aButton = new MButton();
+	aButton->setText(tr("Addressbook contact"));
+	aButton->setSizePolicy(QSizePolicy::Preferred, 
+			       QSizePolicy::Fixed);
+	connect(aButton, SIGNAL(clicked()), 
+		this, SLOT(chooseFromAddressbook()));
+	buttons << aButton;
+
 	m_contactDetails = new LabelOrList(m_model,
 					   _getCreator,
 					   tr("Select a contact"),
 					   true,
-					   false);
+					   false,
+					   buttons);
 	m_contactDetails->setSizePolicy(QSizePolicy::Preferred, 
 					QSizePolicy::Preferred);
 	layout()->addItem(m_contactDetails);
@@ -160,7 +171,9 @@ void ContactPage::setContact(const QContact contact)
 	m_model->setContact(m_info);
 
 	setContentValidity(m_info.isEmpty() ? false : true);
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void ContactPage::setContactThroughAction(const QContact contact)
@@ -169,6 +182,7 @@ void ContactPage::setContactThroughAction(const QContact contact)
 	setDefaultName(contact.displayLabel());
 }
 
+#ifdef LABEL_SIZE
 void ContactPage::updateSize(void)
 {
 	/* No easy way to calculate the size of the exported VCARD file,
@@ -177,4 +191,5 @@ void ContactPage::updateSize(void)
 	quint32 ndefLength = Util::messageLength(message);
 	setContentSize(ndefLength);
 }
+#endif
 

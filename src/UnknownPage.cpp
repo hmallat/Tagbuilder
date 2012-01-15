@@ -66,14 +66,18 @@ void UnknownPage::setupNewData(void)
 {
 	m_message = QNdefMessage();
 	m_model->setMessage(m_message);
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 bool UnknownPage::setupData(const QNdefMessage message)
 {
 	m_message = message;
 	m_model->setMessage(m_message);
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 	return true;
 }
 
@@ -82,7 +86,9 @@ QNdefMessage UnknownPage::prepareDataForStorage(void)
 	return m_message;
 }
 
+#ifdef LABEL_SIZE
 void UnknownPage::updateSize(void)
 {
 	setContentSize(Util::messageLength(m_message));
 }
+#endif

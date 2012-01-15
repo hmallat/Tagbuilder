@@ -18,6 +18,7 @@
 
 #include <MLabel>
 #include <MAction>
+#include <MButton>
 #include <QGraphicsLinearLayout>
 #include <QVersitOrganizerExporter>
 #include <QVersitOrganizerImporter>
@@ -58,16 +59,32 @@ void CalendarPage::createPageSpecificActions(void)
 	connect(todoAction, SIGNAL(triggered()),
 		this, SLOT(chooseTodo()));
 	addAction(todoAction);
-	
 }
 
 void CalendarPage::createPageSpecificContent(void)
 {
+	QList<MButton *> buttons;
+
+	MButton *eButton = new MButton();
+	eButton->setText(tr("Calendar event"));
+	eButton->setSizePolicy(QSizePolicy::Preferred, 
+			       QSizePolicy::Fixed);
+	connect(eButton, SIGNAL(clicked()), this, SLOT(chooseEvent()));
+	buttons << eButton;
+
+	MButton *tButton = new MButton();
+	tButton->setText(tr("Calendar to-do item"));
+	tButton->setSizePolicy(QSizePolicy::Preferred, 
+			       QSizePolicy::Fixed);
+	connect(tButton, SIGNAL(clicked()), this, SLOT(chooseTodo()));
+	buttons << tButton;
+
 	m_calendarDetails = new LabelOrList(m_model,
 					    _getCreator,
 					    tr("Select a calendar entry"),
 					    true,
-					    false);
+					    false,
+					    buttons);
 	m_calendarDetails->setSizePolicy(QSizePolicy::Preferred, 
 					 QSizePolicy::Preferred);
 	layout()->addItem(m_calendarDetails);
@@ -175,7 +192,9 @@ void CalendarPage::setCalendarItem(const QOrganizerItem item)
 	m_model->setOrganizerItem(m_info);
 
 	setContentValidity(m_info.isEmpty() ? false : true);
+#ifdef LABEL_SIZE
 	updateSize();
+#endif
 }
 
 void CalendarPage::setCalendarItemThroughAction(const QOrganizerItem item)
@@ -184,6 +203,7 @@ void CalendarPage::setCalendarItemThroughAction(const QOrganizerItem item)
 	setDefaultName(item.displayLabel());
 }
 
+#ifdef LABEL_SIZE
 void CalendarPage::updateSize(void)
 {
 	/* No easy way to calculate the size of the exported VCAL file,
@@ -193,3 +213,4 @@ void CalendarPage::updateSize(void)
 	quint32 ndefLength = Util::messageLength(message);
 	setContentSize(ndefLength);
 }
+#endif

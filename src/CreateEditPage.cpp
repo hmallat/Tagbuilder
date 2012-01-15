@@ -28,7 +28,9 @@ CreateEditPage::CreateEditPage(int tag, QGraphicsItem *parent)
 	  m_cancelAction(0),
 	  m_storeAction(0),
 	  m_layout(0),
+#ifdef LABEL_SIZE
 	  m_size(0),
+#endif
 	  m_name(0),
 	  m_contentValidity(false),
 	  m_nameValidity(false),
@@ -80,11 +82,13 @@ void CreateEditPage::createContent(void)
 	anchor->addCornerAnchors(header, Qt::TopLeftCorner,
 				 anchor, Qt::TopLeftCorner);
 
+#ifdef LABEL_SIZE
 	m_size = new MLabel();
 	m_size->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	m_size->setAlignment(Qt::AlignRight);
 	anchor->addAnchor(m_size, Qt::AnchorBottom, anchor, Qt::AnchorBottom);
 	anchor->addAnchor(m_size, Qt::AnchorRight, anchor, Qt::AnchorRight);
+#endif
 
 	MWidget *layoutContainer = new MWidget();
 	layoutContainer->setSizePolicy(QSizePolicy::Preferred, 
@@ -117,7 +121,11 @@ void CreateEditPage::createContent(void)
 	view->setWidget(layoutContainer);
 
 	anchor->addAnchor(view, Qt::AnchorTop, header, Qt::AnchorBottom);
+#ifdef LABEL_SIZE
 	anchor->addAnchor(view, Qt::AnchorBottom, m_size, Qt::AnchorTop);
+#else
+	anchor->addAnchor(view, Qt::AnchorBottom, anchor, Qt::AnchorBottom);
+#endif
 	anchor->addAnchor(view, Qt::AnchorLeft, anchor, Qt::AnchorLeft);
 	anchor->addAnchor(view, Qt::AnchorRight, anchor, Qt::AnchorRight);
 
@@ -165,10 +173,12 @@ void CreateEditPage::setContentValidity(bool valid)
 	updateUI();
 }
 
+#ifdef LABEL_SIZE
 void CreateEditPage::setContentSize(quint32 bytes)
 {
 	m_size->setText(tr("%1 bytes").arg(bytes));
 }
+#endif
 
 void CreateEditPage::load(void)
 {

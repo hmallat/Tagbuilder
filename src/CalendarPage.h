@@ -58,7 +58,9 @@ private:
 
 	Q_DISABLE_COPY(CalendarPage);
 
+#ifdef LABEL_SIZE
 	void updateSize(void);
+#endif
 
 	void setCalendarItem(const QOrganizerItem item);
 
