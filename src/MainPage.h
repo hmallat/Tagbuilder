@@ -58,6 +58,8 @@ private Q_SLOTS:
 
 	void messageRead(const QNdefMessage contents);
 
+	void linkActivated(const QString &);
+
 private:
 
 	Q_DISABLE_COPY(MainPage);

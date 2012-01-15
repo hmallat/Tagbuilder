@@ -38,6 +38,8 @@
 #include <MSceneManager>
 #include <MMessageBox>
 
+#include <contentaction.h>
+
 #include <MDebug>
 
 #ifndef VERSION
@@ -250,15 +252,37 @@ void MainPage::removeAllTags(void)
 
 void MainPage::showAbout(void)
 {
-	MMessageBox *box = 
-		new MMessageBox(tr("<big>NFC Tag Builder</big><br>"
-                                  "<br>"
-                                  "<br>v%1"
-                                  "<br>"
-                                  "Copyright (c) 2012 Hannu Mallat<br>"
-                                  "http://hannu.mallat.fi/n9/nfctagbuilder<br>")
-				.arg(VERSION));
+	MLabel *label = 
+		new MLabel(tr("<big>NFC Tag Builder</big><br>"
+			      "<br>"
+			      "<br>v%1"
+			      "<br>"
+			      "Copyright (c) 2012 Hannu Mallat<br>"
+			      "<a href=\"http://hannu.mallat.fi/n9/nfctagbuilder\">http://hannu.mallat.fi/n9/nfctagbuilder</a><br>")
+			   .arg(VERSION));
+	label->setWordWrap(true);
+        label->setAlignment(Qt::AlignHCenter);
+        label->setStyleName("CommonQueryText");
+	connect(label, SIGNAL(linkActivated(const QString &)),
+		this, SLOT(linkActivated(const QString &)));
+
+	MMessageBox *box = new MMessageBox();
+	box->setCentralWidget(label);
+
 	box->appear();
+}
+
+void MainPage::linkActivated(const QString &link)
+{
+        mDebug(__func__) << "link=" << link;
+        ContentAction::Action uriAction = 
+                ContentAction::Action::defaultActionForScheme(link);
+        if (uriAction.isValid()) {
+                mDebug(__func__) << "Triggering...";
+                uriAction.trigger();
+        } else {
+                mDebug(__func__) << "Invalid action. ";
+        }
 }
 
 void MainPage::tagSelected(const QModelIndex &which)

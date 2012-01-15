@@ -151,3 +151,8 @@ style.files	= \
 		data/Tagbuilder.css
 
 INSTALLS	+= target gfx trans desktop style
+
+unix {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += contentaction-0.1
+}
