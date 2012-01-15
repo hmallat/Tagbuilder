@@ -8,34 +8,28 @@ GENERAL:
   unsupported contents from tags
 - Multi record message support?
 - Set keyboard in text record edit text field according to language?
-- Make sure bytes are updated always (at least when removing sp titles
-  currently it doesn't work)
 - Check why input limiting with regexes doesn't work on N9?
 - Mini application icon for installation, too
 
 BLUETOOTH:
 - full Nokia-proprietary BT2.0 support (need docs or more data)
 - automatic semicolon add/del for address field?
-- Pretends to be scanning when in flight mode, should error instead.
-  Also check normal BT off situation. 
 
 EVENTS:
 
 CONTACTS:
+- more details?
 
 CALENDAR:
+- more details?
 
 URL:
 
 - Should not allow many titles with same languages
-- Fix UI niglets (bad alignments, Add title button -> '+', Del title button
-  with borders)
 
 UNKNOWN:
 
 WRITING:
-
-- Writing page still uses handmade view header?
 
 MISC: (rearrange these)
 

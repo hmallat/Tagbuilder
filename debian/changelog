@@ -3,6 +3,8 @@ tagbuilder (0.0.7) unstable; urgency=low
   * Fixed empty calendar and addressbook handling (ready signaling).
   * Fixed smart poster initialization to contain an empty URI. 
   * Monitor NFC state and indicate in write UI if it needs enabling. 
+  * Added buttons for contact and calendar creation on the page itself.
+  * Fixed maximum Mifare UL payload to 46 (was 48). 
 
  -- Hannu Mallat <hmallat@gmail.com>  Sat, 14 Jan 2012 12:18:17 +0200
 

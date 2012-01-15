@@ -9,6 +9,7 @@
 #include "WritePage.h"
 #include "TagWriter.h"
 #include "NfcdMonitor.h"
+#include "ViewHeader.h"
 
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsLinearLayout>
@@ -20,6 +21,10 @@
 #include <MMessageBox>
 
 #define TAP_IMAGE INSTALLPREFIX "/share/images/tap.png"
+
+/* Mifare ultralights have 48 writable bytes, but two bytes
+   are taken by NDEF TLV overhead */
+#define MAX_UL_DATALEN 46
 
 WritePage::WritePage(QNdefMessage message, 
 		     NfcdMonitor *monitor,
@@ -78,16 +83,10 @@ void WritePage::createContent(void)
 	anchor->setSizePolicy(QSizePolicy::Preferred, 
 			      QSizePolicy::Preferred);
 
-	MWidgetController *header = new MWidgetController();
-	header->setStyleName("CommonHeaderPanel");
-	header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	ViewHeader *header = 
+		new ViewHeader(tr("Write tags"));
 	anchor->addCornerAnchors(header, Qt::TopLeftCorner,
 				 anchor, Qt::TopLeftCorner);
-
-	MLabel *label = new MLabel(tr("Write tags"),
-				   header);
-	label->setStyleName("CommonHeader");
-	label->setAlignment(Qt::AlignLeft);
 
 	{
 		QGraphicsLinearLayout *sub_layout = 
@@ -147,10 +146,11 @@ void WritePage::updateInfo(void)
 		QString first = tr("<p>Touch a tag to write it. "
 				   "You can write multiple tags, "
 				   "one after another.</p>");
-		QString second = tr("<p>Note that tag capacity must be "
-				    "at least %1 bytes.<p>")
+		QString second = tr("<p>Note that tag must have capacity for "
+				    "at least %1 bytes of NDEF data.<p>")
 			.arg(m_datalen);
-		m_info->setText(m_datalen > 48 ? first + second : first);
+		m_info->setText(m_datalen > MAX_UL_DATALEN 
+				? first + second : first);
 	} else {
 		m_info->setText(tr("<p>NFC is not enabled. To write "
 				   "tags, please enable NFC from the "
