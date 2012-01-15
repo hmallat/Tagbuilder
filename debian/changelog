@@ -1,3 +1,10 @@
+tagbuilder (0.0.8) unstable; urgency=low
+
+  * Clickable link to About box
+  * Icon update
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sun, 15 Jan 2012 17:41:11 +0200
+
 tagbuilder (0.0.7) unstable; urgency=low
 
   * Fixed empty calendar and addressbook handling (ready signaling).
