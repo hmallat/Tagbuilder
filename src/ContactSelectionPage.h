@@ -27,7 +27,7 @@ public:
 
 	ContactSelectionPage(QContactManager *manager,
 			     Util::ContactDetails requiredDetails = 
-			     Util::NoDetails,
+			     Util::NoContactDetails,
 			     QGraphicsItem *parent = 0);
 
 	virtual ~ContactSelectionPage(void);

@@ -8,20 +8,36 @@
 
 #include "Util.h"
 #include "VCardNdefRecord.h"
+#include "VCalNdefRecord.h"
 
 #include <QSystemInfo>
 #include <QLocale>
 #include <QContactPhoneNumber>
 #include <QMap>
 #include <MInputMethodState>
+
 #include <QVersitContactExporter>
 #include <QVersitContactImporter>
 #include <QVersitReader>
 #include <QVersitWriter>
+
 #include <QContactName>
 #include <QContactPhoneNumber>
 #include <QContactEmailAddress>
 #include <QContactAddress>
+
+#include <QVersitOrganizerExporter>
+#include <QVersitOrganizerImporter>
+#include <QVersitReader>
+#include <QVersitWriter>
+
+#include <QOrganizerEventTime>
+#include <QOrganizerJournalTime>
+#include <QOrganizerTodoTime>
+#include <QOrganizerItemComment>
+#include <QOrganizerItemDescription>
+#include <QOrganizerItemDisplayLabel>
+#include <QOrganizerItemLocation>
 
 #include <MDebug>
 
@@ -310,17 +326,11 @@ const QString Util::contactDetailName(Util::ContactDetail detail)
 {
 	if (detail == Name) {
 		return QContactName::DefinitionName;
-	}
-
-	if (detail == PhoneNumber) {
+	} else if (detail == PhoneNumber) {
 		return QContactPhoneNumber::DefinitionName;
-	}
-
-	if (detail == EmailAddress) {
+	} else if (detail == EmailAddress) {
 		return QContactEmailAddress::DefinitionName;
-	}
-
-	if (detail == PhysicalAddress) {
+	} else if (detail == PhysicalAddress) {
 		return QContactAddress::DefinitionName;
 	}
 
@@ -349,6 +359,124 @@ QNdefMessage Util::ndefFromContact(const QContact &contact)
 	message << vc;
 	return message;
 	
+fail:
+	return QNdefMessage();
+}
+
+const QString Util::calendarDetailName(Util::CalendarDetail detail)
+{
+	if (detail == Label) {
+		return QOrganizerItemDisplayLabel::DefinitionName;
+	} else if (detail == Location) {
+		return QOrganizerItemLocation::DefinitionName;
+	} else if (detail == EventTime) {
+		return QOrganizerEventTime::DefinitionName;
+	} else if (detail == JournalTime) {
+		return QOrganizerJournalTime::DefinitionName;
+	} else if (detail == TodoTime) {
+		return QOrganizerTodoTime::DefinitionName;
+	} else if (detail == Description) {
+		return QOrganizerItemDescription::DefinitionName;
+	} else if (detail == Comment) {
+		return QOrganizerItemComment::DefinitionName;
+	}
+
+	return QString();
+}
+
+QOrganizerItem Util::organizerItemFromNdef(const QNdefMessage &message)
+{
+	CalendarDetail detail[CALENDAR_DETAILS] = {
+		Label,
+		Location,
+		EventTime,
+		JournalTime,
+		TodoTime,
+		Description,
+		Comment
+	};
+
+	QVersitOrganizerImporter importer;
+	QList<QOrganizerItemDetail> details;
+	QOrganizerItem item;
+
+	if (message.length() != 1 ||
+	    message[0].isRecordType<VCalNdefRecord>() == false) {
+		return QOrganizerItem();
+	}
+
+	mDebug(__func__) << message[0].typeNameFormat();
+	mDebug(__func__) << QString::fromAscii(message[0].type());
+	mDebug(__func__) << QString::fromAscii(message[0].payload());
+
+	QVersitReader reader(message[0].payload());
+	if (reader.startReading() == false ||
+	    reader.waitForFinished() == false) {
+		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
+		goto fail;
+	}
+
+	if (reader.results().length() == 0) {
+		mDebug(__func__) << "No results. ";
+		goto fail;
+	}
+
+	if (importer.importDocument(reader.results()[0]) == false ||
+	    importer.items().length() == 0) {
+		mDebug(__func__) << "Importer fail. ";
+		goto fail;
+	}
+
+	/* We don't want all possible details, only those which are
+	   selected from the set of supported details. */ 
+
+	for (int i = 0; i < CALENDAR_DETAILS; i++) {
+		const QString name = calendarDetailName(detail[i]);
+		mDebug(__func__) << "Appending details for " << name;
+		details << importer.items()[0].details(name);
+	}
+
+	item.setType(importer.items()[0].type());
+	mDebug(__func__) << "Saving " << details.length() 
+			 << " details to item. ";
+	for (int i = 0; i < details.length(); i++) {
+		mDebug(__func__) << "Saving " << details[i].definitionName();
+		item.saveDetail(&(details[i]));
+	}
+
+	return item;
+
+fail:
+	return QOrganizerItem();
+}
+
+QNdefMessage Util::ndefFromOrganizerItem(const QOrganizerItem &item)
+{
+	QNdefMessage message;
+	VCalNdefRecord vc;
+	QByteArray data;
+	QVersitWriter writer(&data);
+	QVersitOrganizerExporter exporter;
+	QList<QOrganizerItem> items;
+
+	items << item;
+	if (exporter.exportItems(items,
+				 QVersitDocument::ICalendar20Type) == false) {
+		QVersitOrganizerExporter::Error e = exporter.errorMap()[0];
+		mDebug(__func__) << "Export fail, " << e;
+		goto fail;
+	}
+
+	if (writer.startWriting(exporter.document()) == false ||
+	    writer.waitForFinished() == false) {
+		mDebug(__func__) << "Write fail";
+		goto fail;
+	}
+
+	vc.setPayload(data);
+	message << vc;
+	return message;
+
 fail:
 	return QNdefMessage();
 }

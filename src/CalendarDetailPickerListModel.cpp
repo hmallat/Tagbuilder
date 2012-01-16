@@ -33,56 +33,26 @@ CalendarDetailPickerListModel(QObject *parent)
 void CalendarDetailPickerListModel::setOrganizerItem(const QOrganizerItem &item)
 {
 
-	QList<enum DetailType> types;
-	QMap<enum DetailType, QList<QOrganizerItemDetail> > details;
+	QList<enum Util::CalendarDetail> types;
+	QMap<enum Util::CalendarDetail, QList<QOrganizerItemDetail> > details;
 
-	QList<QOrganizerItemDetail> labels = 
-		item.details(QOrganizerItemDisplayLabel::DefinitionName);
-	if (labels.length() != 0) {
-		types << Label;
-		details[Label] = labels;
-	}
+	Util::CalendarDetail type[CALENDAR_DETAILS] = {
+		Util::Label, 
+		Util::Location, 
+		Util::EventTime,
+		Util::JournalTime,
+		Util::TodoTime,
+		Util::Description,
+		Util::Comment
+	};
 
-	QList<QOrganizerItemDetail> eventtimes = 
-		item.details(QOrganizerEventTime::DefinitionName);
-	if (eventtimes.length() != 0) {
-		types << EventTime;
-		details[EventTime] = eventtimes;
-	}
-
-	QList<QOrganizerItemDetail> todotimes = 
-		item.details(QOrganizerTodoTime::DefinitionName);
-	if (todotimes.length() != 0) {
-		types << TodoTime;
-		details[TodoTime] = todotimes;
-	}
-
-	QList<QOrganizerItemDetail> jourtimes = 
-		item.details(QOrganizerJournalTime::DefinitionName);
-	if (jourtimes.length() != 0) {
-		types << JournalTime;
-		details[JournalTime] = jourtimes;
-	}
-
-	QList<QOrganizerItemDetail> locs = 
-		item.details(QOrganizerItemLocation::DefinitionName);
-	if (locs.length() != 0) {
-		types << Location;
-		details[Location] = locs;
-	}
-
-	QList<QOrganizerItemDetail> descrs = 
-		item.details(QOrganizerItemDescription::DefinitionName);
-	if (descrs.length() != 0) {
-		types << Description;
-		details[Description] = descrs;
-	}
-
-	QList<QOrganizerItemDetail> comms = 
-		item.details(QOrganizerItemComment::DefinitionName);
-	if (comms.length() != 0) {
-		types << Comment;
-		details[Comment] = comms;
+	for (int i = 0; i < CALENDAR_DETAILS; i++) {
+		const QString name = Util::calendarDetailName(type[i]);
+		QList<QOrganizerItemDetail> dets = item.details(name);
+		if (dets.length() != 0) {
+			types << type[i];
+			details[type[i]] = dets;
+		}
 	}
 
 	Q_EMIT(layoutAboutToBeChanged());
@@ -117,13 +87,13 @@ int CalendarDetailPickerListModel::rowCountInGroup(int group) const
 QString CalendarDetailPickerListModel::groupTitle(int group) const
 {
 	return 
-		(m_types[group] == Label) ? tr("Label") :
-		(m_types[group] == Location) ? tr("Location") :
-		(m_types[group] == EventTime) ? tr("Time") :
-		(m_types[group] == JournalTime) ? tr("Time") :
-		(m_types[group] == TodoTime) ? tr("Time") :
-		(m_types[group] == Description) ? tr("Description") :
-		(m_types[group] == Comment) ? tr("Comment") :
+		(m_types[group] == Util::Label) ? tr("Label") :
+		(m_types[group] == Util::Location) ? tr("Location") :
+		(m_types[group] == Util::EventTime) ? tr("Time") :
+		(m_types[group] == Util::JournalTime) ? tr("Time") :
+		(m_types[group] == Util::TodoTime) ? tr("Time") :
+		(m_types[group] == Util::Description) ? tr("Description") :
+		(m_types[group] == Util::Comment) ? tr("Comment") :
 		tr("Unknown type");
 }
 
@@ -134,22 +104,22 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 	(void)role;
 
 	QStringList parameters;
-	enum DetailType type = m_types[group];
+	enum Util::CalendarDetail type = m_types[group];
 	QOrganizerItemDetail detail = m_details[type][row];
 
-	if (type == Label) {
+	if (type == Util::Label) {
 		QOrganizerItemDisplayLabel label = 
 			static_cast<QOrganizerItemDisplayLabel>(detail);
 		parameters << label.label();
 		parameters << "";
 
-	} else if (type == Location) {
+	} else if (type == Util::Location) {
 		QOrganizerItemLocation loc = 
 			static_cast<QOrganizerItemLocation>(detail);
 		parameters << loc.label();
 		parameters << "";
 
-	} else if (type == EventTime) {
+	} else if (type == Util::EventTime) {
 		QOrganizerEventTime time = 
 			static_cast<QOrganizerEventTime>(detail);
 
@@ -169,7 +139,7 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 			       ? tr("All-day event") 
 			       : Util::eventDurationToString(s, e));
 
-	} else if (type == JournalTime) {
+	} else if (type == Util::JournalTime) {
 		QOrganizerJournalTime time = 
 			static_cast<QOrganizerJournalTime>(detail);
 
@@ -181,7 +151,7 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		parameters << rep;
 		parameters << "";
 
-	} else if (type == TodoTime) {
+	} else if (type == Util::TodoTime) {
 		QOrganizerTodoTime time = 
 			static_cast<QOrganizerTodoTime>(detail);
 
@@ -197,13 +167,13 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		parameters << rep;
 		parameters << (time.isAllDay() ? tr("All-day event") : "");
 
-	} else if (type == Description) {
+	} else if (type == Util::Description) {
 		QOrganizerItemDescription description = 
 			static_cast<QOrganizerItemDescription>(detail);
 		parameters << description.description();
 		parameters << "";
 
-	} else if (type == Comment) {
+	} else if (type == Util::Comment) {
 		QOrganizerItemComment comment = 
 			static_cast<QOrganizerItemComment>(detail);
 		parameters << comment.comment();
@@ -219,6 +189,6 @@ CalendarDetailPickerListModel::detail(const QModelIndex &index) const
 {
 	int row = index.row();
 	int group = index.parent().row();
-	enum DetailType type = m_types[group];
+	enum Util::CalendarDetail type = m_types[group];
 	return m_details[type][row];
 }

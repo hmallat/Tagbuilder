@@ -29,7 +29,7 @@ public:
 
 	ContactSelectionPageListModel(QContactManager *manager,
 				      Util::ContactDetails requiredDetails =
-				      Util::NoDetails,
+				      Util::NoContactDetails,
 				      QObject *parent = 0);
 
 	virtual int groupCount(void) const;

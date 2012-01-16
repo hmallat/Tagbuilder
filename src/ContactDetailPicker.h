@@ -30,7 +30,7 @@ class ContactDetailPicker : public SelectionPage
 public:
 
 	ContactDetailPicker(const QContact contact, 
-			    Util::ContactDetails details = Util::AllDetails,
+			    Util::ContactDetails details = Util::AllContactDetails,
 			    bool singleDetailOnly = false,
 			    QGraphicsItem *parent = 0);
 

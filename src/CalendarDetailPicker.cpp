@@ -81,6 +81,7 @@ void CalendarDetailPicker::pickingDone(void)
 		QOrganizerItemDetail detail = m_model->detail(list[i]);
 		/* TODO: will this cause problems, does the 
 		   damn qorganizeritem make a copy or not? */
+		mDebug(__func__) << "Saving " << detail.definitionName();
 		picked.saveDetail(&detail);
 	}
 

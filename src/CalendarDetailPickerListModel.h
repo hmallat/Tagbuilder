@@ -10,6 +10,9 @@
 #define _CALENDAR_DETAIL_PICKER_LIST_MODEL_H_
 
 #include <MAbstractItemModel>
+
+#include "Util.h"
+
 #include <QOrganizerItem>
 #include <QOrganizerItemDetail>
 #include <QMap>
@@ -21,16 +24,6 @@ class CalendarDetailPickerListModel : public MAbstractItemModel
 {
 
 	Q_OBJECT;
-
-	enum DetailType {
-		Label,
-		Location,
-		EventTime,
-		JournalTime,
-		TodoTime,
-		Description,
-		Comment
-	};
 
 public:
 
@@ -52,9 +45,9 @@ public:
 
 private:
 
-	QList<enum DetailType> m_types;
+	QList<enum Util::CalendarDetail> m_types;
 
-	QMap<enum DetailType, QList<QOrganizerItemDetail> > m_details;
+	QMap<enum Util::CalendarDetail, QList<QOrganizerItemDetail> > m_details;
 
 };
 

@@ -31,7 +31,8 @@ ContactPage::ContactPage(int tag, QGraphicsItem *parent)
 	: CreateEditPage(tag, parent),
 	  m_info(),
 	  m_contactDetails(0),
-	  m_model(new ContactDetailPickerListModel(Util::AllDetails, this))
+	  m_model(new ContactDetailPickerListModel(Util::AllContactDetails, 
+						   this))
 {
 }
 
@@ -82,6 +83,7 @@ bool ContactPage::setupData(const QNdefMessage message)
 {
 	QContact c = Util::contactFromNdef(message);
 	if (c.isEmpty() == true) {
+		setContact(QContact());
 		return false;
 	}
 

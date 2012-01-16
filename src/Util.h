@@ -11,6 +11,7 @@
 
 #include <QNdefMessage>
 #include <QContact>
+#include <QOrganizerItem>
 
 class QDateTime;
 
@@ -18,21 +19,37 @@ QTM_USE_NAMESPACE;
 
 #define CONTACT_DETAILS 4
 
+#define CALENDAR_DETAILS 7
+
 class Util
 {
 
 public:
 
 	enum ContactDetail {
-		NoDetails = 0x0,
+		NoContactDetails = 0x0,
 		Name = 0x1,
 		PhoneNumber = 0x2,
 		EmailAddress = 0x4, 
 		PhysicalAddress = 0x8,
-		AllDetails = 0xf
+		AllContactDetails = 0xf
 	};
 
 	Q_DECLARE_FLAGS(ContactDetails, ContactDetail);
+
+	enum CalendarDetail {
+		NoCalendarDetails = 0x0,
+		Label = 0x1,
+		Location = 0x2,
+		EventTime = 0x4,
+		JournalTime = 0x8,
+		TodoTime = 0x10,
+		Description = 0x20,
+		Comment = 0x40,
+		AllCalendarDetails = 0x7f		
+	};
+
+	Q_DECLARE_FLAGS(CalendarDetails, CalendarDetail);
 
 	static quint32 messageLength(const QNdefMessage message);
 
@@ -55,16 +72,26 @@ public:
 	
 	static int imAttributeExtensionId(void);
 
-	static const QString contactDetailName(Util::ContactDetail detail);
+	static const QString contactDetailName(ContactDetail detail);
 
-	static QContact contactFromNdef(const QNdefMessage &message,
-					enum ContactDetail filter 
-					= AllDetails);
+	static QContact 
+		contactFromNdef(const QNdefMessage &message,
+				enum ContactDetail filter = AllContactDetails);
 
 	static QNdefMessage ndefFromContact(const QContact &contact);
+
+	static const QString calendarDetailName(CalendarDetail detail);
+
+	static QOrganizerItem 
+		organizerItemFromNdef(const QNdefMessage &message);
+
+	static QNdefMessage 
+		ndefFromOrganizerItem(const QOrganizerItem &contact);
 
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Util::ContactDetails);
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Util::CalendarDetails);
 
 #endif /* UTIL_H */

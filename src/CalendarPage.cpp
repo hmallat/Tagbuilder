@@ -20,10 +20,6 @@
 #include <MAction>
 #include <MButton>
 #include <QGraphicsLinearLayout>
-#include <QVersitOrganizerExporter>
-#include <QVersitOrganizerImporter>
-#include <QVersitReader>
-#include <QVersitWriter>
 
 #include <MDebug>
 
@@ -98,61 +94,19 @@ void CalendarPage::setupNewData(void)
 
 bool CalendarPage::setupData(const QNdefMessage message)
 {
-	VCalNdefRecord vc(message[0]);
-	QVersitReader reader(vc.payload());
-	QVersitOrganizerImporter importer;
-
-	if (reader.startReading() == false ||
-	    reader.waitForFinished() == false) {
-		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
-		goto fail;
+	QOrganizerItem o = Util::organizerItemFromNdef(message);
+	if (o.isEmpty() == true) {
+		setCalendarItem(QOrganizerItem());
+		return false;
 	}
 
-	if (reader.results().length() == 0) {
-		mDebug(__func__) << "No results. ";
-		goto fail;
-	}
-
-	if (importer.importDocument(reader.results()[0]) == false ||
-	    importer.items().length() == 0) {
-		mDebug(__func__) << "Importer fail. ";
-		goto fail;
-	}
-
-	setCalendarItem(importer.items()[0]);
+	setCalendarItem(o);
 	return true;
-
-fail:
-	return false;
 }
 
 QNdefMessage CalendarPage::prepareDataForStorage(void)
 {
-	QNdefMessage message;
-	VCalNdefRecord vc;
-	QByteArray data;
-	QVersitWriter writer(&data);
-	QVersitOrganizerExporter exporter;
-
-	if (exporter.exportItems(QList<QOrganizerItem>() << m_info,
-				 QVersitDocument::ICalendar20Type) == false) {
-		mDebug(__func__) << "Export fail";
-		goto fail;
-	}
-
-	if (writer.startWriting(exporter.document()) == false ||
-	    writer.waitForFinished() == false) {
-		mDebug(__func__) << "Write fail";
-		goto fail;
-	}
-
-	vc.setPayload(data);
-	message << vc;
-
-	return message;
-
-fail:
-	return QNdefMessage();
+	return Util::ndefFromOrganizerItem(m_info);
 }
 
 void CalendarPage::chooseEvent(void)
