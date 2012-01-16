@@ -7,12 +7,21 @@
  */
 
 #include "Util.h"
+#include "VCardNdefRecord.h"
 
 #include <QSystemInfo>
 #include <QLocale>
 #include <QContactPhoneNumber>
 #include <QMap>
 #include <MInputMethodState>
+#include <QVersitContactExporter>
+#include <QVersitContactImporter>
+#include <QVersitReader>
+#include <QVersitWriter>
+#include <QContactName>
+#include <QContactPhoneNumber>
+#include <QContactEmailAddress>
+#include <QContactAddress>
 
 #include <MDebug>
 
@@ -233,3 +242,113 @@ int Util::imAttributeExtensionId(void)
 	return id;
 }
 
+QContact Util::contactFromNdef(const QNdefMessage &message,
+			       enum ContactDetail filter)
+{
+	ContactDetail detail[CONTACT_DETAILS] = {
+		Name, 
+		PhoneNumber, 
+		EmailAddress,
+		PhysicalAddress
+	};
+	
+	QVersitContactImporter importer;
+	QList<QContactDetail> details;
+	QContact contact;
+
+	if (message.length() != 1 ||
+	    message[0].isRecordType<VCardNdefRecord>() == false) {
+		return QContact();
+	}
+
+	mDebug(__func__) << message[0].typeNameFormat();
+	mDebug(__func__) << QString::fromAscii(message[0].type());
+	mDebug(__func__) << QString::fromAscii(message[0].payload());
+
+	QVersitReader reader(message[0].payload());
+	if (reader.startReading() == false ||
+	    reader.waitForFinished() == false) {
+		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
+		goto fail;
+	}
+
+	if (reader.results().length() == 0) {
+		mDebug(__func__) << "No results. ";
+		goto fail;
+	}
+
+	if (importer.importDocuments(reader.results()) == false ||
+	    importer.contacts().length() == 0) {
+		mDebug(__func__) << "Importer fail. ";
+		goto fail;
+	}
+
+	/* We don't want all possible details, only those which are
+	   selected from the set of supported details. */ 
+
+	for (int i = 0; i < CONTACT_DETAILS; i++) {
+		const QString name = contactDetailName(detail[i]);
+		if ((filter & detail[i]) != 0) {
+			mDebug(__func__) << "Appending details for " << name;
+			details << importer.contacts()[0].details(name);
+		}
+	}
+
+	mDebug(__func__) << "Saving " << details.length() 
+			 << " details to contact. ";
+	for (int i = 0; i < details.length(); i++) {
+		contact.saveDetail(&(details[i]));
+	}
+
+	return contact;
+
+fail:
+	return QContact();
+}
+
+const QString Util::contactDetailName(Util::ContactDetail detail)
+{
+	if (detail == Name) {
+		return QContactName::DefinitionName;
+	}
+
+	if (detail == PhoneNumber) {
+		return QContactPhoneNumber::DefinitionName;
+	}
+
+	if (detail == EmailAddress) {
+		return QContactEmailAddress::DefinitionName;
+	}
+
+	if (detail == PhysicalAddress) {
+		return QContactAddress::DefinitionName;
+	}
+
+	return QString();
+}
+
+QNdefMessage Util::ndefFromContact(const QContact &contact)
+{
+	QNdefMessage message;
+	VCardNdefRecord vc;
+	QByteArray data;
+	QVersitWriter writer(&data);
+	QVersitContactExporter exporter;
+
+	if (exporter.exportContacts(QList<QContact>() << contact,
+				    QVersitDocument::VCard30Type) == false) {
+		goto fail;
+	}
+
+	if (writer.startWriting(exporter.documents()) == false ||
+	    writer.waitForFinished() == false) {
+		goto fail;
+	}
+
+	vc.setPayload(data);
+	message << vc;
+	return message;
+	
+fail:
+	return QNdefMessage();
+}

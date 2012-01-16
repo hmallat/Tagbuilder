@@ -33,42 +33,24 @@ void ContactDetailPickerListModel::setContact(const QContact &contact)
 	QList<enum Util::ContactDetail> types;
 	QMap<enum Util::ContactDetail, QList<QContactDetail> > details;
 
-	if ((m_filter & Util::Name) != 0) {
-		QList<QContactDetail> names = 
-			contact.details(QContactName::DefinitionName);
-		if (names.length() != 0) {
-			types << Util::Name;
-			details[Util::Name] = names;
+	Util::ContactDetail type[CONTACT_DETAILS] = {
+		Util::Name, 
+		Util::PhoneNumber, 
+		Util::EmailAddress,
+		Util::PhysicalAddress
+	};
+
+	for (int i = 0; i < CONTACT_DETAILS; i++) {
+		if ((m_filter & type[i]) != 0) {
+			const QString name = Util::contactDetailName(type[i]);
+			QList<QContactDetail> dets = contact.details(name);
+			if (dets.length() != 0) {
+				types << type[i];
+				details[type[i]] = dets;
+			}
 		}
 	}
 
-	if ((m_filter & Util::PhoneNumber) != 0) {
-		QList<QContactDetail> numbers = 
-			contact.details(QContactPhoneNumber::DefinitionName);
-		if (numbers.length() != 0) {
-			types << Util::PhoneNumber;
-			details[Util::PhoneNumber] = numbers;
-		}
-	}
-
-	if ((m_filter & Util::EmailAddress) != 0) {
-		QList<QContactDetail> emails = 
-			contact.details(QContactEmailAddress::DefinitionName);
-		if (emails.length() != 0) {
-			types << Util::EmailAddress;
-			details[Util::EmailAddress] = emails;
-		}
-	}
-
-	if ((m_filter & Util::PhysicalAddress) != 0) {
-		QList<QContactDetail> addresses = 
-			contact.details(QContactAddress::DefinitionName);
-		if (addresses.length() != 0) {
-			types << Util::PhysicalAddress;
-			details[Util::PhysicalAddress] = addresses;
-		}
-	}
-	
 	Q_EMIT(layoutAboutToBeChanged());
 
 	if (m_types.length() > 0) {

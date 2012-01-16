@@ -71,6 +71,8 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 	results = m_fetch->contacts();
 
 	for (int i = 0; i < results.length(); i++) {
+		bool include = true;
+
 		QContact contact = results[i];
 		if (contact.displayLabel() == "") {
 			continue;
@@ -82,36 +84,31 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 			continue;
 		}
 
-		if ((m_requiredDetails & Util::Name) != 0 &&
-		    contact.details(QContactName::DefinitionName).length() == 0) {
-			mDebug(__func__) << contact.displayLabel() 
-					 << " doesn't have name, skipping. ";
-			continue;
+		Util::ContactDetail detail[CONTACT_DETAILS] = {
+			Util::Name, 
+			Util::PhoneNumber, 
+			Util::EmailAddress,
+			Util::PhysicalAddress
+		};
+
+		for (int j = 0; j < CONTACT_DETAILS; j++) {
+			const QString name = Util::contactDetailName(detail[j]);
+			if ((m_requiredDetails & detail[j]) != 0 &&
+			    contact.details(name).length() == 0) {
+				mDebug(__func__) << contact.displayLabel() 
+						 << " doesn't have "
+						 << name
+						 << ", skipping. ";
+				include = false;
+				break;
+			}
 		}
 
-		if ((m_requiredDetails & Util::PhoneNumber) != 0 &&
-		    contact.details(QContactPhoneNumber::DefinitionName).length() == 0) {
-			mDebug(__func__) << contact.displayLabel() 
-					 << " doesn't have number, skipping. ";
-			continue;
+		if (include == true) {
+			insertions[contact.displayLabel()] = contact;
+			bucketEntries << contact.displayLabel();
 		}
 
-		if ((m_requiredDetails & Util::EmailAddress) != 0 &&
-		    contact.details(QContactEmailAddress::DefinitionName).length() == 0) {
-			mDebug(__func__) << contact.displayLabel() 
-					 << " doesn't have email, skipping. ";
-			continue;
-		}
-
-		if ((m_requiredDetails & Util::PhysicalAddress) != 0 &&
-		    contact.details(QContactAddress::DefinitionName).length() == 0) {
-			mDebug(__func__) << contact.displayLabel() 
-					 << " doesn't have addr, skipping. ";
-			continue;
-		}
-
-		insertions[contact.displayLabel()] = contact;
-		bucketEntries << contact.displayLabel();
 	}
 	if (bucketEntries.length() == 0) {
 		mDebug(__func__) << "Nothing to be inserted. ";

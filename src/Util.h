@@ -10,10 +10,13 @@
 #define _UTIL_H_
 
 #include <QNdefMessage>
+#include <QContact>
 
 class QDateTime;
 
 QTM_USE_NAMESPACE;
+
+#define CONTACT_DETAILS 4
 
 class Util
 {
@@ -51,6 +54,14 @@ public:
 					     const QDateTime &end);
 	
 	static int imAttributeExtensionId(void);
+
+	static const QString contactDetailName(Util::ContactDetail detail);
+
+	static QContact contactFromNdef(const QNdefMessage &message,
+					enum ContactDetail filter 
+					= AllDetails);
+
+	static QNdefMessage ndefFromContact(const QContact &contact);
 
 };
 

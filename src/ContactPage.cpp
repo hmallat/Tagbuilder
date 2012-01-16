@@ -12,7 +12,6 @@
 #include "ContactDetailPickerListCellCreator.h"
 #include "ContactDetailPickerListModel.h"
 #include "LabelOrList.h"
-#include "VCardNdefRecord.h"
 #include "Util.h"
 #include "Tag.h"
 
@@ -20,11 +19,6 @@
 #include <MAction>
 #include <MButton>
 #include <QGraphicsLinearLayout>
-#include <QContactLocalIdFilter>
-#include <QVersitContactExporter>
-#include <QVersitContactImporter>
-#include <QVersitReader>
-#include <QVersitWriter>
 
 #include <MDebug>
 
@@ -86,63 +80,18 @@ void ContactPage::setupNewData(void)
 
 bool ContactPage::setupData(const QNdefMessage message)
 {
-	VCardNdefRecord vc(message[0]);
-	QVersitReader reader(vc.payload());
-	QVersitContactImporter importer;
-
-	mDebug(__func__) << message[0].typeNameFormat();
-	mDebug(__func__) << QString::fromAscii(message[0].type());
-	mDebug(__func__) << QString::fromAscii(message[0].payload());
-	mDebug(__func__) << Tag::type(message);
-
-	if (reader.startReading() == false ||
-	    reader.waitForFinished() == false) {
-		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
-		goto fail;
+	QContact c = Util::contactFromNdef(message);
+	if (c.isEmpty() == true) {
+		return false;
 	}
 
-	if (reader.results().length() == 0) {
-		mDebug(__func__) << "No results. ";
-		goto fail;
-	}
-
-	if (importer.importDocuments(reader.results()) == false ||
-	    importer.contacts().length() == 0) {
-		mDebug(__func__) << "Importer fail. ";
-		goto fail;
-	}
-
-	setContact(importer.contacts()[0]);
+	setContact(c);
 	return true;
-
-fail:
-	return false;
 }
 
 QNdefMessage ContactPage::prepareDataForStorage(void)
 {
-	QNdefMessage message;
-	VCardNdefRecord vc;
-	QByteArray data;
-	QVersitWriter writer(&data);
-	QVersitContactExporter exporter;
-
-	if (exporter.exportContacts(QList<QContact>() << m_info,
-				    QVersitDocument::VCard30Type) == false) {
-		goto fail;
-	}
-
-	if (writer.startWriting(exporter.documents()) == false ||
-	    writer.waitForFinished() == false) {
-		goto fail;
-	}
-
-	vc.setPayload(data);
-	message << vc;
-	return message;
-	
-fail:
-	return QNdefMessage();
+	return Util::ndefFromContact(m_info);
 }
 
 void ContactPage::chooseFromAddressbook(void)
