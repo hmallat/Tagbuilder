@@ -3,12 +3,11 @@ GENERAL:
 - Guideline: when reading a tag, don't copy unsupported stuff over verbatim,
   just issue a warning or something if data is dropped. Check that this is
   done for all types! ALSO for contact and calendar individual fields!!!
+  *** done for contacts, others still missing ***
 - Styling (partly done)
-- Drop fields that are not supported from harvested records, warn when dropping
-  unsupported contents from tags
 - Multi record message support?
 - Set keyboard in text record edit text field according to language?
-- Check why input limiting with regexes doesn't work on N9?
+- Check why input limiting with regexes doesn't work as expected on N9?
 - Mini application icon for installation, too
 
 BLUETOOTH:
