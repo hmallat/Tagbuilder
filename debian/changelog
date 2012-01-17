@@ -2,6 +2,8 @@ tagbuilder (0.0.8) unstable; urgency=low
 
   * Clickable link to About box
   * Icon update
+  * Harvested contacts and calendars are filtered, so that they won't contain uneditable & undisplayed fields
+  * Custom handler for LOCATION property, as system versit import/export did not have that
 
  -- Hannu Mallat <hmallat@gmail.com>  Sun, 15 Jan 2012 17:41:11 +0200
 

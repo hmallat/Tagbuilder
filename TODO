@@ -1,9 +1,7 @@
 GENERAL:
 
-- Guideline: when reading a tag, don't copy unsupported stuff over verbatim,
-  just issue a warning or something if data is dropped. Check that this is
-  done for all types! ALSO for contact and calendar individual fields!!!
-  *** done for contacts and calendar, others still missing ***
+- When harvesting a tag, undisplayed info is now dropped; should maybe
+  warn the user that this happens. 
 - Styling (partly done)
 - Multi record message support?
 - Set keyboard in text record edit text field according to language?
@@ -13,6 +11,7 @@ GENERAL:
 BLUETOOTH:
 - full Nokia-proprietary BT2.0 support (need docs or more data)
 - automatic semicolon add/del for address field?
+- hex-only keyboard for editing bdaddr and cod
 
 EVENTS:
 
@@ -20,11 +19,9 @@ CONTACTS:
 - more details?
 
 CALENDAR:
-- location detail not working!
 - more details?
 
 URL:
-
 - Should not allow many titles with same languages
 
 UNKNOWN:
