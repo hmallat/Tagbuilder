@@ -50,6 +50,7 @@ HEADERS		+= \
 		src/MainPage.h \
 		src/NfcdMonitor.h \
 		src/NfcHandoverSelectNdefRecord.h \
+		src/OrganizerItemHandler.h \
 		src/SelectionPage.h \
 		src/SmartPosterRecord.h \
 		src/Tag.h \
@@ -106,6 +107,7 @@ SOURCES		+= \
 		src/MainPage.cpp \
 		src/NfcdMonitor.cpp \
 		src/NfcHandoverSelectNdefRecord.cpp \
+		src/OrganizerItemHandler.cpp \
 		src/SelectionPage.cpp \
 		src/SmartPosterRecord.cpp \
 		src/Tag.cpp \

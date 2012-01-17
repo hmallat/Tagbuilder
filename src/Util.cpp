@@ -9,6 +9,7 @@
 #include "Util.h"
 #include "VCardNdefRecord.h"
 #include "VCalNdefRecord.h"
+#include "OrganizerItemHandler.h"
 
 #include <QSystemInfo>
 #include <QLocale>
@@ -399,7 +400,8 @@ QOrganizerItem Util::organizerItemFromNdef(const QNdefMessage &message)
 	QVersitOrganizerImporter importer;
 	QList<QOrganizerItemDetail> details;
 	QOrganizerItem item;
-
+	OrganizerItemHandler *handler = 0;
+	
 	if (message.length() != 1 ||
 	    message[0].isRecordType<VCalNdefRecord>() == false) {
 		return QOrganizerItem();
@@ -413,18 +415,20 @@ QOrganizerItem Util::organizerItemFromNdef(const QNdefMessage &message)
 	if (reader.startReading() == false ||
 	    reader.waitForFinished() == false) {
 		mDebug(__func__) << "Reader fail, " << reader.error() << ". ";
-		goto fail;
+		goto exit;
 	}
 
 	if (reader.results().length() == 0) {
 		mDebug(__func__) << "No results. ";
-		goto fail;
+		goto exit;
 	}
 
+	handler = new OrganizerItemHandler();
+	importer.setPropertyHandler(handler);
 	if (importer.importDocument(reader.results()[0]) == false ||
 	    importer.items().length() == 0) {
 		mDebug(__func__) << "Importer fail. ";
-		goto fail;
+		goto exit;
 	}
 
 	/* We don't want all possible details, only those which are
@@ -444,10 +448,9 @@ QOrganizerItem Util::organizerItemFromNdef(const QNdefMessage &message)
 		item.saveDetail(&(details[i]));
 	}
 
+exit:
+	delete handler;
 	return item;
-
-fail:
-	return QOrganizerItem();
 }
 
 QNdefMessage Util::ndefFromOrganizerItem(const QOrganizerItem &item)
@@ -459,24 +462,27 @@ QNdefMessage Util::ndefFromOrganizerItem(const QOrganizerItem &item)
 	QVersitOrganizerExporter exporter;
 	QList<QOrganizerItem> items;
 
+	OrganizerItemHandler *handler = new OrganizerItemHandler();
+	exporter.setDetailHandler(handler);
+
 	items << item;
 	if (exporter.exportItems(items,
 				 QVersitDocument::ICalendar20Type) == false) {
 		QVersitOrganizerExporter::Error e = exporter.errorMap()[0];
 		mDebug(__func__) << "Export fail, " << e;
-		goto fail;
+		goto exit;
 	}
 
 	if (writer.startWriting(exporter.document()) == false ||
 	    writer.waitForFinished() == false) {
 		mDebug(__func__) << "Write fail";
-		goto fail;
+		goto exit;
 	}
 
 	vc.setPayload(data);
 	message << vc;
-	return message;
 
-fail:
-	return QNdefMessage();
+exit:
+	delete handler;
+	return message;
 }
