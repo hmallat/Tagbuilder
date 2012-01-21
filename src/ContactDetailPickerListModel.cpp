@@ -12,6 +12,8 @@
 #include <QContactPhoneNumber>
 #include <QContactEmailAddress>
 #include <QContactAddress>
+#include <QContactUrl>
+#include <QContactOrganization>
 
 #include <MDebug>
 
@@ -37,7 +39,9 @@ void ContactDetailPickerListModel::setContact(const QContact &contact)
 		Util::Name, 
 		Util::PhoneNumber, 
 		Util::EmailAddress,
-		Util::PhysicalAddress
+		Util::PhysicalAddress,
+		Util::WebAddress,
+		Util::Organization
 	};
 
 	for (int i = 0; i < CONTACT_DETAILS; i++) {
@@ -82,6 +86,7 @@ int ContactDetailPickerListModel::rowCountInGroup(int group) const
 
 QString ContactDetailPickerListModel::groupTitle(int group) const
 {
+	/* TODO: move translations to Util class */
 	return 
 		(m_types[group] == Util::Name) 
 		? tr("Name") :
@@ -91,6 +96,10 @@ QString ContactDetailPickerListModel::groupTitle(int group) const
 		? tr("Email address") :
 		(m_types[group] == Util::PhysicalAddress) 
 		? tr("Address") :
+		(m_types[group] == Util::WebAddress) 
+		? tr("Web address") :
+		(m_types[group] == Util::Organization) 
+		? tr("Organization") :
 		tr("Unknown type");
 }
 
@@ -134,14 +143,14 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 			static_cast<QContactPhoneNumber>(detail);
 		parameters << number.number();
 
-		QString detail = "";
+		QString subdetail = "";
 
 		if (number.contexts().length() != 0) {
 			QString con = 
 				Util::contactDetailContextToString
 				(number.contexts()[0]);
 			if (con != "") {
-				detail += con;
+				subdetail += con;
 			}
 		}
 
@@ -150,30 +159,30 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 				Util::phoneNumberSubtypeToString
 				(number.subTypes()[0]);
 			if (sub != "") {
-				detail += (detail != "" ? ", " : "");
-				detail += sub;
+				subdetail += (subdetail != "" ? ", " : "");
+				subdetail += sub;
 			}
 		}
 
-		parameters << detail;
+		parameters << subdetail;
 
 	} else if (type == Util::EmailAddress) {
 		QContactEmailAddress addr = 
 			static_cast<QContactEmailAddress>(detail);
 		parameters << addr.emailAddress();
 
-		QString detail = "";
+		QString subdetail = "";
 
 		if (addr.contexts().length() != 0) {
 			QString con = 
 				Util::contactDetailContextToString
 				(addr.contexts()[0]);
 			if (con != "") {
-				detail += con;
+				subdetail += con;
 			}
 		}
 
-		parameters << detail;
+		parameters << subdetail;
 
 	} else if (type == Util::PhysicalAddress) {
 		QContactAddress addr = 
@@ -210,18 +219,74 @@ QVariant ContactDetailPickerListModel::itemData(int row,
 
 		parameters << rep;
 
-		QString detail = "";
+		QString subdetail = "";
 
 		if (addr.contexts().length() != 0) {
 			QString con = 
 				Util::contactDetailContextToString
 				(addr.contexts()[0]);
 			if (con != "") {
-				detail += con;
+				subdetail += con;
 			}
 		}
 
-		parameters << detail;
+		parameters << subdetail;
+
+	} else if (type == Util::WebAddress) {
+		QContactUrl url = 
+			static_cast<QContactUrl>(detail);
+		
+		mDebug(__func__) << "URL=" << url.url() << "SUBTYPE=" << url.subType();
+
+		parameters << url.url();
+
+		QString subdetail = "";
+
+		if (url.contexts().length() != 0) {
+			QString con = 
+				Util::contactDetailContextToString
+				(url.contexts()[0]);
+			if (con != "") {
+				subdetail += con;
+			}
+		}
+
+		parameters << subdetail;
+
+	} else if (type == Util::Organization) {
+		QContactOrganization org = 
+			static_cast<QContactOrganization>(detail);
+
+		QString rep;
+		const char *sep = ", "; 
+		if (org.title() != "") {
+			if (rep != "") rep += sep;
+			rep += org.title();
+		}
+		if (org.role() != "") {
+			if (rep != "") rep += sep;
+			rep += org.role();
+		}
+		if (org.department().length() != 0) {
+			for (int i = 0; i < org.department().length(); i++) {
+				if (rep != "") rep += sep;
+				rep += org.department()[i];
+			}
+		}
+		if (org.name() != "") {
+			if (rep != "") rep += sep;
+			rep += org.name();
+		}
+		if (org.location() != "") {
+			if (rep != "") rep += sep;
+			rep += org.location();
+		}
+
+		parameters << rep;
+
+		QString subdetail = "";
+
+		parameters << subdetail;
 
 	}
 

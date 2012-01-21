@@ -17,9 +17,9 @@ class QDateTime;
 
 QTM_USE_NAMESPACE;
 
-#define CONTACT_DETAILS 4
+#define CONTACT_DETAILS 6
 
-#define CALENDAR_DETAILS 7
+#define CALENDAR_DETAILS 8
 
 class Util
 {
@@ -32,7 +32,9 @@ public:
 		PhoneNumber = 0x2,
 		EmailAddress = 0x4, 
 		PhysicalAddress = 0x8,
-		AllContactDetails = 0xf
+		WebAddress = 0x10,
+		Organization = 0x20,
+		AllContactDetails = 0x3f
 	};
 
 	Q_DECLARE_FLAGS(ContactDetails, ContactDetail);
@@ -46,7 +48,8 @@ public:
 		TodoTime = 0x10,
 		Description = 0x20,
 		Comment = 0x40,
-		AllCalendarDetails = 0x7f		
+		TodoProgress = 0x80,
+		AllCalendarDetails = 0xff		
 	};
 
 	Q_DECLARE_FLAGS(CalendarDetails, CalendarDetail);
@@ -60,6 +63,8 @@ public:
 	static QString languageCodeToString(const QString &code);
 
 	static QString phoneNumberSubtypeToString(const QString &type);
+
+	static QString urlSubtypeToString(const QString &type);
 
 	static QString contactDetailContextToString(const QString &type);
 

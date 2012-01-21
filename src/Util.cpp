@@ -28,6 +28,8 @@
 #include <QContactPhoneNumber>
 #include <QContactEmailAddress>
 #include <QContactAddress>
+#include <QContactUrl>
+#include <QContactOrganization>
 
 #include <QVersitOrganizerExporter>
 #include <QVersitOrganizerImporter>
@@ -41,6 +43,7 @@
 #include <QOrganizerItemDescription>
 #include <QOrganizerItemDisplayLabel>
 #include <QOrganizerItemLocation>
+#include <QOrganizerTodoProgress>
 
 #include <MDebug>
 
@@ -86,6 +89,37 @@ QString Util::languageCodeToString(const QString &code)
 	QString lang = locale.languageToString(locale.language());
 	mDebug(__func__) << code << "->" << lang;
 	return lang;
+}
+
+QString Util::urlSubtypeToString(const QString &type)
+{
+	static QMap<QString, QString> typeMap;
+	static bool typeMapInitialized = false;
+
+	if (typeMapInitialized == false) {
+		const char* types[] = {
+			QContactUrl::SubTypeHomePage.latin1(),
+			QContactUrl::SubTypeBlog.latin1(),
+			QContactUrl::SubTypeFavourite.latin1()
+		};
+		const QString trans[] = {
+			QObject::tr("Home page"),
+			QObject::tr("Blog"),
+			QObject::tr("Favorite")
+		};
+		const int count = 3;
+
+		for (int i = 0; i < count; i++) {
+			QString key = QString::fromLatin1(types[i]);
+			typeMap[key] = trans[i];
+		}
+		typeMapInitialized = true;
+	}
+
+	if (typeMap.contains(type)) {
+		return typeMap[type];
+	}
+	return QObject::tr("");
 }
 
 QString Util::phoneNumberSubtypeToString(const QString &type)
@@ -268,7 +302,9 @@ QContact Util::contactFromNdef(const QNdefMessage &message,
 		Name, 
 		PhoneNumber, 
 		EmailAddress,
-		PhysicalAddress
+		PhysicalAddress,
+		WebAddress,
+		Organization
 	};
 	
 	QContactManager manager;
@@ -337,6 +373,10 @@ const QString Util::contactDetailName(Util::ContactDetail detail)
 		return QContactEmailAddress::DefinitionName;
 	} else if (detail == PhysicalAddress) {
 		return QContactAddress::DefinitionName;
+	} else if (detail == WebAddress) {
+		return QContactUrl::DefinitionName;
+	} else if (detail == Organization) {
+		return QContactOrganization::DefinitionName;
 	}
 
 	return QString();
@@ -384,6 +424,8 @@ const QString Util::calendarDetailName(Util::CalendarDetail detail)
 		return QOrganizerItemDescription::DefinitionName;
 	} else if (detail == Comment) {
 		return QOrganizerItemComment::DefinitionName;
+	} else if (detail == TodoProgress) {
+		return QOrganizerTodoProgress::DefinitionName;
 	}
 
 	return QString();
@@ -398,7 +440,8 @@ QOrganizerItem Util::organizerItemFromNdef(const QNdefMessage &message)
 		JournalTime,
 		TodoTime,
 		Description,
-		Comment
+		Comment,
+		TodoProgress
 	};
 
 	QVersitOrganizerImporter importer;

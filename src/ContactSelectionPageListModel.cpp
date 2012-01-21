@@ -88,7 +88,9 @@ void ContactSelectionPageListModel::resultsAvailable(void)
 			Util::Name, 
 			Util::PhoneNumber, 
 			Util::EmailAddress,
-			Util::PhysicalAddress
+			Util::PhysicalAddress,
+			Util::WebAddress,
+			Util::Organization
 		};
 
 		for (int j = 0; j < CONTACT_DETAILS; j++) {

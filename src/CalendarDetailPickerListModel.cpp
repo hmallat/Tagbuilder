@@ -16,6 +16,7 @@
 #include <QOrganizerItemDescription>
 #include <QOrganizerItemDisplayLabel>
 #include <QOrganizerItemLocation>
+#include <QOrganizerTodoProgress>
 
 #include <MDebug>
 
@@ -43,15 +44,20 @@ void CalendarDetailPickerListModel::setOrganizerItem(const QOrganizerItem &item)
 		Util::JournalTime,
 		Util::TodoTime,
 		Util::Description,
-		Util::Comment
+		Util::Comment,
+		Util::TodoProgress
 	};
 
+	QString label = item.displayLabel();
 	for (int i = 0; i < CALENDAR_DETAILS; i++) {
 		const QString name = Util::calendarDetailName(type[i]);
 		QList<QOrganizerItemDetail> dets = item.details(name);
 		if (dets.length() != 0) {
+			mDebug(__func__) << label << "got some " << name;
 			types << type[i];
 			details[type[i]] = dets;
+		} else {
+			mDebug(__func__) << label << "has no " << name;
 		}
 	}
 
@@ -86,14 +92,16 @@ int CalendarDetailPickerListModel::rowCountInGroup(int group) const
 
 QString CalendarDetailPickerListModel::groupTitle(int group) const
 {
+	/* TODO: move translation to Util */
 	return 
 		(m_types[group] == Util::Label) ? tr("Label") :
 		(m_types[group] == Util::Location) ? tr("Location") :
 		(m_types[group] == Util::EventTime) ? tr("Time") :
 		(m_types[group] == Util::JournalTime) ? tr("Time") :
-		(m_types[group] == Util::TodoTime) ? tr("Time") :
+		(m_types[group] == Util::TodoTime) ? tr("Due time") :
 		(m_types[group] == Util::Description) ? tr("Description") :
 		(m_types[group] == Util::Comment) ? tr("Comment") :
+		(m_types[group] == Util::TodoProgress) ? tr("Status") :
 		tr("Unknown type");
 }
 
@@ -165,7 +173,7 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		}
 		
 		parameters << rep;
-		parameters << (time.isAllDay() ? tr("All-day event") : "");
+		parameters << (time.isAllDay() ? tr("All-day item") : "");
 
 	} else if (type == Util::Description) {
 		QOrganizerItemDescription description = 
@@ -179,6 +187,33 @@ QVariant CalendarDetailPickerListModel::itemData(int row,
 		parameters << comment.comment();
 		parameters << "";
 
+	} else if (type == Util::TodoProgress) {
+		QOrganizerTodoProgress prog = 
+			static_cast<QOrganizerTodoProgress>(detail);
+		QString rep;
+		QDateTime f;
+
+		switch (prog.status()) {
+
+		case QOrganizerTodoProgress::StatusNotStarted:
+			rep = tr("Not started");
+			break;
+
+		case QOrganizerTodoProgress::StatusComplete:
+			f = prog.finishedDateTime();
+			if (f.isValid() == true) {
+				rep = tr("Finished %1").arg(Util::eventTimeToString(f, QDateTime()));
+			} else {
+				rep = tr("Finished");
+			}
+			break;
+
+		default:
+			rep = tr("In progress");
+		}
+
+		parameters << rep;
+		parameters << "";
 	}
 
 	return qVariantFromValue(parameters);
