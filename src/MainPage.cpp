@@ -27,6 +27,7 @@
 #include "WritePage.h"
 #include "ViewHeader.h"
 #include "NfcdMonitor.h"
+#include "HelpPage.h"
 
 #include <QGraphicsAnchorLayout>
 #include <MAction>
@@ -124,6 +125,11 @@ void MainPage::createActions(void)
  		this, SLOT(showAbout()));
 	addAction(aboutAction);
 
+	MAction *helpAction = new MAction(tr("Instructions..."), this);
+	helpAction->setLocation(MAction::ApplicationMenuLocation);
+ 	connect(helpAction, SIGNAL(triggered()),
+ 		this, SLOT(showHelp()));
+	addAction(helpAction);
 }
 
 void MainPage::createContent(void)
@@ -270,6 +276,12 @@ void MainPage::showAbout(void)
 	box->setCentralWidget(label);
 
 	box->appear();
+}
+
+void MainPage::showHelp(void)
+{
+	HelpPage *page = new HelpPage();
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
 }
 
 void MainPage::linkActivated(const QString &link)

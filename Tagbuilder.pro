@@ -45,6 +45,7 @@ HEADERS		+= \
 		src/ContentItemCellCreator.h \
 		src/CreatePage.h \
 		src/CreateEditPage.h \
+		src/HelpPage.h \
 		src/LabeledTextEdit.h \
 		src/LabelOrList.h \
 		src/MainPage.h \
@@ -102,6 +103,7 @@ SOURCES		+= \
 		src/ContentItemCellCreator.cpp \
 		src/CreatePage.cpp \
 		src/CreateEditPage.cpp \
+		src/HelpPage.cpp \
 		src/LabeledTextEdit.cpp \
 		src/LabelOrList.cpp \
 		src/MainPage.cpp \

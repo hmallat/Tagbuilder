@@ -47,6 +47,8 @@ private Q_SLOTS:
 
 	void showAbout(void);
 
+	void showHelp(void);
+
 	void tagSelected(const QModelIndex &);
 
 	void tagLongSelected(const QModelIndex &,
