@@ -184,8 +184,11 @@ void CreateEditPage::load(void)
 {
 	const Tag *tag = TagStorage::storage()->tag(m_tag);	
 
-	m_name->setContents(tag->name());
-	setNameValidity(true);
+	if (m_tag == TagStorage::TEMPORARY_TAG) {
+		setDefaultName(tr("Harvested tag"));
+	} else {
+		m_name->setContents(tag->name());
+	}
 
 	if (setupData(tag->message()) == false) {
 		goto fail;

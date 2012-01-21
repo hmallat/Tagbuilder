@@ -17,6 +17,8 @@
 #include <QMap>
 #include <MInputMethodState>
 
+#include <QContactManager>
+
 #include <QVersitContactExporter>
 #include <QVersitContactImporter>
 #include <QVersitReader>
@@ -269,6 +271,7 @@ QContact Util::contactFromNdef(const QNdefMessage &message,
 		PhysicalAddress
 	};
 	
+	QContactManager manager;
 	QVersitContactImporter importer;
 	QList<QContactDetail> details;
 	QContact contact;
@@ -317,6 +320,7 @@ QContact Util::contactFromNdef(const QNdefMessage &message,
 		contact.saveDetail(&(details[i]));
 	}
 
+	manager.synthesizeContactDisplayLabel(&contact);
 	return contact;
 
 fail:
