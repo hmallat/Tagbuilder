@@ -101,6 +101,9 @@ bool CalendarPage::setupData(const QNdefMessage message)
 	}
 
 	setCalendarItem(o);
+	if (isTemporary() == true) {
+		setDefaultName(m_info.displayLabel());
+	}
 	return true;
 }
 

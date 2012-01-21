@@ -54,6 +54,8 @@ protected:
 
 	void setDefaultName(const QString name);
 
+	bool isTemporary(void);
+
 protected Q_SLOTS:
 
 	void setContentValidity(bool);

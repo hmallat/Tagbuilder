@@ -243,9 +243,15 @@ void CreateEditPage::setDefaultName(const QString name)
 	mDebug(__func__) << (m_nameEdited == true ? "" : "not ")
 			 << "edited. ";
 
-	if (m_tag == TagStorage::NULL_TAG && m_nameEdited == false) {
+	if ((m_tag == TagStorage::NULL_TAG ||
+	     m_tag == TagStorage::TEMPORARY_TAG) && m_nameEdited == false) {
 		m_name->setContents(name);
 		m_nameEdited = false;
 		mDebug(__func__) << "Default name set!";
 	}
+}
+
+bool CreateEditPage::isTemporary(void)
+{
+	return m_tag == TagStorage::TEMPORARY_TAG ? true : false;
 }

@@ -1,3 +1,9 @@
+tagbuilder (0.0.9) unstable; urgency=low
+
+  * Added default names for harvested tags (except for text and unknown). 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sat, 21 Jan 2012 08:51:24 +0200
+
 tagbuilder (0.0.8) unstable; urgency=low
 
   * Clickable link to About box

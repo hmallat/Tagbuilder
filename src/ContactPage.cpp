@@ -88,6 +88,9 @@ bool ContactPage::setupData(const QNdefMessage message)
 	}
 
 	setContact(c);
+	if (isTemporary() == true) {
+		setDefaultName(m_info.displayLabel());
+	}
 	return true;
 }
 

@@ -186,6 +186,13 @@ bool BtPage::setupData(const QNdefMessage message)
 	setDevice(QBluetoothDeviceInfo(bt.address(), 
 				       bt.name(), 
 				       bt.classOfDevice()));
+	if (isTemporary() == true) {
+		if (bt.name() != "") {
+			setDefaultName(bt.name());
+		} else {
+			setDefaultName(_bdaddr2str(bt.address()));
+		}
+	}
 	return true;
 }
 

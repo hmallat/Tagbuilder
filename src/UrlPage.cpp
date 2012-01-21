@@ -228,6 +228,11 @@ bool UrlPage::setupData(const QNdefMessage message)
 	}
 
 exit:
+	if (isTemporary() == true) {
+		if (m_titles.length() != 0) {
+			setDefaultName(m_titles[0]->contents());
+		}
+	}
 #ifdef LABEL_SIZE
 	updateSize();
 #endif
@@ -452,7 +457,7 @@ void UrlPage::emailAddressChosen(const QContact which)
 	u.setUri(mailto);
 
 	QNdefNfcTextRecord t;
-	t.setText(m_contactLabel);
+	t.setText(tr("Email address of %1").arg(m_contactLabel));
 	t.setLocale(Util::currentLanguageCode());
 
 	QList<QNdefNfcTextRecord> ts;
@@ -467,7 +472,7 @@ void UrlPage::emailAddressChosen(const QContact which)
 	Tag::dump(message);
 	setupData(message);
 
-	setDefaultName(tr("Email address of %1").arg(m_contactLabel));
+	setDefaultName(t.text());
 }
 
 void UrlPage::choosePhoneContact(void)
@@ -506,7 +511,7 @@ void UrlPage::phoneNumberChosen(const QContact which)
 	u.setUri(tel);
 
 	QNdefNfcTextRecord t;
-	t.setText(m_contactLabel);
+	t.setText(tr("Phone number of %1").arg(m_contactLabel));
 	t.setLocale(Util::currentLanguageCode());
 
 	QList<QNdefNfcTextRecord> ts;
@@ -521,5 +526,5 @@ void UrlPage::phoneNumberChosen(const QContact which)
 	Tag::dump(message);
 	setupData(message);
 
-	setDefaultName(tr("Phone number of %1").arg(m_contactLabel));
+	setDefaultName(t.text());
 }

@@ -351,8 +351,6 @@ void MainPage::messageRead(const QNdefMessage contents)
 		in << contents[0];
 		in << BtNdefRecord::fromSupportedMimeType(contents[1]);
 	} else {
-		/* TODO: change! Must make a record of our own so that
-		   no unsupported (== uneditable) contents leak through */
 		in = contents;
 	}
 
