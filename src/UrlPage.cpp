@@ -39,7 +39,9 @@ UrlPage::UrlPage(int tag, QGraphicsItem *parent)
 	  m_url(0),
 	  m_addTitle(0),
 	  m_titleLayout(0),
-	  m_titles()
+	  m_titles(),
+	  m_urlValidity(false),
+	  m_titleValidity(true)
 {
 	connect(m_titleRemoveMapper, SIGNAL(mapped(QObject *)),
 		this, SLOT(removeTitle(QObject *)));
@@ -297,11 +299,12 @@ void UrlPage::updateSize(void)
 
 void UrlPage::urlChanged(void)
 {
-	/* TODO: how about checking also that the URL is a valid one */
-	setContentValidity(m_url->contents() != "" ? true : false);
 #ifdef LABEL_SIZE
 	updateSize();
 #endif
+	/* TODO: how about checking also that the URL is a valid one */
+	m_urlValidity = m_url->contents() != "" ? true : false;
+	setContentValidity(m_titleValidity && m_urlValidity);
 }
 
 void UrlPage::actChanged(void)
@@ -313,11 +316,33 @@ void UrlPage::actChanged(void)
 
 void UrlPage::titleChanged(QObject *which)
 {
-	/* TODO for reals */
 	(void) which;
+
 #ifdef LABEL_SIZE
 	updateSize();
 #endif
+	checkTitleValidity();
+}
+
+void UrlPage::checkTitleValidity(void)
+{
+	/* Sp standard forbids multiple titles using the same 
+	   language, so enable/disable store button accordingly. */
+	
+	bool duplicate = false;
+	for (int i = 0; i < m_titles.length(); i++) {
+		for (int j = i + 1; j < m_titles.length(); j++) {
+			if (m_titles[i]->languageCode() == 
+			    m_titles[j]->languageCode()) {
+				duplicate = true; 
+				goto done;
+			}
+		}
+	}
+
+done:
+	m_titleValidity = (duplicate == true) ? false : true;
+	setContentValidity(m_titleValidity && m_urlValidity);
 }
 
 void UrlPage::addTitle(void)
@@ -367,6 +392,7 @@ void UrlPage::addTitle(void)
 #ifdef LABEL_SIZE
 	updateSize();
 #endif
+	checkTitleValidity();
 }
 
 void UrlPage::removeTitle(QObject *which)
@@ -400,6 +426,7 @@ void UrlPage::removeTitle(QObject *which)
 #ifdef LABEL_SIZE
 	updateSize();
 #endif
+	checkTitleValidity();
 }
 
 void UrlPage::chooseFromBookmarks(void)

@@ -53,7 +53,9 @@ MComboBox *TextRecordEdit::comboWidget(void)
 
 		m_combo = new MComboBox();
 		m_combo->setTitle(tr("Language"));
-		m_combo->addItems(langs);
+		m_combo->addItems(langs);	
+		connect(m_combo, SIGNAL(currentIndexChanged(int)),
+			this, SIGNAL(languageCodeChanged()));
 	}
 
 	return m_combo;

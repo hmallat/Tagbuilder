@@ -88,6 +88,8 @@ private:
 	void updateSize(void);
 #endif
 
+	void checkTitleValidity(void);
+
 	enum Action checkedAction(void);
 
 	QSignalMapper *m_titleRemoveMapper;
@@ -107,6 +109,10 @@ private:
 	QContactManager m_contactManager;
 
 	QString m_contactLabel;
+
+	bool m_urlValidity;
+
+	bool m_titleValidity;
 
 };
 

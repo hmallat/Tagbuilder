@@ -1,10 +1,9 @@
 GENERAL:
 
+- Refactoring of conversion/parsing code, where to translate from Qt
+  identifiers to UI strings, etc...
 - When harvesting a tag, undisplayed info is now dropped; should maybe
   warn the user that this happens. 
-- Styling (partly done)
-- Multi record message support?
-- Set keyboard in text record edit text field according to language?
 - Check why input limiting with regexes doesn't work as expected on N9?
 - Mini application icon for installation, too
 
@@ -16,13 +15,10 @@ BLUETOOTH:
 EVENTS:
 
 CONTACTS:
-- more details?
 
 CALENDAR:
-- more details?
 
 URL:
-- Should not allow many titles with same languages
 
 UNKNOWN:
 
