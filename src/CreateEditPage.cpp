@@ -200,7 +200,9 @@ void CreateEditPage::load(void)
 
 fail:
 	setupNewData();
-	MMessageBox *box = new MMessageBox(tr("Cannot read the tag. "));
+	MMessageBox *box = new MMessageBox(tr("Cannot read the tag. "
+					      "The tag contents may be "
+					      "invalid. "));
 	box->appear(MSceneWindow::DestroyWhenDismissed);	
 }
 

@@ -1,3 +1,10 @@
+tagbuilder (0.0.10) unstable; urgency=low
+
+  * Actually use BT validity checks in harvesting.
+  * Fix progress bar when touching devices. 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Tue, 24 Jan 2012 20:33:01 +0200
+
 tagbuilder (0.0.9) unstable; urgency=low
 
   * Added default names for harvested tags (except for U, T, and unknown). 

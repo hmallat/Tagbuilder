@@ -63,6 +63,10 @@ void TextPage::setupNewData(void)
 bool TextPage::setupData(QNdefMessage message)
 {
 	QNdefNfcTextRecord T(message[0]);
+	if (T.isEmpty() == true) {
+		return false;
+	}
+
 	m_edit->setLanguageCode(T.locale());
 	m_edit->setContents(T.text());
 #ifdef LABEL_SIZE

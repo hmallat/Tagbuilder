@@ -191,6 +191,10 @@ bool UrlPage::setupData(const QNdefMessage message)
 
 	if (record.isRecordType<QNdefNfcUriRecord>()) {
 		QNdefNfcUriRecord U(record);
+		if (U.isEmpty() == true || U.uri().isValid() == false) {
+			goto exit;
+		}
+
 		m_url->setContents(U.uri().toString());
 		r = true;
 
@@ -198,9 +202,12 @@ bool UrlPage::setupData(const QNdefMessage message)
 
 	} else {
 		SmartPosterRecord Sp(record);
+		if (Sp.isEmpty() == true) {
+			goto exit;
+		}
 
 		QNdefNfcUriRecord U;
-		if (Sp.uri(U) == false) {
+		if (Sp.uri(U) == false || U.uri().isValid() == false) {
 			goto exit;
 		}
 		m_url->setContents(U.uri().toString());

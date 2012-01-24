@@ -82,6 +82,11 @@ void TagWriter::writeError(QNearFieldTarget::Error err,
 void TagWriter::targetDetected(QNearFieldTarget *target)
 {
         mDebug(__func__) << "Saw target (W). ";
+	if (target->type() == QNearFieldTarget::NfcForumDevice) {
+		mDebug(__func__) << "Target is a device, not writing. ";
+		return;
+	}
+
 	m_target = target;
 
 	connect(m_target, SIGNAL(ndefMessagesWritten(void)),

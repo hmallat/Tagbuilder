@@ -183,6 +183,10 @@ bool BtPage::setupData(const QNdefMessage message)
 {
 	m_message = message;
 	BtNdefRecord bt(m_message[m_message.length() - 1]);
+	if (bt.isValid() == false) {
+		return false;
+	}
+
 	setDevice(QBluetoothDeviceInfo(bt.address(), 
 				       bt.name(), 
 				       bt.classOfDevice()));

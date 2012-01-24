@@ -321,21 +321,26 @@ BtNdefRecord BtNdefRecord::fromSupportedMimeType(const QNdefRecord &other)
 	 * 
 	 */
 
+	quint32 cod;
+	quint64 bdaddr;
+	BtNdefRecord bt;
 	const QByteArray nokiabt = other.payload();
+	if (nokiabt.length() < 10) {
+		goto exit;
+	}
 
-	quint64 bdaddr = 0;
+	bdaddr = 0;
 	for (int i = 0; i < 6; i++) {
 		bdaddr <<= 8;
 		bdaddr |= (quint64)nokiabt[1 + i];
 	}
 
-	quint32 cod = 0;
+	cod = 0;
 	for (int i = 0; i < 3; i++) {
 		cod <<= 8;
 		cod |= nokiabt[7 + i];
 	}
 
-	BtNdefRecord bt;
 	bt.setAddress(QBluetoothAddress(bdaddr));
 	bt.setClassOfDevice(cod);
 
@@ -352,6 +357,7 @@ BtNdefRecord BtNdefRecord::fromSupportedMimeType(const QNdefRecord &other)
 		}
 	}
 	
+exit:
 	return bt;
 }
 
