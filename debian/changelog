@@ -1,3 +1,9 @@
+tagbuilder (1.0.0) unstable; urgency=low
+
+  * First released version. 
+
+ -- Hannu Mallat <hmallat@gmail.com>  Wed, 25 Jan 2012 20:07:14 +0200
+
 tagbuilder (0.0.10) unstable; urgency=low
 
   * Actually use BT validity checks in harvesting.
