@@ -8,6 +8,7 @@
 
 #include "TagStorage.h"
 #include "Tag.h"
+#include "Util.h"
 
 #include <QCoreApplication>
 #include <QDesktopServices>
@@ -345,7 +346,7 @@ TagStorage *TagStorage::storage(void)
 }
 
 TagStorage::TagStorage(TagStorageImpl *impl, QObject *parent)
-	: QAbstractListModel(parent),
+	: MAbstractItemModel(parent),
 	  m_impl(impl)
 {
 }
@@ -360,12 +361,21 @@ int TagStorage::count(void) const
 	return m_impl->count();
 }
 
-int TagStorage::rowCount(const QModelIndex &parent) const
+int TagStorage::groupCount(void) const
 {
-	if (parent.isValid()) {
-		return 0;
-	}
+	return 0;
+}
+
+int TagStorage::rowCountInGroup(int group) const
+{
+	(void) group;
 	return count();
+}
+
+QString TagStorage::groupTitle(int group) const
+{
+	(void) group;
+	return "";
 }
 
 const Tag *TagStorage::tag(int which) const
@@ -373,15 +383,11 @@ const Tag *TagStorage::tag(int which) const
 	return m_impl->at(which);
 }
 
-QVariant TagStorage::data(const QModelIndex &index, int role) const
+QVariant TagStorage::itemData(int row, int group, int role) const
 {
-	(void) role;
+	(void) role, (void) group;
 	
-	if (index.isValid() == false || index.row() >= count()) {
-		return QVariant();
-	}
-
-	return qVariantFromValue(tag(index.row()));
+	return qVariantFromValue(tag(row));
 }
 
 bool TagStorage::append(const QString &name, 
@@ -391,7 +397,7 @@ bool TagStorage::append(const QString &name,
 	bool r;
 
 	Q_EMIT(layoutAboutToBeChanged());
-	beginInsertRows(QModelIndex(), count(), count());
+	beginInsertRows(QModelIndex(), count(), count(), Util::animateLists);
 	r = m_impl->append(tag);
 	endInsertRows();
 	Q_EMIT(layoutChanged());
@@ -421,7 +427,8 @@ bool TagStorage::remove(int which)
 
 	if (which >= 0) {
 		Q_EMIT(layoutAboutToBeChanged());
-		beginRemoveRows(QModelIndex(), which, which);
+		beginRemoveRows(QModelIndex(), which, which, 
+				Util::animateLists);
 	}
 	r = m_impl->remove(which);
 	if (which >= 0) {

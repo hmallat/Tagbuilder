@@ -9,7 +9,7 @@
 #ifndef _TAG_STORAGE_H_
 #define _TAG_STORAGE_H_
 
-#include <QAbstractListModel>
+#include <MAbstractItemModel>
 #include <QNdefMessage>
 
 class Tag;
@@ -17,7 +17,7 @@ class QString;
 
 QTM_USE_NAMESPACE;
 
-class TagStorage : public QAbstractListModel
+class TagStorage : public MAbstractItemModel
 {
 
 	class TagStorageImpl;
@@ -43,9 +43,15 @@ public:
 	
 	bool remove(int which);
 
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	virtual int groupCount(void) const;
 
-	QVariant data(const QModelIndex &index, int role) const;
+	virtual int rowCountInGroup(int group) const;
+
+	virtual QString groupTitle(int group) const;
+
+	virtual QVariant itemData(int row, 
+				  int group, 
+				  int role = Qt::DisplayRole) const;
 
 private:
 

@@ -16,6 +16,10 @@
 #include <MImageWidget>
 #include <MPannableViewport>
 
+#include <contentaction.h>
+
+#include <MDebug>
+
 HelpPage::HelpPage(QGraphicsItem *parent)
 	: MApplicationPage(parent)
 {
@@ -68,7 +72,11 @@ void HelpPage::createContent(void)
 	info->setSizePolicy(QSizePolicy::Preferred, 
 			    QSizePolicy::Preferred);
 	info->setText(
-		tr("<h2>Creating tag contents</h2>"
+		tr("<h2>Application home page</h2>"
+
+		   "Please see <a href=\"http://hannu.mallat.fi/n9/nfctagbuilder\">http://hannu.mallat.fi/n9/nfctagbuilder</a>"
+
+		   "<h2>Creating tag contents</h2>"
 		   
 		   "<p>The main page shows a list of tag content you have, "
 		   "and it is initially empty. </p>"
@@ -135,6 +143,9 @@ void HelpPage::createContent(void)
 		   "other tags, but cannot be edited. </p>"
 			));
 	
+	connect(info, SIGNAL(linkActivated(const QString &)),
+		this, SLOT(linkActivated(const QString &)));
+
 	layout->addItem(info);
 	layout->setAlignment(info, Qt::AlignCenter);
 
@@ -151,3 +162,17 @@ void HelpPage::createContent(void)
 
 	centralWidget()->setLayout(anchor);
 }
+
+void HelpPage::linkActivated(const QString &link)
+{
+        mDebug(__func__) << "link=" << link;
+        ContentAction::Action uriAction = 
+                ContentAction::Action::defaultActionForScheme(link);
+        if (uriAction.isValid()) {
+                mDebug(__func__) << "Triggering...";
+                uriAction.trigger();
+        } else {
+                mDebug(__func__) << "Invalid action. ";
+        }
+}
+

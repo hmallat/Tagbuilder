@@ -8,6 +8,7 @@
 
 #include "BtSelectionPageExistingListModel.h"
 #include "BluezSupplicant.h"
+#include "Util.h"
 
 #include <QStringList>
 #include <QBluetoothAddress>
@@ -71,7 +72,8 @@ void BtSelectionPageExistingListModel::deviceCreated(QDBusObjectPath which)
 
 	beginInsertRows(QModelIndex(), 
 			m_device_ids.length(), 
-			m_device_ids.length());
+			m_device_ids.length(),
+			Util::animateLists);
 	m_device_ids << which.path();
 	m_devices[which.path()] = created;
 	endInsertRows();
@@ -81,7 +83,7 @@ void BtSelectionPageExistingListModel::deviceRemoved(QDBusObjectPath which)
 {
 	for (int i = 0; i < m_device_ids.length(); i++) {
 		if (m_device_ids[i] == which.path()) {
-			beginRemoveRows(QModelIndex(), i, i);
+		  beginRemoveRows(QModelIndex(), i, i, Util::animateLists);
 			m_devices.remove(which.path());
 			m_device_ids.removeAt(i);
 			endRemoveRows();

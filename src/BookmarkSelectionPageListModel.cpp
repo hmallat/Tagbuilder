@@ -152,7 +152,8 @@ void BookmarkSelectionPageListModel::queryFinished(void)
 
 	Q_EMIT(layoutAboutToBeChanged());
 
-	beginInsertRows(QModelIndex(), 0, marks.length() - 1, false);
+	beginInsertRows(QModelIndex(), 0, marks.length() - 1, 
+			Util::animateLists);
 	m_bookmarks = marks;
 	endInsertRows();
 

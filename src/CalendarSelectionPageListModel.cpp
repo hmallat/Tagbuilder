@@ -161,7 +161,8 @@ done:
 	Q_EMIT(layoutAboutToBeChanged());
 
 	if (m_items.length() > 0) {
-		beginRemoveRows(QModelIndex(), 0, m_items.length() - 1, false);
+		beginRemoveRows(QModelIndex(), 0, m_items.length() - 1, 
+				Util::animateLists);
 		m_items.clear();
 		endRemoveRows();
 	}
@@ -171,7 +172,8 @@ done:
 	if (keys.length() != 0) {
 		QList< QPair <QDate, QList< QOrganizerItem > > > pairs;
 
-		beginInsertRows(QModelIndex(), 0, keys.length() - 1, false);
+		beginInsertRows(QModelIndex(), 0, keys.length() - 1, 
+				Util::animateLists);
 
 		/* TODO: check the date() for non-dated todos */
 

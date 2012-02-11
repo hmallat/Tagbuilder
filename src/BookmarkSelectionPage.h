@@ -35,6 +35,8 @@ signals:
 
 private Q_SLOTS:
 	
+	void itemsReady(void);
+
 	void bookmarkSelected(const QModelIndex &which);
 
 private:

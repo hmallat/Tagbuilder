@@ -37,7 +37,7 @@ void ContactSelectionPage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("No contacts to select from"),
+			    tr("Fetching contacts"),
 			    tr("Select contact"),
 			    true,
 			    false);
@@ -45,12 +45,18 @@ void ContactSelectionPage::createContent(void)
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(contactSelected(const QModelIndex &)));
 
-	connect(m_model, SIGNAL(ready()), this, SLOT(clearBusy()));
+	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
 	if (m_model->fetch() == true) {
 		setBusy();
 	} else {
-		/* TODO: message box or some other indication */
+		m_list->setLabel(tr("Cannot retrieve contacts"));
 	}
+}
+
+void ContactSelectionPage::itemsReady(void)
+{
+	clearBusy();
+	m_list->setLabel(tr("No contacts to select from"));
 }
 
 void ContactSelectionPage::contactSelected(const QModelIndex &which)

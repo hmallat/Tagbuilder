@@ -23,6 +23,10 @@ public:
 
         virtual void createContent(void);
 
+private Q_SLOTS:
+
+	void linkActivated(const QString &link);
+
 private:
 
 	Q_DISABLE_COPY(HelpPage);

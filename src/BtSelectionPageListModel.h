@@ -9,14 +9,14 @@
 #ifndef _BT_SELECTION_PAGE_LIST_MODEL_H_
 #define _BT_SELECTION_PAGE_LIST_MODEL_H_
 
-#include <QAbstractListModel>
+#include <MAbstractItemModel>
 #include <QBluetoothDeviceInfo>
 
 #include "BluezSupplicant.h"
 
 QTM_USE_NAMESPACE;
 
-class BtSelectionPageListModel : public QAbstractListModel
+class BtSelectionPageListModel : public MAbstractItemModel
 {
 
 	Q_OBJECT;
@@ -26,9 +26,15 @@ public:
 	BtSelectionPageListModel(BluezSupplicant *bluez,
 				 QObject *parent = 0);
 
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	virtual int groupCount(void) const;
 
-	QVariant data(const QModelIndex &index, int role) const;
+	virtual int rowCountInGroup(int group) const;
+
+	virtual QString groupTitle(int group) const;
+
+	virtual QVariant itemData(int row, 
+				  int group, 
+				  int role = Qt::DisplayRole) const;
 
 	const QString name(const QModelIndex &index) const;
 

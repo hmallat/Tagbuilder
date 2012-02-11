@@ -15,23 +15,36 @@ QTM_USE_NAMESPACE;
 
 BtSelectionPageListModel::BtSelectionPageListModel(BluezSupplicant *bluez,
 						   QObject *parent)
-	: QAbstractListModel(parent),
+	: MAbstractItemModel(parent),
 	  m_bluez(bluez)
 {
 }
 
-int BtSelectionPageListModel::rowCount(const QModelIndex &parent) const
+int BtSelectionPageListModel::groupCount(void) const
 {
-	(void) parent;
+	return 0;
+}
+
+int BtSelectionPageListModel::rowCountInGroup(int group) const
+{
+	(void) group;
 	return m_device_ids.length();
 }
 
-QVariant BtSelectionPageListModel::data(const QModelIndex &index, 
-					int role) const
+QString BtSelectionPageListModel::groupTitle(int group) const
+{
+	(void) group;
+	return "";
+}
+
+QVariant BtSelectionPageListModel::itemData(int row,
+					    int group,
+					    int role) const
 {
 	(void) role;
+	(void) group;
 
-	QString id = m_device_ids[index.row()];
+	QString id = m_device_ids[row];
 	QBluetoothDeviceInfo info = m_devices[id];
 	QStringList parameters;
 	parameters 

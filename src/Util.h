@@ -54,6 +54,8 @@ public:
 
 	Q_DECLARE_FLAGS(CalendarDetails, CalendarDetail);
 
+	static const bool animateLists;
+
 	static quint32 messageLength(const QNdefMessage message);
 
 	static QString currentLanguageCode(void);

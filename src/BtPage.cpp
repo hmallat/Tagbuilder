@@ -11,8 +11,6 @@
    BT record. This is implemented in a slightly hacky manner
    currently. */ 
 
-/* TODO: check what happens if BT is off */
-
 #include "BtPage.h"
 #include "BtNdefRecord.h"
 #include "BluezSupplicant.h"

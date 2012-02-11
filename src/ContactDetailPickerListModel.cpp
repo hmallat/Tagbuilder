@@ -58,14 +58,16 @@ void ContactDetailPickerListModel::setContact(const QContact &contact)
 	Q_EMIT(layoutAboutToBeChanged());
 
 	if (m_types.length() > 0) {
-		beginRemoveRows(QModelIndex(), 0, m_types.length() - 1, false);
+		beginRemoveRows(QModelIndex(), 0, m_types.length() - 1, 
+				Util::animateLists);
 		m_types.clear();
 		m_details.clear();
 		endRemoveRows();
 	}
 
 	if (types.length() > 0) {
-		beginInsertRows(QModelIndex(), 0, types.length() - 1, false);
+		beginInsertRows(QModelIndex(), 0, types.length() - 1, 
+				Util::animateLists);
 		m_types = types;
 		m_details = details;
 		endInsertRows();

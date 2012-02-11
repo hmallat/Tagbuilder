@@ -1,3 +1,9 @@
+tagbuilder (1.0.1) unstable; urgency=low
+
+  * Differentiate between fetching/no results labels in calendar, contacts
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sat, 11 Feb 2012 09:34:11 +0200
+
 tagbuilder (1.0.0) unstable; urgency=low
 
   * First released version. 

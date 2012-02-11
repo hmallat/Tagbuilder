@@ -34,7 +34,7 @@ void CalendarSelectionPage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("No calendar entries to select from"),
+			    tr("Fetching calendar items"),
 			    tr("Select calendar entry"),
 			    true,
 			    false);
@@ -46,7 +46,7 @@ void CalendarSelectionPage::createContent(void)
 	if (m_model->fetch() == true) {
 		setBusy();
 	} else {
-		/* TODO: message box or some other indication */
+		m_list->setLabel(tr("Cannot retrieve calendar entries"));
 	}
 }
 
@@ -59,6 +59,8 @@ void CalendarSelectionPage::calendarItemSelected(const QModelIndex &which)
 void CalendarSelectionPage::itemsReady(void)
 {
 	clearBusy();
+
+	m_list->setLabel(tr("No calendar entries to select from"));
 
 	QModelIndex group = m_model->groupClosestToNow();
 	if (group.isValid()) {

@@ -32,7 +32,7 @@ void BookmarkSelectionPage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("No bookmarks to select from"),
+			    tr("Fetching bookmarks"),
 			    tr("Select bookmark"),
 			    false,
 			    false);
@@ -40,12 +40,18 @@ void BookmarkSelectionPage::createContent(void)
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(bookmarkSelected(const QModelIndex &)));
 
-	connect(m_model, SIGNAL(ready()), this, SLOT(clearBusy()));
+	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
 	if (m_model->fetch() == true) {
 		setBusy();
 	} else {
-		/* TODO: message box or some other indication */
+		m_list->setLabel(tr("Cannot retrieve bookmarks"));
 	}
+}
+
+void BookmarkSelectionPage::itemsReady(void)
+{
+	clearBusy();
+	m_list->setLabel(tr("No bookmarks to select from"));
 }
 
 void BookmarkSelectionPage::bookmarkSelected(const QModelIndex &which)

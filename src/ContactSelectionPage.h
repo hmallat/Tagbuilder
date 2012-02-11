@@ -40,6 +40,8 @@ signals:
 
 private Q_SLOTS:
 	
+	void itemsReady(void);
+
 	void contactSelected(const QModelIndex &which);
 
 private:

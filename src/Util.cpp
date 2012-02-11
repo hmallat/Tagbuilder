@@ -47,6 +47,8 @@
 
 #include <MDebug>
 
+const bool Util::animateLists = true;
+
 static QSystemInfo *_singleton_sysinfo = NULL;
 
 static QSystemInfo *_systeminfo(void)

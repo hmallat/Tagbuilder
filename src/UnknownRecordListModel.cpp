@@ -21,13 +21,15 @@ void UnknownRecordListModel::setMessage(const QNdefMessage &message)
 	Q_EMIT(layoutAboutToBeChanged());
 
 	if (m_message.length() > 0) {
-		beginRemoveRows(QModelIndex(), 0, m_message.length() - 1, false);
+		beginRemoveRows(QModelIndex(), 0, m_message.length() - 1, 
+				Util::animateLists);
 		m_message.clear();
 		endRemoveRows();
 	}
 
 	if (message.length() > 0) {
-		beginInsertRows(QModelIndex(), 0, message.length() - 1, false);
+		beginInsertRows(QModelIndex(), 0, message.length() - 1, 
+				Util::animateLists);
 		m_message = message;
 		endInsertRows();
 	}

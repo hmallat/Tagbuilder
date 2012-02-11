@@ -8,6 +8,7 @@
 
 #include "BtSelectionPageScanListModel.h"
 #include "BluezSupplicant.h"
+#include "Util.h"
 
 #include <QStringList>
 #include <QBluetoothAddress>
@@ -88,7 +89,8 @@ void BtSelectionPageScanListModel::deviceFound(QString which)
 
 	beginInsertRows(QModelIndex(), 
 			m_device_ids.length(), 
-			m_device_ids.length());
+			m_device_ids.length(),
+			Util::animateLists);
 	m_device_ids << which;
 	m_devices[which] = created;
 	endInsertRows();
@@ -100,7 +102,7 @@ void BtSelectionPageScanListModel::deviceLost(QString which)
 
 	for (int i = 0; i < m_device_ids.length(); i++) {
 		if (m_device_ids[i] == which) {
-			beginRemoveRows(QModelIndex(), i, i);
+		  beginRemoveRows(QModelIndex(), i, i, Util::animateLists);
 			m_devices.remove(which);
 			m_device_ids.removeAt(i);
 			endRemoveRows();

@@ -122,14 +122,16 @@ done:
 	Q_EMIT(layoutAboutToBeChanged());
 
 	if (m_buckets.bucketCount() > 0) {
-		beginRemoveRows(QModelIndex(), 0, m_buckets.bucketCount() - 1, false);
+		beginRemoveRows(QModelIndex(), 0, m_buckets.bucketCount() - 1,
+				Util::animateLists);
 		m_buckets.clear();
 		m_contacts.clear();
 		endRemoveRows();
 	}
 
 	if (bucketEntries.length() > 0) {
-		beginInsertRows(QModelIndex(), 0, bucketEntries.length() - 1, false);
+		beginInsertRows(QModelIndex(), 0, bucketEntries.length() - 1,
+				Util::animateLists);
 		m_buckets.setItems(bucketEntries);
 		m_contacts = insertions;
 		endInsertRows();
