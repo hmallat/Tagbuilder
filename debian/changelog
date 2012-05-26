@@ -1,3 +1,9 @@
+tagbuilder (1.0.2) unstable; urgency=low
+
+  * GPLv3 release
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sat, 26 May 2012 08:42:31 +0300
+
 tagbuilder (1.0.1) unstable; urgency=low
 
   * Differentiate between fetching/no results labels in calendar, contacts
