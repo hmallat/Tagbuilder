@@ -321,8 +321,8 @@ void UrlPage::urlChanged(void)
 #ifdef LABEL_SIZE
 	updateSize();
 #endif
-	/* TODO: how about checking also that the URL is a valid one */
-	m_urlValidity = m_url->contents() != "" ? true : false;
+	QUrl u(m_url->contents());
+	m_urlValidity = u.isValid();
 	setContentValidity(m_titleValidity && m_urlValidity);
 }
 

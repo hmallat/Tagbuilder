@@ -1,3 +1,9 @@
+tagbuilder (1.0.3) unstable; urgency=low
+
+  * Check URL validity before allowing to store bookmark data
+
+ -- Hannu Mallat <hmallat@gmail.com>  Sat, 09 Jun 2012 14:39:27 +0300
+
 tagbuilder (1.0.2) unstable; urgency=low
 
   * GPLv3 release
