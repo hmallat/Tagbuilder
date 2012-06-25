@@ -34,7 +34,7 @@ class FoursquareVenueSearch : public QObject
 
 public:
 
-	FoursquareVenueSearch(QObject *parent = 0);
+	FoursquareVenueSearch(QString auth, QObject *parent = 0);
 
 	~FoursquareVenueSearch(void);
 

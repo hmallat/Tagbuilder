@@ -18,28 +18,24 @@
 
 */
 
-#ifndef _FOURSQUARE_VENUE_SELECTION_PAGE_H_
-#define _FOURSQUARE_VENUE_SELECTION_PAGE_H_
+#ifndef _FOURSQUARE_AUTH_PAGE_H_
+#define _FOURSQUARE_AUTH_PAGE_H_
 
-#include "SelectionPage.h"
+#include <MApplicationPage>
 
-#include "Util.h"
+class QWebView;
+class ViewHeader;
 
-QTM_USE_NAMESPACE;
-
-class FoursquareAuthStorage;
-class FoursquareVenue;
-class FoursquareVenueSelectionPageListModel;
-
-class FoursquareVenueSelectionPage : public SelectionPage
+class FoursquareAuthPage : public MApplicationPage
 {
+
 	Q_OBJECT;
 
 public:
 
-	FoursquareVenueSelectionPage(QGraphicsItem *parent = 0);
+	FoursquareAuthPage(QGraphicsItem *parent = 0);
 
-	virtual ~FoursquareVenueSelectionPage(void);
+	virtual ~FoursquareAuthPage(void);
 
         virtual void createContent(void);
 
@@ -47,34 +43,22 @@ Q_SIGNALS:
 
 	void created(void);
 
-	void selected(const FoursquareVenue &which);
-
-private Q_SLOTS:
-	
-	void activate(void);
-
-	void authenticationComplete(const QString token);
+	void authenticationComplete(const QString auth);
 
 	void authenticationFailed(void);
 
-	void positionFound(void);
+private Q_SLOTS:
 
-	void itemsReady(void);
-
-	void venueSelected(const QModelIndex &which);
+	void activate(void);
 
 private:
 
-	Q_DISABLE_COPY(FoursquareVenueSelectionPage);
+	Q_DISABLE_COPY(FoursquareAuthPage);
 
-	void fetch(void);
+	ViewHeader *m_header;
 
-	void authenticate(void);
-
-	FoursquareVenueSelectionPageListModel *m_model;
-
-	FoursquareAuthStorage *m_storage;
+	QWebView *m_view;
 
 };
 
-#endif /* _FOURSQUARE_VENUE_SELECTION_PAGE_H_ */
+#endif /* _FOURSQUARE_AUTH_PAGE_H_ */

@@ -55,7 +55,7 @@ public:
 
 	const FoursquareVenue venue(const QModelIndex &index) const;
 
-	bool fetch(void);
+	bool fetch(const QString auth);
 
 Q_SIGNALS:
 
@@ -84,6 +84,8 @@ protected:
 	MLocaleBuckets m_buckets;
 
 	FoursquareVenueSearch *m_search;
+
+	QString m_auth;
 
 };
 

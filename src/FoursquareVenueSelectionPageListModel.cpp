@@ -32,13 +32,16 @@ FoursquareVenueSelectionPageListModel(QObject *parent)
 	  m_source(0),
 	  m_venues(),
 	  m_buckets(),
-	  m_search(0)
+	  m_search(0),
+	  m_auth("")
 {
 	setGrouped(true);
 }
 
-bool FoursquareVenueSelectionPageListModel::fetch(void)
+bool FoursquareVenueSelectionPageListModel::fetch(const QString auth)
 {
+	m_auth = auth;
+
 	if (m_source == NULL) {
 		m_source = QGeoPositionInfoSource::createDefaultSource(this);
 		if (m_source == NULL) {
@@ -71,7 +74,7 @@ void FoursquareVenueSelectionPageListModel::positionUpdated(const QGeoPositionIn
 		<< update.coordinate().longitude() << ". ";
 	Q_EMIT(positionFound());
 
-	m_search = new FoursquareVenueSearch(this);
+	m_search = new FoursquareVenueSearch(m_auth, this);
 	connect(m_search, SIGNAL(searchComplete()),
 		this, SLOT(venueSearchCompleted()));
 	m_state = Fetching;

@@ -23,6 +23,8 @@
 #include "FoursquareVenueSelectionPageListModel.h"
 #include "FoursquareVenue.h"
 #include "LabelOrList.h"
+#include "FoursquareAuthStorage.h"
+#include "FoursquareAuthPage.h"
 
 #include <MDebug>
 
@@ -33,8 +35,15 @@ static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 
 FoursquareVenueSelectionPage::FoursquareVenueSelectionPage(QGraphicsItem *parent)
 	: SelectionPage(parent),
-	  m_model(new FoursquareVenueSelectionPageListModel(this))
+	  m_model(new FoursquareVenueSelectionPageListModel(this)),
+	  m_storage(FoursquareAuthStorage::storage())
 {
+	connect(m_model, SIGNAL(positionFound()), this, SLOT(positionFound()));
+	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
+
+	connect(this, SIGNAL(created()), 
+		this, SLOT(activate()),
+		Qt::QueuedConnection);
 }
 
 FoursquareVenueSelectionPage::~FoursquareVenueSelectionPage(void)
@@ -45,7 +54,7 @@ void FoursquareVenueSelectionPage::createContent(void)
 {
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr(""),
+			    tr("Not authenticated"),
 			    tr("Select venue"),
 			    true,
 			    false);
@@ -53,11 +62,44 @@ void FoursquareVenueSelectionPage::createContent(void)
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(venueSelected(const QModelIndex &)));
 
-	connect(m_model, SIGNAL(positionFound()), this, SLOT(positionFound()));
-	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
+	Q_EMIT(created());
+}
 
+void FoursquareVenueSelectionPage::activate(void)
+{
+	if (m_storage->isEmpty()) { 
+		/* No authentication token present, get it */
+		authenticate();
+	} else {
+		fetch();
+	}
+}
+
+void FoursquareVenueSelectionPage::authenticate(void)
+{
+	FoursquareAuthPage *page =
+		new FoursquareAuthPage();
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(authenticationComplete(const QString)),
+		this, SLOT(authenticationComplete(const QString)));
+	connect(page, SIGNAL(authenticationFailed()),
+		this, SLOT(authenticationFailed()));
+}
+
+void FoursquareVenueSelectionPage::authenticationComplete(const QString token)
+{
+	m_storage->set(token);
+	fetch();
+}
+
+void FoursquareVenueSelectionPage::authenticationFailed(void)
+{
+}
+
+void FoursquareVenueSelectionPage::fetch(void)
+{
 	m_list->setLabel(tr("Locating current position"));
-	if (m_model->fetch() == true) {
+	if (m_model->fetch(m_storage->get()) == true) {
 		setBusy();
 	} else {
 		m_list->setLabel(tr("Cannot retrieve venues"));

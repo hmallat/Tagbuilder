@@ -20,9 +20,11 @@
 
 #include "FoursquareVenueSearch.h"
 
-FoursquareVenueSearch::FoursquareVenueSearch(QObject *parent) :
+FoursquareVenueSearch::FoursquareVenueSearch(const QString auth, 
+					     QObject *parent) :
 	QObject(parent)
 {
+	(void)auth;
 }
 
 FoursquareVenueSearch::~FoursquareVenueSearch(void)

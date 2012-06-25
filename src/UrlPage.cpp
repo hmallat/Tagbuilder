@@ -616,7 +616,7 @@ void UrlPage::foursquareVenueChosen(const FoursquareVenue which)
 	u.setUri(fsq);
 
 	QNdefNfcTextRecord t;
-	t.setText(tr("Foursquare venue %1").arg(which.displayLabel()));
+	t.setText(which.displayLabel());
 	t.setLocale(Util::currentLanguageCode());
 
 	QList<QNdefNfcTextRecord> ts;

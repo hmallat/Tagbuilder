@@ -2,8 +2,7 @@ TEMPLATE	 = app
 CONFIG		+= meegotouch mobility qtsparql debug
 #CONFIG		+= console
 MOBILITY	+= connectivity contacts location organizer systeminfo versit
-QT		+= core
-QT		+= dbus
+QT		+= core dbus webkit
 
 TARGET		 = Tagbuilder
 
@@ -45,6 +44,7 @@ HEADERS		+= \
 		src/ContentItemCellCreator.h \
 		src/CreatePage.h \
 		src/CreateEditPage.h \
+		src/FoursquareAuthPage.h \
 		src/FoursquareAuthStorage.h \
 		src/FoursquareVenue.h \
 		src/FoursquareVenueSearch.h \
@@ -109,6 +109,7 @@ SOURCES		+= \
 		src/ContentItemCellCreator.cpp \
 		src/CreatePage.cpp \
 		src/CreateEditPage.cpp \
+		src/FoursquareAuthPage.cpp \
 		src/FoursquareAuthStorage.cpp \
 		src/FoursquareVenue.cpp \
 		src/FoursquareVenueSearch.cpp \
