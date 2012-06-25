@@ -1,6 +1,7 @@
 tagbuilder (1.0.3) unstable; urgency=low
 
   * Check URL validity before allowing to store bookmark data
+  * Foursquare venue lookup for URL building
 
  -- Hannu Mallat <hmallat@gmail.com>  Sat, 09 Jun 2012 14:39:27 +0300
 

@@ -1,7 +1,7 @@
 TEMPLATE	 = app
 CONFIG		+= meegotouch mobility qtsparql debug
 #CONFIG		+= console
-MOBILITY	+= connectivity contacts organizer systeminfo versit
+MOBILITY	+= connectivity contacts location organizer systeminfo versit
 QT		+= core
 QT		+= dbus
 
@@ -45,6 +45,12 @@ HEADERS		+= \
 		src/ContentItemCellCreator.h \
 		src/CreatePage.h \
 		src/CreateEditPage.h \
+		src/FoursquareAuthStorage.h \
+		src/FoursquareVenue.h \
+		src/FoursquareVenueSearch.h \
+		src/FoursquareVenueSelectionPage.h \
+		src/FoursquareVenueSelectionPageListCellCreator.h \
+		src/FoursquareVenueSelectionPageListModel.h \
 		src/HelpPage.h \
 		src/LabeledTextEdit.h \
 		src/LabelOrList.h \
@@ -103,6 +109,12 @@ SOURCES		+= \
 		src/ContentItemCellCreator.cpp \
 		src/CreatePage.cpp \
 		src/CreateEditPage.cpp \
+		src/FoursquareAuthStorage.cpp \
+		src/FoursquareVenue.cpp \
+		src/FoursquareVenueSearch.cpp \
+		src/FoursquareVenueSelectionPage.cpp \
+		src/FoursquareVenueSelectionPageListCellCreator.cpp \
+		src/FoursquareVenueSelectionPageListModel.cpp \
 		src/HelpPage.cpp \
 		src/LabeledTextEdit.cpp \
 		src/LabelOrList.cpp \

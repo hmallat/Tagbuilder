@@ -22,6 +22,7 @@
 #define _URL_PAGE_H_
 
 #include "CreateEditPage.h"
+#include "FoursquareVenue.h"
 
 #include <QNdefMessage>
 #include <QContactManager>
@@ -91,6 +92,12 @@ private Q_SLOTS:
 	void phoneContactChosen(const QContact which);
 
 	void phoneNumberChosen(const QContact which);
+
+	void chooseFoursquareVenue(void);
+
+	void chooseFoursquareVenueNearHere(void);
+
+	void foursquareVenueChosen(const FoursquareVenue which);
 
 private:
 

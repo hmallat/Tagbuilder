@@ -27,6 +27,7 @@
 #include "ContactSelectionPage.h"
 #include "ContactDetailPicker.h"
 #include "ContactDetailPickerListModel.h"
+#include "FoursquareVenueSelectionPage.h"
 #include "Tag.h"
 
 #include <QUrl>
@@ -87,6 +88,21 @@ void UrlPage::createPageSpecificActions(void)
 	connect(phoneAction, SIGNAL(triggered()),
 		this, SLOT(choosePhoneContact()));
 	addAction(phoneAction);
+
+	MAction *venueAction = new MAction(tr("Foursquare venue..."),
+					  this);
+	venueAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(venueAction, SIGNAL(triggered()),
+		this, SLOT(chooseFoursquareVenue()));
+	addAction(venueAction);
+	
+	MAction *venueHereAction = new MAction(tr("Nearby Foursquare venue..."),
+					  this);
+	venueHereAction->setLocation(MAction::ApplicationMenuLocation);
+	connect(venueHereAction, SIGNAL(triggered()),
+		this, SLOT(chooseFoursquareVenueNearHere()));
+	addAction(venueHereAction);
+	
 }
 
 void UrlPage::createPageSpecificContent(void)
@@ -558,6 +574,49 @@ void UrlPage::phoneNumberChosen(const QContact which)
 
 	QNdefNfcTextRecord t;
 	t.setText(tr("Phone number of %1").arg(m_contactLabel));
+	t.setLocale(Util::currentLanguageCode());
+
+	QList<QNdefNfcTextRecord> ts;
+	ts << t;
+
+	SmartPosterRecord sp;
+	sp.setUri(u);
+	sp.setTitles(ts);
+
+	message << sp;
+
+	Tag::dump(message);
+	setupData(message);
+
+	setDefaultName(t.text());
+}
+
+void UrlPage::chooseFoursquareVenue(void)
+{
+	/* TODO */
+}
+
+void UrlPage::chooseFoursquareVenueNearHere(void)
+{
+	FoursquareVenueSelectionPage *page =
+		new FoursquareVenueSelectionPage();
+	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
+	connect(page, SIGNAL(selected(const FoursquareVenue)),
+		this, SLOT(foursquareVenueChosen(const FoursquareVenue)));
+}
+
+void UrlPage::foursquareVenueChosen(const FoursquareVenue which)
+{
+ 	mDebug(__func__) << which.displayLabel();
+
+	QNdefMessage message;
+
+	QString fsq = "http://m.foursquare.com/venue/" + which.id();
+	QNdefNfcUriRecord u;
+	u.setUri(fsq);
+
+	QNdefNfcTextRecord t;
+	t.setText(tr("Foursquare venue %1").arg(which.displayLabel()));
 	t.setLocale(Util::currentLanguageCode());
 
 	QList<QNdefNfcTextRecord> ts;

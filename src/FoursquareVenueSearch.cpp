@@ -1,0 +1,49 @@
+/*
+
+    NFC Tag Builder for Nokia N9
+    Copyright (C) 2011,2012  Hannu Mallat <hmallat@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+#include "FoursquareVenueSearch.h"
+
+FoursquareVenueSearch::FoursquareVenueSearch(QObject *parent) :
+	QObject(parent)
+{
+}
+
+FoursquareVenueSearch::~FoursquareVenueSearch(void)
+{
+}
+
+bool FoursquareVenueSearch::venuesByCoordinates(double lat, double lon)
+{
+	/* TODO fake so far */
+	(void)lat, (void)lon;
+	Q_EMIT(searchComplete());
+	return true;
+}
+
+const QList<FoursquareVenue> FoursquareVenueSearch::results(void)
+{
+	/* TODO fake so far */
+
+	QList<FoursquareVenue> foo;
+	foo << FoursquareVenue("1234", "Dummy one");
+	foo << FoursquareVenue("5678", "Made up second");
+	foo << FoursquareVenue("9999", "Third fake");
+	return foo;
+}
