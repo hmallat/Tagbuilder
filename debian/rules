@@ -2,6 +2,7 @@
 
 LOGVER := $(shell dpkg-parsechangelog | grep '^Version:.*' | cut -d ' ' -f 2)
 CXXFLAGS += -DVERSION=\\\"$(LOGVER)\\\"
+CXXFLAGS += -DBUILDDATE=\\\"$(shell date +%Y%m%d)\\\"
 
 %:
 	dh $@

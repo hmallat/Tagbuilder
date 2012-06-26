@@ -173,5 +173,5 @@ INSTALLS	+= target gfx trans desktop style
 
 unix {
         CONFIG += link_pkgconfig
-        PKGCONFIG += contentaction-0.1
+        PKGCONFIG += contentaction-0.1 QJson
 }

@@ -29,6 +29,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QVariant>
 
 class FoursquareVenueSearch : public QObject
 {
@@ -56,6 +57,8 @@ private Q_SLOTS:
 private:
 
 	Q_DISABLE_COPY(FoursquareVenueSearch);
+
+	void processResponse(QVariantMap &response);
 
 	QString m_auth;
 

@@ -20,6 +20,7 @@
 
 #include "FoursquareVenueSearch.h"
 
+#include <qjson/parser.h>
 #include <MDebug>
 
 FoursquareVenueSearch::FoursquareVenueSearch(const QString auth, 
@@ -47,9 +48,10 @@ bool FoursquareVenueSearch::venuesByCoordinates(double lat, double lon)
 	m_venues.clear();
 
         QUrl query("https://api.foursquare.com/v2/venues/search");
-
 	query.addQueryItem("ll", QString("%1,%2").arg(lat).arg(lon));
 	query.addQueryItem("oauth_token", m_auth);
+	query.addQueryItem("v", BUILDDATE);
+	mDebug(__func__) << query;
 
         m_request = new QNetworkRequest(query);
 	m_nam->get(*m_request);
@@ -57,15 +59,57 @@ bool FoursquareVenueSearch::venuesByCoordinates(double lat, double lon)
 	return true;
 }
 
+static void debugVariantMap(const QString name, const QVariantMap &map)
+{
+	mDebug(__func__) << name << ":::";
+
+	for (QVariantMap::const_iterator i = map.constBegin();
+	     i != map.constEnd();
+	     i++) {
+		QString k = i.key();
+		QVariant v = i.value();
+		mDebug(__func__) << "key " << k << ", value " << v;
+	}
+
+	mDebug(__func__) << ":::";
+}
+
+void FoursquareVenueSearch::processResponse(QVariantMap &response)
+{
+	debugVariantMap("response", response);
+	QList<QVariant> venues = response["venues"].toList();
+	foreach(QVariant venue, venues) {
+		QVariantMap venueMap = venue.toMap();
+		debugVariantMap("venue", venueMap);
+		mDebug(__func__) << venueMap["id"];
+		mDebug(__func__) << venueMap["name"];
+
+		m_venues << 
+			FoursquareVenue(venueMap["id"].toString(),
+					venueMap["name"].toString());
+	}
+
+	mDebug(__func__) << m_venues.size() << " venues found. ";
+}
+
 void FoursquareVenueSearch::requestFinished(QNetworkReply *reply)
 {
         if (reply->error() == QNetworkReply::NoError) {
-                QString contents(reply->readAll());
+		QByteArray contents = reply->readAll();
                 mDebug(__func__) << "Success: " << contents;
-		/* TODO: JSON handling */
-		m_venues << FoursquareVenue("1234", "Dummy one");
-		m_venues << FoursquareVenue("5678", "Made up second");
-		m_venues << FoursquareVenue("9999", "Third fake");
+
+		QJson::Parser parser;
+		bool valid = false;
+
+		QVariantMap results = parser.parse(contents, &valid).toMap();
+		if (valid == true) {
+			debugVariantMap("results", results);
+			QVariantMap response = results["response"].toMap();
+			processResponse(response);
+		} else {
+			mDebug(__func__) << "Invalid response. ";
+		}
+
 	} else {
 		/* TODO: handle stale/invalid auth token error somehow,
 		   eg add parameter to signal */
@@ -79,5 +123,6 @@ void FoursquareVenueSearch::requestFinished(QNetworkReply *reply)
 
 const QList<FoursquareVenue> FoursquareVenueSearch::results(void)
 {
+	mDebug(__func__) << m_venues.size() << " venues in results. ";
 	return m_venues;
 }
