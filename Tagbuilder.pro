@@ -44,6 +44,7 @@ HEADERS		+= \
 		src/ContentItemCellCreator.h \
 		src/CreatePage.h \
 		src/CreateEditPage.h \
+		src/FoursquareAuthNetworkAccessManager.h \
 		src/FoursquareAuthPage.h \
 		src/FoursquareAuthStorage.h \
 		src/FoursquareVenue.h \
@@ -109,6 +110,7 @@ SOURCES		+= \
 		src/ContentItemCellCreator.cpp \
 		src/CreatePage.cpp \
 		src/CreateEditPage.cpp \
+		src/FoursquareAuthNetworkAccessManager.cpp \
 		src/FoursquareAuthPage.cpp \
 		src/FoursquareAuthStorage.cpp \
 		src/FoursquareVenue.cpp \

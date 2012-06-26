@@ -96,13 +96,6 @@ void UrlPage::createPageSpecificActions(void)
 		this, SLOT(chooseFoursquareVenue()));
 	addAction(venueAction);
 	
-	MAction *venueHereAction = new MAction(tr("Nearby Foursquare venue..."),
-					  this);
-	venueHereAction->setLocation(MAction::ApplicationMenuLocation);
-	connect(venueHereAction, SIGNAL(triggered()),
-		this, SLOT(chooseFoursquareVenueNearHere()));
-	addAction(venueHereAction);
-	
 }
 
 void UrlPage::createPageSpecificContent(void)
@@ -593,11 +586,6 @@ void UrlPage::phoneNumberChosen(const QContact which)
 
 void UrlPage::chooseFoursquareVenue(void)
 {
-	/* TODO */
-}
-
-void UrlPage::chooseFoursquareVenueNearHere(void)
-{
 	FoursquareVenueSelectionPage *page =
 		new FoursquareVenueSelectionPage();
 	page->appear(scene(), MSceneWindow::DestroyWhenDismissed);
@@ -631,5 +619,5 @@ void UrlPage::foursquareVenueChosen(const FoursquareVenue which)
 	Tag::dump(message);
 	setupData(message);
 
-	setDefaultName(t.text());
+	setDefaultName("Foursquare venue "+ t.text());
 }

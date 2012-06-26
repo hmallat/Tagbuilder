@@ -22,10 +22,13 @@
 #include "FoursquareVenueSelectionPageListCellCreator.h"
 #include "FoursquareVenueSelectionPageListModel.h"
 #include "FoursquareVenue.h"
-#include "LabelOrList.h"
 #include "FoursquareAuthStorage.h"
 #include "FoursquareAuthPage.h"
+#include "LabelOrList.h"
+#include "LabeledTextEdit.h"
 
+#include <QGraphicsLinearLayout>
+#include <MButton>
 #include <MDebug>
 
 static MAbstractCellCreator<MWidgetController> *_getCreator(void)
@@ -35,10 +38,25 @@ static MAbstractCellCreator<MWidgetController> *_getCreator(void)
 
 FoursquareVenueSelectionPage::FoursquareVenueSelectionPage(QGraphicsItem *parent)
 	: SelectionPage(parent),
+	  m_geosource(QGeoPositionInfoSource::createDefaultSource(this)),
 	  m_model(new FoursquareVenueSelectionPageListModel(this)),
 	  m_storage(FoursquareAuthStorage::storage())
 {
-	connect(m_model, SIGNAL(positionFound()), this, SLOT(positionFound()));
+	if (m_geosource == NULL) {
+		mDebug(__func__) << "Cannot set up geoposition source. ";
+	} else {
+		mDebug(__func__) << "Starting geoposition lookup. ";
+		connect(m_geosource, 
+			SIGNAL(positionUpdated(const QGeoPositionInfo &)),
+			this, 
+			SLOT(positionUpdated(const QGeoPositionInfo &)));
+		connect(m_geosource, 
+			SIGNAL(updateTimeout()),
+			this, 
+			SLOT(positionUpdateTimeout()));
+		m_geosource->requestUpdate(60*1000);
+	}
+
 	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
 
 	connect(this, SIGNAL(created()), 
@@ -52,12 +70,31 @@ FoursquareVenueSelectionPage::~FoursquareVenueSelectionPage(void)
 
 void FoursquareVenueSelectionPage::createContent(void)
 {
+	m_location = new LabeledTextEdit(tr("Ok"),
+					 LabeledTextEdit::SingleLineEditOnly);
+	m_location->setPrompt(tr("Enter location"));
+
+	m_here = new MButton(tr("Nearby venues"));
+	m_here->setEnabled(false);
+	connect(m_here, SIGNAL(clicked()),
+		this, SLOT(searchNearby(void)));
+
+	QGraphicsLinearLayout *sub_layout = 
+		new QGraphicsLinearLayout(Qt::Vertical);
+	sub_layout->setSizePolicy(QSizePolicy::Preferred, 
+				  QSizePolicy::Preferred);
+	sub_layout->addItem(m_location);
+	sub_layout->setAlignment(m_location, Qt::AlignCenter);
+	sub_layout->addItem(m_here);
+	sub_layout->setAlignment(m_here, Qt::AlignCenter);
+
 	createCommonContent(m_model,
 			    _getCreator,
-			    tr("Not authenticated"),
+			    tr(""),
 			    tr("Select venue"),
 			    true,
-			    false);
+			    false,
+			    sub_layout);
 
 	connect(m_list, SIGNAL(itemClicked(const QModelIndex &)),
 		this, SLOT(venueSelected(const QModelIndex &)));
@@ -65,13 +102,29 @@ void FoursquareVenueSelectionPage::createContent(void)
 	Q_EMIT(created());
 }
 
+void FoursquareVenueSelectionPage::positionUpdated(const QGeoPositionInfo &update)
+{
+	mDebug(__func__) 
+		<< "Position lookup done, we're at "
+		<< update.coordinate().latitude() << "," 
+		<< update.coordinate().longitude() << ". ";
+	m_geoinfo = update;
+	m_here->setEnabled(true);
+}
+
+void FoursquareVenueSelectionPage::positionUpdateTimeout(void)
+{
+	mDebug(__func__) << "Position lookup timeout. ";
+}
+
 void FoursquareVenueSelectionPage::activate(void)
 {
 	if (m_storage->isEmpty()) { 
 		/* No authentication token present, get it */
+		m_list->setLabel(tr("Not authenticated"));
 		authenticate();
 	} else {
-		fetch();
+		m_list->setLabel(tr("Search for venues"));
 	}
 }
 
@@ -89,26 +142,21 @@ void FoursquareVenueSelectionPage::authenticate(void)
 void FoursquareVenueSelectionPage::authenticationComplete(const QString token)
 {
 	m_storage->set(token);
-	fetch();
+	m_list->setLabel(tr("Search for venues"));
 }
 
 void FoursquareVenueSelectionPage::authenticationFailed(void)
 {
+	/* TODO */
 }
 
-void FoursquareVenueSelectionPage::fetch(void)
+void FoursquareVenueSelectionPage::searchNearby(void)
 {
-	m_list->setLabel(tr("Locating current position"));
-	if (m_model->fetch(m_storage->get()) == true) {
-		setBusy();
-	} else {
-		m_list->setLabel(tr("Cannot retrieve venues"));
-	}
-}
-
-void FoursquareVenueSelectionPage::positionFound(void)
-{
-	m_list->setLabel(tr("Retrieving venues"));
+	setBusy();
+	m_list->setLabel(tr("Searching nearby venues"));
+	m_model->fetch(m_storage->get(),
+		       m_geoinfo.coordinate().latitude(),
+		       m_geoinfo.coordinate().longitude());
 }
 
 void FoursquareVenueSelectionPage::itemsReady(void)
@@ -122,3 +170,4 @@ void FoursquareVenueSelectionPage::venueSelected(const QModelIndex &which)
 	dismiss();
 	Q_EMIT(selected(m_model->venue(which)));
 }
+

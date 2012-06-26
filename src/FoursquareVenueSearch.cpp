@@ -20,11 +20,17 @@
 
 #include "FoursquareVenueSearch.h"
 
+#include <MDebug>
+
 FoursquareVenueSearch::FoursquareVenueSearch(const QString auth, 
 					     QObject *parent) :
-	QObject(parent)
+	QObject(parent),
+	m_auth(auth),
+	m_nam(new QNetworkAccessManager(this)),
+	m_request(0)
 {
-	(void)auth;
+        connect(m_nam, SIGNAL(finished(QNetworkReply *)),
+                this, SLOT(requestFinished(QNetworkReply *)));
 }
 
 FoursquareVenueSearch::~FoursquareVenueSearch(void)
@@ -33,19 +39,45 @@ FoursquareVenueSearch::~FoursquareVenueSearch(void)
 
 bool FoursquareVenueSearch::venuesByCoordinates(double lat, double lon)
 {
-	/* TODO fake so far */
-	(void)lat, (void)lon;
-	Q_EMIT(searchComplete());
+	if (m_request != 0) {
+		delete m_request;
+		m_request = 0;
+	}
+
+	m_venues.clear();
+
+        QUrl query("https://api.foursquare.com/v2/venues/search");
+
+	query.addQueryItem("ll", QString("%1,%2").arg(lat).arg(lon));
+	query.addQueryItem("oauth_token", m_auth);
+
+        m_request = new QNetworkRequest(query);
+	m_nam->get(*m_request);
+
 	return true;
+}
+
+void FoursquareVenueSearch::requestFinished(QNetworkReply *reply)
+{
+        if (reply->error() == QNetworkReply::NoError) {
+                QString contents(reply->readAll());
+                mDebug(__func__) << "Success: " << contents;
+		/* TODO: JSON handling */
+		m_venues << FoursquareVenue("1234", "Dummy one");
+		m_venues << FoursquareVenue("5678", "Made up second");
+		m_venues << FoursquareVenue("9999", "Third fake");
+	} else {
+		/* TODO: handle stale/invalid auth token error somehow,
+		   eg add parameter to signal */
+                QString contents(reply->readAll());
+		mDebug(__func__) << "Error: " << reply->error();
+                mDebug(__func__) << "Error: " << contents;
+	}
+
+	Q_EMIT(searchComplete());
 }
 
 const QList<FoursquareVenue> FoursquareVenueSearch::results(void)
 {
-	/* TODO fake so far */
-
-	QList<FoursquareVenue> foo;
-	foo << FoursquareVenue("1234", "Dummy one");
-	foo << FoursquareVenue("5678", "Made up second");
-	foo << FoursquareVenue("9999", "Third fake");
-	return foo;
+	return m_venues;
 }

@@ -19,11 +19,12 @@
 */
 
 #include "FoursquareAuthPage.h"
+#include "FoursquareAuthNetworkAccessManager.h"
 #include "ViewHeader.h"
 
-#include <QWebView>
+#include <QGraphicsWebView>
 #include <QGraphicsAnchorLayout>
-#include <QGraphicsProxyWidget>
+#include <QNetworkReply>
 #include <MAction>
 
 #define CLIENT_ID "WJTLH3FLFCSPRKTYYBSSUCLHDLQA4YITU2AWBANS1C5LRREX"
@@ -32,7 +33,8 @@
 FoursquareAuthPage::FoursquareAuthPage(QGraphicsItem *parent)
 	: MApplicationPage(parent),
 	  m_header(0),
-	  m_view(0)
+	  m_view(0),
+	  m_nam(0)
 {
 	setComponentsDisplayMode(MApplicationPage::EscapeButton,
 				 MApplicationPageModel::Hide);
@@ -68,13 +70,25 @@ void FoursquareAuthPage::createContent(void)
 	layout->addCornerAnchors(m_header, Qt::TopRightCorner,
 				 layout, Qt::TopRightCorner);
 
-	m_view = new QWebView();
-	QGraphicsProxyWidget *proxy = scene()->addWidget(m_view);
+	m_view = new QGraphicsWebView();
+	m_view->setResizesToContents(false);
+	connect(m_view, SIGNAL(loadStarted()),
+		this, SLOT(pageLoadStarted()));
+	connect(m_view, SIGNAL(loadFinished(bool)),
+		this, SLOT(pageLoadFinished(bool)));
 
-	layout->addCornerAnchors(proxy, Qt::TopLeftCorner,
+	layout->addCornerAnchors(m_view, Qt::TopLeftCorner,
 				 m_header, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(proxy, Qt::BottomRightCorner,
+	layout->addCornerAnchors(m_view, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
+
+	m_nam = new FoursquareAuthNetworkAccessManager(m_view->page()->networkAccessManager(), 
+						       REDIRECT_URL,
+						       this);
+	connect(m_nam, SIGNAL(tokenReceived(QString)),
+		this, SLOT(tokenReceived(QString)));
+
+	m_view->page()->setNetworkAccessManager(m_nam);
 
 	centralWidget()->setLayout(layout);
 
@@ -88,8 +102,34 @@ void FoursquareAuthPage::activate(void)
 		"?client_id=" CLIENT_ID
 		"&response_type=token"
 		"&redirect_uri=" REDIRECT_URL
-		"&display=touch";
+		"&display=webpopup";
 
 	m_view->load(url);
+}
 
+void FoursquareAuthPage::setBusy(void)
+{
+	m_header->setBusy();
+}
+
+void FoursquareAuthPage::clearBusy(void)
+{
+	m_header->clearBusy();
+}
+
+void FoursquareAuthPage::pageLoadStarted(void)
+{
+	setBusy();
+}
+
+void FoursquareAuthPage::pageLoadFinished(bool ok)
+{
+	(void)ok;
+	clearBusy();
+}
+
+void FoursquareAuthPage::tokenReceived(QString token)
+{
+	Q_EMIT(authenticationComplete(token));
+	dismiss();
 }

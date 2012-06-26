@@ -28,8 +28,6 @@
 #include "FoursquareVenueSearch.h"
 
 #include <QMap>
-#include <QGeoPositionInfoSource>
-#include <QGeoPositionInfo>
 #include <MLocaleBuckets>
 
 QTM_USE_NAMESPACE;
@@ -55,7 +53,7 @@ public:
 
 	const FoursquareVenue venue(const QModelIndex &index) const;
 
-	bool fetch(const QString auth);
+	bool fetch(const QString auth, double lat, double lon);
 
 Q_SIGNALS:
 
@@ -65,19 +63,11 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 
-	void positionUpdated(const QGeoPositionInfo &update);
-
-	void positionUpdateTimeout(void);
-
 	void venueSearchCompleted(void);
 
 protected:
 
 	void updateResults(const QList<FoursquareVenue> &results);
-
-	enum { Idle, Locating, Fetching } m_state;
-	
-	QGeoPositionInfoSource *m_source;
 
 	QMap<QString, FoursquareVenue> m_venues;
 

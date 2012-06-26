@@ -23,8 +23,9 @@
 
 #include <MApplicationPage>
 
-class QWebView;
+class QGraphicsWebView;
 class ViewHeader;
+class FoursquareAuthNetworkAccessManager;
 
 class FoursquareAuthPage : public MApplicationPage
 {
@@ -51,13 +52,25 @@ private Q_SLOTS:
 
 	void activate(void);
 
+	void setBusy(void);
+
+	void clearBusy(void);
+
+	void pageLoadStarted(void);
+
+	void pageLoadFinished(bool ok);
+
+	void tokenReceived(QString token);
+
 private:
 
 	Q_DISABLE_COPY(FoursquareAuthPage);
 
 	ViewHeader *m_header;
 
-	QWebView *m_view;
+	QGraphicsWebView *m_view;
+
+	FoursquareAuthNetworkAccessManager *m_nam;
 
 };
 

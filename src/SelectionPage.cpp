@@ -49,7 +49,8 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 					const QString label,
 					const QString title, 
 					bool groupedList,
-					bool multiSelect)
+					bool multiSelect,
+					QGraphicsLayout *subLayout)
 {
 	MApplicationPage::createContent();
 	setStyleName("CommonApplicationPage");
@@ -79,6 +80,13 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 	layout->addCornerAnchors(m_header, Qt::TopRightCorner,
 				 layout, Qt::TopRightCorner);
 
+	if (subLayout != 0) {
+		layout->addCornerAnchors(subLayout, Qt::TopLeftCorner,
+					 m_header, Qt::BottomLeftCorner);
+		layout->addCornerAnchors(subLayout, Qt::TopRightCorner,
+					 m_header, Qt::BottomRightCorner);
+	}
+
 	m_list = new LabelOrList(itemModel,
 				 getCreator,
 				 label,
@@ -89,8 +97,12 @@ void SelectionPage::createCommonContent(QAbstractItemModel *itemModel,
 			this, SIGNAL(clicked(const QModelIndex)));
 	}
 
-	layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
-				 m_header, Qt::BottomLeftCorner);
+	if (subLayout != 0) 
+		layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
+					 subLayout, Qt::BottomLeftCorner);
+	else
+		layout->addCornerAnchors(m_list, Qt::TopLeftCorner,
+					 m_header, Qt::BottomLeftCorner);
 	layout->addCornerAnchors(m_list, Qt::BottomRightCorner,
 				 layout, Qt::BottomRightCorner);
 

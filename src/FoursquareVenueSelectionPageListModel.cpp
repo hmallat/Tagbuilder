@@ -28,8 +28,6 @@
 FoursquareVenueSelectionPageListModel::
 FoursquareVenueSelectionPageListModel(QObject *parent)
 	: MAbstractItemModel(parent),
-	  m_state(FoursquareVenueSelectionPageListModel::Idle),
-	  m_source(0),
 	  m_venues(),
 	  m_buckets(),
 	  m_search(0),
@@ -38,64 +36,25 @@ FoursquareVenueSelectionPageListModel(QObject *parent)
 	setGrouped(true);
 }
 
-bool FoursquareVenueSelectionPageListModel::fetch(const QString auth)
+bool FoursquareVenueSelectionPageListModel::fetch(const QString auth,
+						  double lat,
+						  double lon)
 {
 	m_auth = auth;
-
-	if (m_source == NULL) {
-		m_source = QGeoPositionInfoSource::createDefaultSource(this);
-		if (m_source == NULL) {
-			mDebug(__func__) << "Cannot set up position source. ";
-			return false;
-		}
-	}
 
 	if (m_search != NULL) {
 		delete m_search;
 		m_search = NULL;
 	}
-
-	mDebug(__func__) << "Starting position lookup. ";
-	connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)),
-		this, SLOT(positionUpdated(const QGeoPositionInfo &)));
-	connect(m_source, SIGNAL(updateTimeout()),
-		this, SLOT(positionUpdateTimeout()));
-	m_source->requestUpdate(60*1000);
-	m_state = Locating;
-
-	return true;
-}
-
-void FoursquareVenueSelectionPageListModel::positionUpdated(const QGeoPositionInfo &update)
-{
-	mDebug(__func__) 
-		<< "Position lookup done, we're at "
-		<< update.coordinate().latitude() << "," 
-		<< update.coordinate().longitude() << ". ";
-	Q_EMIT(positionFound());
-
 	m_search = new FoursquareVenueSearch(m_auth, this);
 	connect(m_search, SIGNAL(searchComplete()),
 		this, SLOT(venueSearchCompleted()));
-	m_state = Fetching;
-	if (m_search->venuesByCoordinates(update.coordinate().latitude(),
-					  update.coordinate().longitude()) == false) {
+	if (m_search->venuesByCoordinates(lat, lon) == false) {
 		mDebug(__func__) << "Can't lookup venues. ";
-		QList<FoursquareVenue> empty;
-		updateResults(empty);
-		m_state = Idle;
-		Q_EMIT(ready());
+		return false;
 	}
-}
 
-void FoursquareVenueSelectionPageListModel::positionUpdateTimeout(void)
-{
-	mDebug(__func__) << "Position lookup timeout. ";
-
-	QList<FoursquareVenue> empty;
-	updateResults(empty);
-	m_state = Idle;
-	Q_EMIT(ready());
+	return true;
 }
 
 void FoursquareVenueSelectionPageListModel::
@@ -103,9 +62,7 @@ venueSearchCompleted(void)
 {
 	mDebug(__func__) << "Venue search complete. ";
 	updateResults(m_search->results());
-	delete m_search;
-	m_search = NULL;
-	m_state = Idle;
+	m_search->deleteLater();
 	Q_EMIT(ready());
 }
 

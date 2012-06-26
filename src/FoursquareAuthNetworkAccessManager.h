@@ -18,53 +18,36 @@
 
 */
 
-#ifndef _FOURSQUARE_VENUE_SEARCH_H_
-#define _FOURSQUARE_VENUE_SEARCH_H_
+#ifndef _FOURSQUARE_AUTH_NETWORK_ACCESS_MANAGER_H_
+#define _FOURSQUARE_AUTH_NETWORK_ACCESS_MANAGER_H_
 
-#include <QObject>
-
-#include "FoursquareVenue.h"
-
-#include <QList>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 
-class FoursquareVenueSearch : public QObject
+class FoursquareAuthNetworkAccessManager : public QNetworkAccessManager
 {
 
 	Q_OBJECT;
 
 public:
-
-	FoursquareVenueSearch(QString auth, QObject *parent = 0);
-
-	~FoursquareVenueSearch(void);
-
-	bool venuesByCoordinates(double lat, double lon);
-
-	const QList<FoursquareVenue> results(void);
+	FoursquareAuthNetworkAccessManager(QNetworkAccessManager *oldManager, 
+					   QString redirPrefix, 
+					   QObject *parent = 0);
 
 Q_SIGNALS:
 
-	void searchComplete(void);
+	void tokenReceived(QString token);
 
-private Q_SLOTS:
+protected:
 
-	void requestFinished(QNetworkReply *reply);
+	virtual QNetworkReply* createRequest
+		(QNetworkAccessManager::Operation op, 
+		 const QNetworkRequest &req, 
+		 QIODevice *device);
 
 private:
 
-	Q_DISABLE_COPY(FoursquareVenueSearch);
-
-	QString m_auth;
-
-	QNetworkAccessManager *m_nam;
-
-	QNetworkRequest *m_request;
-
-	QList<FoursquareVenue> m_venues;
+	QString m_prefix;
 
 };
 
-#endif /* _FOURSQUARE_VENUE_SEARCH_H_ */
+#endif /* _FOURSQUARE_AUTH_NETWORK_ACCESS_MANAGER_H_ */

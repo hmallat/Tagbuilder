@@ -95,8 +95,6 @@ private Q_SLOTS:
 
 	void chooseFoursquareVenue(void);
 
-	void chooseFoursquareVenueNearHere(void);
-
 	void foursquareVenueChosen(const FoursquareVenue which);
 
 private:

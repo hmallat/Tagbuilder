@@ -25,6 +25,7 @@
 
 #include <QModelIndex>
 
+class QGraphicsLayout;
 class ViewHeader;
 class LabelOrList;
 class MAbstractItemModel;
@@ -64,7 +65,8 @@ protected:
 				 const QString label,
 				 const QString title, 
 				 bool groupedList,
-				 bool multiSelect);
+				 bool multiSelect,
+				 QGraphicsLayout *subLayout = NULL);
 
 	LabelOrList *m_list;
 

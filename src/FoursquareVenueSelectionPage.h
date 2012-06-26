@@ -30,6 +30,11 @@ QTM_USE_NAMESPACE;
 class FoursquareAuthStorage;
 class FoursquareVenue;
 class FoursquareVenueSelectionPageListModel;
+class LabeledTextEdit;
+class MButton;
+
+#include <QGeoPositionInfoSource>
+#include <QGeoPositionInfo>
 
 class FoursquareVenueSelectionPage : public SelectionPage
 {
@@ -53,11 +58,15 @@ private Q_SLOTS:
 	
 	void activate(void);
 
+	void positionUpdated(const QGeoPositionInfo &update);
+
+	void positionUpdateTimeout(void);
+
 	void authenticationComplete(const QString token);
 
 	void authenticationFailed(void);
 
-	void positionFound(void);
+	void searchNearby(void);
 
 	void itemsReady(void);
 
@@ -67,13 +76,19 @@ private:
 
 	Q_DISABLE_COPY(FoursquareVenueSelectionPage);
 
-	void fetch(void);
-
 	void authenticate(void);
+
+	QGeoPositionInfoSource *m_geosource;
+
+	QGeoPositionInfo m_geoinfo;
 
 	FoursquareVenueSelectionPageListModel *m_model;
 
 	FoursquareAuthStorage *m_storage;
+
+	LabeledTextEdit *m_location;
+
+	MButton *m_here;
 
 };
 
