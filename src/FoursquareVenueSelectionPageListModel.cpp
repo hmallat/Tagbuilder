@@ -164,9 +164,12 @@ QVariant FoursquareVenueSelectionPageListModel::itemData(int row,
 	QString label = m_buckets.bucketContent(group)[row];
 	if (m_venues.contains(label)) {
 		FoursquareVenue venue = m_venues[label];
+		QString dist = "";
+		if (venue.distance() != FoursquareVenue::DISTANCE_UNKNOWN)
+			dist = QString("%1 m").arg(venue.distance());
 		parameters 
 			<< venue.displayLabel()
-			<< "icon-m-content-avatar-placeholder" /* TODO */;
+			<< dist;
 	} else {
 		parameters 
 			<< ""

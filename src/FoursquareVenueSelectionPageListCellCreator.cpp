@@ -24,7 +24,7 @@
 #include <MContentItem>
 
 FoursquareVenueSelectionPageListCellCreator::FoursquareVenueSelectionPageListCellCreator(void)
-	: ContentItemCellCreator(MContentItem::IconAndSingleTextLabel)
+	: ContentItemCellCreator(MContentItem::TwoTextLabels)
 {
 }
 
@@ -35,5 +35,5 @@ void FoursquareVenueSelectionPageListCellCreator::updateCell(const QModelIndex &
 	QVariant data = index.data(Qt::DisplayRole);
 	QStringList parameters = data.value<QStringList>();
 	contentItem->setTitle(parameters[0]);
-	contentItem->setImageID(parameters[1]); 
+	contentItem->setSubtitle(parameters[1]); 
 }

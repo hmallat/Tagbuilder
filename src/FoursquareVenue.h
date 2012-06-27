@@ -22,15 +22,20 @@
 #define _FOURSQUARE_VENUE_H_
 
 #include <QString>
+#include <QMap>
 
 class FoursquareVenue
 {
 
 public:
+
+	static const int DISTANCE_UNKNOWN;
+
 	FoursquareVenue(void);
 
 	FoursquareVenue(const QString &id,
-			const QString &label);
+			const QString &label,
+			int distance = DISTANCE_UNKNOWN);
 
 	FoursquareVenue(const FoursquareVenue &other);
 
@@ -44,11 +49,15 @@ public:
 
 	const QString id(void) const;
 
+	int distance(void) const;
+
 private:
 
 	QString m_id;
 
 	QString m_label;
+
+	int m_distance;
 
 };
 

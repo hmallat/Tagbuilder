@@ -20,22 +20,28 @@
 
 #include "FoursquareVenue.h"
 
+const int FoursquareVenue::DISTANCE_UNKNOWN = -1;
+
 FoursquareVenue::FoursquareVenue(void) :
 	m_id(""),
-	m_label("")
+	m_label(""),
+	m_distance(FoursquareVenue::DISTANCE_UNKNOWN)
 {
 }
 
 FoursquareVenue::FoursquareVenue(const QString &id,
-				 const QString &label) :
+				 const QString &label,
+				 int dist) :
 	m_id(id),
-	m_label(label)
+	m_label(label),
+	m_distance(dist)
 {
 }
 
 FoursquareVenue::FoursquareVenue(const FoursquareVenue &other) :
 	m_id(other.m_id),
-	m_label(other.m_label)
+	m_label(other.m_label),
+	m_distance(other.m_distance)
 {
 }
 
@@ -44,6 +50,7 @@ FoursquareVenue &FoursquareVenue::operator=(const FoursquareVenue &other)
 	if (this != &other) {
 		m_id = other.m_id;
 		m_label = other.m_label;
+		m_distance = other.m_distance;
 	}
 
 	return *this;
@@ -66,4 +73,9 @@ const QString FoursquareVenue::displayLabel(void) const
 const QString FoursquareVenue::id(void) const
 {
 	return m_id;
+}
+
+int FoursquareVenue::distance(void) const
+{
+	return m_distance;
 }

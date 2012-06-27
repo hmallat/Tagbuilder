@@ -66,6 +66,7 @@ FoursquareVenueSelectionPage::FoursquareVenueSelectionPage(QGraphicsItem *parent
 
 FoursquareVenueSelectionPage::~FoursquareVenueSelectionPage(void)
 {
+	m_geosource->stopUpdates();
 }
 
 void FoursquareVenueSelectionPage::createContent(void)

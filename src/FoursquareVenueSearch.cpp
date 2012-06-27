@@ -104,9 +104,15 @@ void FoursquareVenueSearch::processResponse(QVariantMap &response)
 		mDebug(__func__) << venueMap["id"];
 		mDebug(__func__) << venueMap["name"];
 
+		unsigned long long dist = FoursquareVenue::DISTANCE_UNKNOWN;
+		QVariantMap locationMap = venueMap["location"].toMap();
+		if (locationMap.contains("distance"))
+			dist = locationMap["distance"].toULongLong();
+
 		m_venues << 
 			FoursquareVenue(venueMap["id"].toString(),
-					venueMap["name"].toString());
+					venueMap["name"].toString(),
+					dist);
 	}
 
 	mDebug(__func__) << m_venues.size() << " venues found. ";
