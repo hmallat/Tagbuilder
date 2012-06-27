@@ -28,35 +28,55 @@ FoursquareVenueSearch::FoursquareVenueSearch(const QString auth,
 	QObject(parent),
 	m_auth(auth),
 	m_nam(new QNetworkAccessManager(this)),
-	m_request(0)
+	m_reply(0)
 {
-        connect(m_nam, SIGNAL(finished(QNetworkReply *)),
-                this, SLOT(requestFinished(QNetworkReply *)));
 }
 
 FoursquareVenueSearch::~FoursquareVenueSearch(void)
 {
+	if (m_reply != 0) {
+		delete m_reply;
+		m_reply = 0;
+	}
+
+}
+
+bool FoursquareVenueSearch::search(QUrl query)
+{
+	mDebug(__func__) << query;
+
+	m_venues.clear();
+
+	if (m_reply != 0) {
+		delete m_reply;
+		m_reply = 0;
+	}
+
+        m_reply = m_nam->get(QNetworkRequest(query));
+        connect(m_reply, SIGNAL(finished(void)),
+                this, SLOT(requestFinished(void)));
+
+	return true;
 }
 
 bool FoursquareVenueSearch::venuesByCoordinates(double lat, double lon)
 {
-	if (m_request != 0) {
-		delete m_request;
-		m_request = 0;
-	}
-
-	m_venues.clear();
-
         QUrl query("https://api.foursquare.com/v2/venues/search");
 	query.addQueryItem("ll", QString("%1,%2").arg(lat).arg(lon));
 	query.addQueryItem("oauth_token", m_auth);
 	query.addQueryItem("v", BUILDDATE);
-	mDebug(__func__) << query;
 
-        m_request = new QNetworkRequest(query);
-	m_nam->get(*m_request);
+	return search(query);
+}
 
-	return true;
+bool FoursquareVenueSearch::venuesByLocation(const QString loc)
+{
+        QUrl query("https://api.foursquare.com/v2/venues/search");
+	query.addQueryItem("near", loc);
+	query.addQueryItem("oauth_token", m_auth);
+	query.addQueryItem("v", BUILDDATE);
+
+	return search(query);
 }
 
 static void debugVariantMap(const QString name, const QVariantMap &map)
@@ -92,10 +112,10 @@ void FoursquareVenueSearch::processResponse(QVariantMap &response)
 	mDebug(__func__) << m_venues.size() << " venues found. ";
 }
 
-void FoursquareVenueSearch::requestFinished(QNetworkReply *reply)
+void FoursquareVenueSearch::requestFinished(void)
 {
-        if (reply->error() == QNetworkReply::NoError) {
-		QByteArray contents = reply->readAll();
+        if (m_reply != 0 && m_reply->error() == QNetworkReply::NoError) {
+		QByteArray contents = m_reply->readAll();
                 mDebug(__func__) << "Success: " << contents;
 
 		QJson::Parser parser;
@@ -113,10 +133,15 @@ void FoursquareVenueSearch::requestFinished(QNetworkReply *reply)
 	} else {
 		/* TODO: handle stale/invalid auth token error somehow,
 		   eg add parameter to signal */
-                QString contents(reply->readAll());
-		mDebug(__func__) << "Error: " << reply->error();
+		QString contents(m_reply != 0 ? m_reply->readAll() : "");
+		mDebug(__func__) << "Error: " << (m_reply != 0 
+						  ? m_reply->error()
+						  : QNetworkReply::UnknownNetworkError);
                 mDebug(__func__) << "Error: " << contents;
 	}
+
+	m_reply->deleteLater();
+	m_reply = 0;
 
 	Q_EMIT(searchComplete());
 }

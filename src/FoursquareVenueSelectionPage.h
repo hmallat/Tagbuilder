@@ -68,6 +68,8 @@ private Q_SLOTS:
 
 	void searchNearby(void);
 
+	void searchLocation(void);
+
 	void itemsReady(void);
 
 	void venueSelected(const QModelIndex &which);

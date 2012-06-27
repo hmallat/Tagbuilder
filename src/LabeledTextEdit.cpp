@@ -72,6 +72,9 @@ MTextEdit *LabeledTextEdit::textWidget(void)
 		connect(m_text, SIGNAL(textChanged()),
 			this, SIGNAL(contentsChanged()));
 
+		connect(m_text, SIGNAL(returnPressed()),
+			this, SIGNAL(editCompleted()));
+
 		if (mode == MTextEditModel::SingleLine) {
 			connect(m_text, SIGNAL(returnPressed()),
 				this, SLOT(returnPressed()));

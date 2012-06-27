@@ -44,6 +44,8 @@ public:
 
 	bool venuesByCoordinates(double lat, double lon);
 
+	bool venuesByLocation(const QString loc);
+
 	const QList<FoursquareVenue> results(void);
 
 Q_SIGNALS:
@@ -52,11 +54,13 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 
-	void requestFinished(QNetworkReply *reply);
+	void requestFinished(void);
 
 private:
 
 	Q_DISABLE_COPY(FoursquareVenueSearch);
+
+	bool search(QUrl query);
 
 	void processResponse(QVariantMap &response);
 
@@ -64,7 +68,7 @@ private:
 
 	QNetworkAccessManager *m_nam;
 
-	QNetworkRequest *m_request;
+	QNetworkReply *m_reply;
 
 	QList<FoursquareVenue> m_venues;
 

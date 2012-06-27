@@ -66,6 +66,8 @@ Q_SIGNALS:
 
 	void contentsChanged(void);
 
+	void editCompleted(void);
+
 private Q_SLOTS:
 
 	void adjustAction(void);

@@ -55,6 +55,8 @@ public:
 
 	bool fetch(const QString auth, double lat, double lon);
 
+	bool fetch(const QString auth, const QString loc);
+
 Q_SIGNALS:
 
 	void positionFound(void);

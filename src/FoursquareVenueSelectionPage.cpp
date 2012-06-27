@@ -54,7 +54,7 @@ FoursquareVenueSelectionPage::FoursquareVenueSelectionPage(QGraphicsItem *parent
 			SIGNAL(updateTimeout()),
 			this, 
 			SLOT(positionUpdateTimeout()));
-		m_geosource->requestUpdate(60*1000);
+		m_geosource->startUpdates();
 	}
 
 	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
@@ -70,9 +70,11 @@ FoursquareVenueSelectionPage::~FoursquareVenueSelectionPage(void)
 
 void FoursquareVenueSelectionPage::createContent(void)
 {
-	m_location = new LabeledTextEdit(tr("Ok"),
+	m_location = new LabeledTextEdit(tr("Search"),
 					 LabeledTextEdit::SingleLineEditOnly);
 	m_location->setPrompt(tr("Enter location"));
+	connect(m_location, SIGNAL(editCompleted()),
+		this, SLOT(searchLocation(void)));
 
 	m_here = new MButton(tr("Nearby venues"));
 	m_here->setEnabled(false);
@@ -157,6 +159,17 @@ void FoursquareVenueSelectionPage::searchNearby(void)
 	m_model->fetch(m_storage->get(),
 		       m_geoinfo.coordinate().latitude(),
 		       m_geoinfo.coordinate().longitude());
+}
+
+void FoursquareVenueSelectionPage::searchLocation(void)
+{
+	QString loc = m_location->contents();
+	if (loc == "")
+		return;
+
+	setBusy();
+	m_list->setLabel(tr("Searching venues near %1").arg(loc));
+	m_model->fetch(m_storage->get(), loc);
 }
 
 void FoursquareVenueSelectionPage::itemsReady(void)

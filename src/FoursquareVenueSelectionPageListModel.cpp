@@ -42,14 +42,36 @@ bool FoursquareVenueSelectionPageListModel::fetch(const QString auth,
 {
 	m_auth = auth;
 
-	if (m_search != NULL) {
+	if (m_search != 0) {
 		delete m_search;
 		m_search = NULL;
 	}
+
 	m_search = new FoursquareVenueSearch(m_auth, this);
 	connect(m_search, SIGNAL(searchComplete()),
 		this, SLOT(venueSearchCompleted()));
 	if (m_search->venuesByCoordinates(lat, lon) == false) {
+		mDebug(__func__) << "Can't lookup venues. ";
+		return false;
+	}
+
+	return true;
+}
+
+bool FoursquareVenueSelectionPageListModel::fetch(const QString auth,
+						  const QString loc)
+{
+	m_auth = auth;
+
+	if (m_search != 0) {
+		delete m_search;
+		m_search = NULL;
+	}
+
+	m_search = new FoursquareVenueSearch(m_auth, this);
+	connect(m_search, SIGNAL(searchComplete()),
+		this, SLOT(venueSearchCompleted()));
+	if (m_search->venuesByLocation(loc) == false) {
 		mDebug(__func__) << "Can't lookup venues. ";
 		return false;
 	}
@@ -63,6 +85,7 @@ venueSearchCompleted(void)
 	mDebug(__func__) << "Venue search complete. ";
 	updateResults(m_search->results());
 	m_search->deleteLater();
+	m_search = 0;
 	Q_EMIT(ready());
 }
 

@@ -66,7 +66,7 @@ protected:
 				 const QString title, 
 				 bool groupedList,
 				 bool multiSelect,
-				 QGraphicsLayout *subLayout = NULL);
+				 QGraphicsLayout *subLayout = 0);
 
 	LabelOrList *m_list;
 
