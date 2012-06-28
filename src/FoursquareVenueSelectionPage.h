@@ -22,7 +22,7 @@
 #define _FOURSQUARE_VENUE_SELECTION_PAGE_H_
 
 #include "SelectionPage.h"
-
+#include "FoursquareVenueSearch.h"
 #include "Util.h"
 
 QTM_USE_NAMESPACE;
@@ -70,7 +70,7 @@ private Q_SLOTS:
 
 	void searchLocation(void);
 
-	void itemsReady(void);
+	void itemsReady(enum FoursquareVenueSearch::SearchStatus status);
 
 	void venueSelected(const QModelIndex &which);
 

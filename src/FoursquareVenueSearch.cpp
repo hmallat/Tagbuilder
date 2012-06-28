@@ -28,7 +28,8 @@ FoursquareVenueSearch::FoursquareVenueSearch(const QString auth,
 	QObject(parent),
 	m_auth(auth),
 	m_nam(new QNetworkAccessManager(this)),
-	m_reply(0)
+	m_reply(0),
+	m_status(FoursquareVenueSearch::Incomplete)
 {
 }
 
@@ -37,6 +38,7 @@ FoursquareVenueSearch::~FoursquareVenueSearch(void)
 	if (m_reply != 0) {
 		delete m_reply;
 		m_reply = 0;
+		m_status = Incomplete;
 	}
 
 }
@@ -50,6 +52,7 @@ bool FoursquareVenueSearch::search(QUrl query)
 	if (m_reply != 0) {
 		delete m_reply;
 		m_reply = 0;
+		m_status = Incomplete;
 	}
 
         m_reply = m_nam->get(QNetworkRequest(query));
@@ -121,6 +124,8 @@ void FoursquareVenueSearch::processResponse(QVariantMap &response)
 void FoursquareVenueSearch::requestFinished(void)
 {
         if (m_reply != 0 && m_reply->error() == QNetworkReply::NoError) {
+		m_status = Ok;
+
 		QByteArray contents = m_reply->readAll();
                 mDebug(__func__) << "Success: " << contents;
 
@@ -137,13 +142,18 @@ void FoursquareVenueSearch::requestFinished(void)
 		}
 
 	} else {
-		/* TODO: handle stale/invalid auth token error somehow,
-		   eg add parameter to signal */
+		m_status = Error;
+
 		QString contents(m_reply != 0 ? m_reply->readAll() : "");
 		mDebug(__func__) << "Error: " << (m_reply != 0 
 						  ? m_reply->error()
 						  : QNetworkReply::UnknownNetworkError);
                 mDebug(__func__) << "Error: " << contents;
+
+		if (m_reply != 0 && 
+		    m_reply->error() == QNetworkReply::AuthenticationRequiredError) {
+			m_status = AuthenticationError;
+		}
 	}
 
 	m_reply->deleteLater();
@@ -157,3 +167,9 @@ const QList<FoursquareVenue> FoursquareVenueSearch::results(void)
 	mDebug(__func__) << m_venues.size() << " venues in results. ";
 	return m_venues;
 }
+
+enum FoursquareVenueSearch::SearchStatus FoursquareVenueSearch::status(void)
+{
+	return m_status;
+}
+

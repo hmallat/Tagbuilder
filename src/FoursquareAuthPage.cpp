@@ -24,6 +24,7 @@
 
 #include <QGraphicsWebView>
 #include <QGraphicsAnchorLayout>
+#include <QGraphicsGridLayout>
 #include <QNetworkReply>
 #include <MAction>
 
@@ -70,17 +71,22 @@ void FoursquareAuthPage::createContent(void)
 	layout->addCornerAnchors(m_header, Qt::TopRightCorner,
 				 layout, Qt::TopRightCorner);
 
+	QGraphicsGridLayout *subLayout = new QGraphicsGridLayout();
+	layout->addCornerAnchors(subLayout, Qt::TopLeftCorner,
+				 m_header, Qt::BottomLeftCorner);
+ 	layout->addCornerAnchors(subLayout, Qt::BottomRightCorner,
+ 				 layout, Qt::BottomRightCorner);
+
 	m_view = new QGraphicsWebView();
 	m_view->setResizesToContents(false);
+	m_view->setSizePolicy(QSizePolicy::Ignored,
+			      QSizePolicy::Ignored);
 	connect(m_view, SIGNAL(loadStarted()),
 		this, SLOT(pageLoadStarted()));
 	connect(m_view, SIGNAL(loadFinished(bool)),
 		this, SLOT(pageLoadFinished(bool)));
 
-	layout->addCornerAnchors(m_view, Qt::TopLeftCorner,
-				 m_header, Qt::BottomLeftCorner);
-	layout->addCornerAnchors(m_view, Qt::BottomRightCorner,
-				 layout, Qt::BottomRightCorner);
+	subLayout->addItem(m_view, 0, 0);
 
 	m_nam = new FoursquareAuthNetworkAccessManager(m_view->page()->networkAccessManager(), 
 						       REDIRECT_URL,
@@ -102,7 +108,7 @@ void FoursquareAuthPage::activate(void)
 		"?client_id=" CLIENT_ID
 		"&response_type=token"
 		"&redirect_uri=" REDIRECT_URL
-		"&display=webpopup";
+		"&display=touch";
 
 	m_view->load(url);
 }

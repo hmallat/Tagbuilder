@@ -21,6 +21,7 @@
 #include "FoursquareVenueSelectionPage.h"
 #include "FoursquareVenueSelectionPageListCellCreator.h"
 #include "FoursquareVenueSelectionPageListModel.h"
+#include "FoursquareVenueSearch.h"
 #include "FoursquareVenue.h"
 #include "FoursquareAuthStorage.h"
 #include "FoursquareAuthPage.h"
@@ -57,7 +58,10 @@ FoursquareVenueSelectionPage::FoursquareVenueSelectionPage(QGraphicsItem *parent
 		m_geosource->startUpdates();
 	}
 
-	connect(m_model, SIGNAL(ready()), this, SLOT(itemsReady()));
+	connect(m_model, 
+		SIGNAL(ready(enum FoursquareVenueSearch::SearchStatus)), 
+		this, 
+		SLOT(itemsReady(enum FoursquareVenueSearch::SearchStatus)));
 
 	connect(this, SIGNAL(created()), 
 		this, SLOT(activate()),
@@ -169,14 +173,21 @@ void FoursquareVenueSelectionPage::searchLocation(void)
 		return;
 
 	setBusy();
-	m_list->setLabel(tr("Searching venues near %1").arg(loc));
+	m_list->setLabel(tr("Searching venues"));
 	m_model->fetch(m_storage->get(), loc);
 }
 
-void FoursquareVenueSelectionPage::itemsReady(void)
+void FoursquareVenueSelectionPage::
+itemsReady(enum FoursquareVenueSearch::SearchStatus status)
 {
 	clearBusy();
-	m_list->setLabel(tr("No venues to select from"));
+	if (status == FoursquareVenueSearch::AuthenticationError) {
+		m_list->setLabel(tr("Not authenticated"));
+		m_storage->clear();
+		authenticate();
+	} else {
+		m_list->setLabel(tr("No venues to select from"));
+	}
 }
 
 void FoursquareVenueSelectionPage::venueSelected(const QModelIndex &which)

@@ -61,7 +61,9 @@ Q_SIGNALS:
 
 	void positionFound(void);
 
-	void ready(void);
+	void reauthenticationRequired(void);
+
+	void ready(enum FoursquareVenueSearch::SearchStatus status);
 
 protected Q_SLOTS:
 

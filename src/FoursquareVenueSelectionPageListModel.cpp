@@ -84,9 +84,10 @@ venueSearchCompleted(void)
 {
 	mDebug(__func__) << "Venue search complete. ";
 	updateResults(m_search->results());
+	enum FoursquareVenueSearch::SearchStatus status = m_search->status();
 	m_search->deleteLater();
 	m_search = 0;
-	Q_EMIT(ready());
+	Q_EMIT(ready(status));
 }
 
 void FoursquareVenueSelectionPageListModel::

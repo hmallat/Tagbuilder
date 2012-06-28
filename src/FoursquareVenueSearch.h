@@ -38,6 +38,8 @@ class FoursquareVenueSearch : public QObject
 
 public:
 
+	enum SearchStatus { Ok, Incomplete, Error, AuthenticationError };
+
 	FoursquareVenueSearch(QString auth, QObject *parent = 0);
 
 	~FoursquareVenueSearch(void);
@@ -47,6 +49,8 @@ public:
 	bool venuesByLocation(const QString loc);
 
 	const QList<FoursquareVenue> results(void);
+
+	enum SearchStatus status(void);
 
 Q_SIGNALS:
 
@@ -71,6 +75,8 @@ private:
 	QNetworkReply *m_reply;
 
 	QList<FoursquareVenue> m_venues;
+
+	enum SearchStatus m_status;
 
 };
 
